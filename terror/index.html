@@ -90,7 +90,7 @@ code { font-family: var(--font-mono); color: var(--amber); }
 
   <div class="side">
     <h1>Fita Maldita 3:33</h1>
-    <p>Série de terror para TikTok · Episódio 1 · 9:16, 1080×1920, 24 s em loop</p>
+    <p>Série de terror para TikTok · Episódio 1 · 9:16 com janela 4:3, 1080×1920, 24 s em loop</p>
 
     <div class="deck" role="group" aria-label="Controles">
       <button class="btn primary" id="play" type="button" aria-pressed="false">
@@ -142,6 +142,7 @@ const EXPORT = qs.has('export');
 const R = EXPORT || qs.has('hd') ? 2 : 1;      // prévia em 540x960, exportação em 1080x1920
 const LW = 540, LH = 960;                     // coordenadas lógicas (9:16)
 const W = LW * R, H = LH * R;
+const WIN = { x: 0, y: 165, w: 540, h: 405 };  // janela 4:3 da "fita" dentro do 9:16
 const FPS = 24, L = 576;                      // 24 s
 const BGS = EXPORT ? 5 : 3;                   // resolução da pintura de fundo (para os closes)
 const INK = '#120d16';
@@ -279,15 +280,15 @@ function limb(pts, ws) {
    DECUPAGEM (planos e câmera)
    ============================================================ */
 const SHOTS = [
-  { a: 0,   b: 72,  kind: 'tv',     cam: t => ({ cx: 420, cy: 476, z: 2.9 + t / 72 * .18 }) },
-  { a: 72,  b: 192, kind: 'wide',   cam: t => ({ cx: 270, cy: 488, z: 1.04 + (t - 72) / 120 * .07 }) },
-  { a: 192, b: 288, kind: 'tv',     cam: t => ({ cx: 420, cy: 468, z: 3.1 + (t - 192) / 96 * .5 }) },
-  { a: 288, b: 384, kind: 'kid',    cam: t => ({ cx: 134, cy: 662, z: 3.2 + (t - 288) / 96 * .35 }) },
-  { a: 384, b: 456, kind: 'wide',   cam: t => ({ cx: 270, cy: 520, z: 1.1 + (t - 384) / 72 * .05 }) },
+  { a: 0,   b: 72,  kind: 'tv',     cam: t => ({ cx: 420, cy: 468, z: 2.7 + t / 72 * .15 }) },
+  { a: 72,  b: 192, kind: 'wide',   cam: t => ({ cx: 275, cy: 585, z: 1.12 + (t - 72) / 120 * .06 }) },
+  { a: 192, b: 288, kind: 'tv',     cam: t => ({ cx: 420, cy: 462, z: 3.1 + (t - 192) / 96 * .5 }) },
+  { a: 288, b: 384, kind: 'kid',    cam: t => ({ cx: 138, cy: 638, z: 2.9 + (t - 288) / 96 * .3 }) },
+  { a: 384, b: 456, kind: 'wide',   cam: t => ({ cx: 275, cy: 585, z: 1.15 + (t - 384) / 72 * .05 }) },
   { a: 456, b: 504, kind: 'kid',    cam: t => ({ cx: 124, cy: 664, z: 3.6 + (t - 456) / 48 * .25 }) },
-  { a: 504, b: 540, kind: 'scare',  cam: () => ({ cx: 222, cy: 560, z: 1.25 }) },
+  { a: 504, b: 540, kind: 'scare',  cam: () => ({ cx: 270, cy: 565, z: 1 }) },
   { a: 540, b: 564, kind: 'static', cam: () => ({ cx: 270, cy: 480, z: 1 }) },
-  { a: 564, b: 576, kind: 'tv',     cam: () => ({ cx: 420, cy: 476, z: 2.9 }) },
+  { a: 564, b: 576, kind: 'tv',     cam: () => ({ cx: 420, cy: 468, z: 2.7 }) },
 ];
 const shotAt = t => SHOTS.find(s => t >= s.a && t < s.b);
 
@@ -730,8 +731,10 @@ function drawClock(f) {
    QUADRO
    ============================================================ */
 let ROOM = null, FX = true, SAFE = false;
-function camMatrix(cam) { return [R * cam.z, 0, 0, R * cam.z, R * (LW / 2 - cam.cx * cam.z), R * (LH / 2 - cam.cy * cam.z)]; }
-const toScreen = (cam, x, y) => [(x - cam.cx) * cam.z + LW / 2, (y - cam.cy) * cam.z + LH / 2];
+const WCX = WIN.x + WIN.w / 2, WCY = WIN.y + WIN.h / 2;
+function camMatrix(cam) { return [R * cam.z, 0, 0, R * cam.z, R * (WCX - cam.cx * cam.z), R * (WCY - cam.cy * cam.z)]; }
+const toScreen = (cam, x, y) => [(x - cam.cx) * cam.z + WCX, (y - cam.cy) * cam.z + WCY];
+function clipWindow() { c.setTransform(R, 0, 0, R, 0, 0); c.beginPath(); c.rect(WIN.x, WIN.y, WIN.w, WIN.h); c.clip(); }
 
 function drawScene(t, f) {
   const d = drawnOf(t);
@@ -741,20 +744,22 @@ function drawScene(t, f) {
   c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
 
   if (shot.kind === 'static') {
-    c.setTransform(R, 0, 0, R, 0, 0);
+    c.save(); clipWindow();
     c.imageSmoothingEnabled = true;
-    c.drawImage(fillNoise(fullNoise, f * 13 + 5, [.9, .95, 1.05]), 0, 0, LW, LH);
-    for (let i = 0; i < 3; i++) { const y = (f * (5 + i * 3) + i * 300) % (LH + 80) - 40; c.fillStyle = `rgba(0,0,0,${.25 + i * .1})`; c.fillRect(0, y, LW, 24 + i * 10); }
-    c.fillStyle = 'rgba(40,20,60,.25)'; c.fillRect(0, 0, LW, LH);
+    c.drawImage(fillNoise(fullNoise, f * 13 + 5, [.9, .95, 1.05]), WIN.x, WIN.y, WIN.w, WIN.h);
+    for (let i = 0; i < 3; i++) { const y = WIN.y + (f * (5 + i * 3) + i * 300) % (WIN.h + 80) - 40; c.fillStyle = `rgba(0,0,0,${.25 + i * .1})`; c.fillRect(WIN.x, y, WIN.w, 24 + i * 10); }
+    c.fillStyle = 'rgba(40,20,60,.25)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
+    c.restore();
     return;
   }
   ZK = 1 / cam.z;
+  c.save(); clipWindow();
   c.setTransform(...camMatrix(cam));
   c.drawImage(ROOM, 0, 0, LW, LH);
 
   // criatura atrás da cama (revelação)
   const reveal = shot.kind === 'scare';
-  const MON = new M().t(222, 784).s(1.95).r(-.1);
+  const MON_S = 1.65, MON = new M().t(222, 784).s(MON_S).r(-.1);
   if (reveal) drawMonster(MON, { part: 'body', spread: 1 });
   drawBedBack();
   drawKid(d);
@@ -776,7 +781,7 @@ function drawScene(t, f) {
   }
   const sh = T.shadow(d);
   if (sh > 0 && t >= 456 && t < 504) {
-    const lg = c.createLinearGradient(LW, 0, LW * .2, LH * .9);
+    const lg = c.createLinearGradient(WIN.x + WIN.w, WIN.y, WIN.x + WIN.w * .2, WIN.y + WIN.h * .95);
     lg.addColorStop(0, `rgba(0,0,0,${sh})`); lg.addColorStop(lerp(.2, .75, sh), `rgba(0,0,0,${sh * .8})`); lg.addColorStop(1, 'rgba(0,0,0,0)');
     c.globalCompositeOperation = 'source-over'; c.fillStyle = lg; c.fillRect(0, 0, LW, LH);
   }
@@ -795,6 +800,7 @@ function drawScene(t, f) {
     });
   }
   if (reveal && t < 512) drawMonsterFace(MON, { mouth: T.mouth(d), px: -.6, py: 1 });
+  c.restore(); // fim do recorte 4:3: no susto a criatura rompe a moldura
 
   // ---- o susto: avanço até a câmera ----
   if (reveal && t >= 512) {
@@ -804,21 +810,21 @@ function drawScene(t, f) {
     const smear = d >= 512 && d <= 515;
     c.fillStyle = `rgba(10,0,4,${Math.min(.9, (k - 1) * .3)})`; c.fillRect(0, 0, LW, LH);
     if (d >= 516) {
-      const rg = c.createRadialGradient(LW / 2, LH * .45, 40, LW / 2, LH * .45, LH * .7);
+      const rg = c.createRadialGradient(LW / 2, LH * .42, 40, LW / 2, LH * .42, LH * .7);
       rg.addColorStop(0, '#5a0010'); rg.addColorStop(1, '#0a0004'); c.fillStyle = rg; c.fillRect(0, 0, LW, LH);
       const Rn = rng(d * 31); // linhas de zoom
       c.fillStyle = INK;
       for (let i = 0; i < 26; i++) {
         const a = i / 26 * Math.PI * 2 + Rn() * .2, w = .025 + Rn() * .03, r0 = 150 + Rn() * 80;
-        c.beginPath(); c.moveTo(LW / 2 + Math.cos(a) * r0, LH * .45 + Math.sin(a) * r0);
-        c.lineTo(LW / 2 + Math.cos(a - w) * 900, LH * .45 + Math.sin(a - w) * 900); c.lineTo(LW / 2 + Math.cos(a + w) * 900, LH * .45 + Math.sin(a + w) * 900); c.fill();
+        c.beginPath(); c.moveTo(LW / 2 + Math.cos(a) * r0, LH * .42 + Math.sin(a) * r0);
+        c.lineTo(LW / 2 + Math.cos(a - w) * 900, LH * .42 + Math.sin(a - w) * 900); c.lineTo(LW / 2 + Math.cos(a + w) * 900, LH * .42 + Math.sin(a + w) * 900); c.fill();
       }
     }
     const from = toScreen(cam, ...MON.p(0, -214));
     const u = Math.min(1, (k - 1) / 3);
-    const cx = lerp(from[0], LW / 2, u), cy = lerp(from[1], LH * .44, u);
+    const cx = lerp(from[0], LW / 2, u), cy = lerp(from[1], LH * .40, u);
     const sx = smear ? .78 : (d >= 516 && d <= 518 ? 1.12 : 1), sy = smear ? 1.45 : (d >= 516 && d <= 518 ? .88 : 1);
-    const base = 1.95 * cam.z * k * .55;
+    const base = MON_S * cam.z * k * .78;
     if (smear) [.45, .25].forEach(back => {
       const kk = lerp(1, k, 1 - back), m2 = new M().t(lerp(from[0], cx, 1 - back), lerp(from[1], cy, 1 - back)).s(base / k * kk * sx, base / k * kk * sy).t(0, 214);
       c.globalAlpha = .35; drawMonster(m2, { part: 'all', mouth: mo, fuzz: 4, spread: 1 }); c.globalAlpha = 1;
@@ -854,7 +860,7 @@ function drawCaption(g, t) {
   if (!cap) return;
   const [a, b, text] = cap;
   const big = t >= 541;
-  const size = big ? 36 : 29, maxW = 400, cx = 252, cy = big ? 430 : 676;
+  const size = big ? 31 : 28, maxW = 400, cx = 252, cy = 646;
   g.save(); g.setTransform(R, 0, 0, R, 0, 0);
   g.font = `${size}px Bungee, "Arial Black", Impact, sans-serif`; g.textBaseline = 'middle'; g.textAlign = 'left';
   const words = text.split(' ').map(w => ({ w: w.replace(/\*/g, ''), hot: /\*/.test(w) }));
@@ -894,6 +900,22 @@ const vignette = (() => {
   rg.addColorStop(0, 'rgba(0,0,0,0)'); rg.addColorStop(1, 'rgba(0,0,0,.7)'); x.fillStyle = rg; x.fillRect(0, 0, W, H); return v;
 })();
 
+// moldura: título da série no topo (abaixo das abas do TikTok) e borda da janela 4:3
+function drawFrame(g, t) {
+  if (t >= 512 && t < 540) return; // a criatura está por cima de tudo
+  g.save(); g.setTransform(R, 0, 0, R, 0, 0);
+  g.strokeStyle = 'rgba(160,150,190,.35)'; g.lineWidth = 1.5;
+  g.strokeRect(WIN.x + .75, WIN.y - .75, WIN.w - 1.5, WIN.h + 1.5);
+  g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
+  g.font = '40px Creepster, Bungee, Impact, sans-serif'; g.textAlign = 'center';
+  g.lineWidth = 6; g.strokeStyle = '#000'; g.strokeText('FITA MALDITA', LW / 2 - 44, 152);
+  g.fillStyle = '#ff2a3d'; g.shadowColor = 'rgba(255,42,61,.55)'; g.shadowBlur = 12; g.fillText('FITA MALDITA', LW / 2 - 44, 152);
+  g.shadowBlur = 0;
+  g.font = '26px VT323, ui-monospace, monospace'; g.fillStyle = '#e9e4ef'; g.textAlign = 'left';
+  g.fillText('EP.1 · 3:33', LW / 2 + 78, 150);
+  g.restore();
+}
+
 function compose(f) {
   const t = loopT(f), d = drawnOf(t);
   drawScene(t, f);
@@ -925,17 +947,22 @@ function compose(f) {
     g.drawImage(vignette, 0, 0);
     // OSD do videocassete (dentro da zona segura)
     g.setTransform(R, 0, 0, R, 0, 0);
-    g.font = '30px VT323, ui-monospace, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
+    g.font = '24px VT323, ui-monospace, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
     const osd = (txt, x, y, col = '#f4f4f4') => { g.fillStyle = 'rgba(0,0,0,.55)'; g.fillText(txt, x + 2, y + 2); g.fillStyle = col; g.fillText(txt, x, y); };
-    if (t < 48) osd('PLAY ▶', 30, 124);
-    if (Math.floor(f / 12) % 2 === 0 || t >= 504) osd('● REC', 30, 152, '#ff4d4d');
-    osd('AM 3:33  NOV.20.1989', 30, 180);
+    const lunging = t >= 512 && t < 540;
+    if (!lunging) {
+      if (t < 48) osd('PLAY ▶', WIN.x + 18, WIN.y + 12);
+      else if (Math.floor(f / 12) % 2 === 0) osd('● REC', WIN.x + 18, WIN.y + 12, '#ff4d4d');
+      g.textAlign = 'right'; osd('AM 3:33  NOV.20.1989', WIN.x + WIN.w - 18, WIN.y + 12); g.textAlign = 'left';
+    }
   }
+  drawFrame(g, t);
   drawCaption(g, t);
   if (SAFE && !EXPORT) {
     g.setTransform(R, 0, 0, R, 0, 0);
     g.fillStyle = 'rgba(255,42,61,.28)';
     g.fillRect(0, 0, LW, 110); g.fillRect(0, 760, LW, 200); g.fillRect(470, 380, 70, 380);
+    g.strokeStyle = '#9fd8ff'; g.lineWidth = 1.5; g.setLineDash([6, 4]); g.strokeRect(WIN.x + 1, WIN.y, WIN.w - 2, WIN.h); g.setLineDash([]);
     g.fillStyle = '#fff'; g.font = '20px VT323, monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText('abas do TikTok', LW / 2, 60); g.fillText('legenda, @ e música', LW / 2, 860);
     g.save(); g.translate(505, 570); g.rotate(-Math.PI / 2); g.fillText('botões', 0, 0); g.restore();
@@ -1163,7 +1190,7 @@ window.RetroToon = {
 };
 
 const fontsReady = (document.fonts && document.fonts.load)
-  ? Promise.race([Promise.all(['30px VT323', '29px Bungee'].map(s => document.fonts.load(s))), new Promise(r => setTimeout(r, 2500))])
+  ? Promise.race([Promise.all(['30px VT323', '29px Bungee', '40px Creepster'].map(s => document.fonts.load(s))), new Promise(r => setTimeout(r, 2500))])
   : Promise.resolve();
 fontsReady.catch(() => {}).then(() => {
   ROOM = paintRoom();

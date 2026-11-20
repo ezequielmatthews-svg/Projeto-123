@@ -65,7 +65,7 @@ Um menino acorda às 3:33 com a TV ligando sozinha. Na tela, uma figura chega ma
 | 21–22 s | O susto, em um, com smear e quadro invertido | pico |
 | 22–24 s | “Você viu ele na porta?” e volta ao quadro 1 | comentários + loop perfeito |
 
-- **Formato:** 1080×1920 (9:16), 24 fps, 24 s.
+- **Formato:** 1080×1920 (9:16), 24 fps, 24 s. A imagem fica numa janela 4:3, o formato real da TV e do VHS, com o título da série acima e a legenda numa faixa própria abaixo, fora da área que o TikTok cobre. No susto, a criatura rompe a moldura e ocupa a tela inteira.
 - **Loop perfeito:** o último quadro emenda no primeiro (a TV está apagada nos dois), então o vídeo parece não ter fim.
 - **Legendas e OSD** ficam dentro da zona segura. Na prévia, marque “Zona segura do TikTok” para ver o que a interface do app cobre.
 - **Som sintetizado no próprio código**, sem samples nem direitos autorais: chiado de fita, estática, caixinha de música desafinada, drone, coração, cobertor, rangido, respiração e o acorde do susto. Na prévia, clique em “Som”.
