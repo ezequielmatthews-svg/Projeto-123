@@ -10,10 +10,12 @@
  *
  * Uso:
  *   node export/render.mjs [opções]
+ *     --page <arquivo>     página a renderizar (padrão: index.html; ex.: terror/index.html)
  *     --out <arquivo>      saída (padrão: out/zarko.mp4)
  *     --loops <n>          quantas vezes repetir o ciclo de 7 s (padrão: 2)
  *     --frames <n>         número exato de quadros (sobrepõe --loops)
- *     --size <LxA>         redimensiona na saída, ex.: 1440x1080 (padrão: 960x720)
+ *     --size <LxA>         redimensiona na saída, ex.: 1440x1080 (padrão: tamanho da página)
+ *     --no-audio           ignora a trilha, se a página tiver uma
  *     --crf <n>            qualidade x264, menor = melhor (padrão: 16)
  *     --no-vhs             desliga grão, scanlines e OSD (só o desenho animado)
  *     --png-dir <pasta>    também salva cada quadro como PNG
@@ -34,12 +36,14 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const argv = process.argv.slice(2);
 const opt = (name, def) => { const i = argv.indexOf(`--${name}`); return i >= 0 && argv[i + 1] && !argv[i + 1].startsWith('--') ? argv[i + 1] : def; };
 const flag = name => argv.includes(`--${name}`);
+const pagePath = opt('page', 'index.html');
 const outFile = resolve(root, opt('out', 'out/zarko.mp4'));
 const loops = Math.max(1, Number(opt('loops', 2)));
 const crf = String(opt('crf', 16));
 const size = opt('size', null);
 const pngDir = opt('png-dir', null);
 const vhs = !flag('no-vhs');
+const wantAudio = !flag('no-audio');
 
 // ---------- ffmpeg ----------
 async function findFfmpeg() {
@@ -65,10 +69,18 @@ async function main() {
   page.on('pageerror', e => console.error('[página]', e.message));
   await page.setViewport({ width: 1100, height: 900, deviceScaleFactor: 1 });
 
-  const url = pathToFileURL(resolve(root, 'index.html')).href + '?export=1';
+  const url = pathToFileURL(resolve(root, pagePath)).href + '?export=1';
   await page.goto(url, { waitUntil: 'load' });
-  await page.waitForFunction('window.RetroToon && window.RetroToon.ready', { timeout: 30000 });
-  const info = await page.evaluate(vhsOn => { window.RetroToon.setFX(vhsOn); const r = window.RetroToon; return { fps: r.fps, loop: r.loopFrames, w: r.width, h: r.height }; }, vhs);
+  await page.waitForFunction('window.RetroToon && window.RetroToon.ready', { timeout: 180000 });
+  const info = await page.evaluate(vhsOn => { window.RetroToon.setFX(vhsOn); const r = window.RetroToon; return { fps: r.fps, loop: r.loopFrames, w: r.width, h: r.height, audio: typeof r.audioWAVBase64 === 'function' }; }, vhs);
+
+  // trilha sonora gerada pela própria página (se houver)
+  let wavFile = null;
+  if (info.audio && wantAudio) {
+    wavFile = outFile.replace(/\.[^.]+$/, '') + '.wav';
+    const b64 = await page.evaluate(() => window.RetroToon.audioWAVBase64());
+    writeFileSync(wavFile, Buffer.from(b64, 'base64'));
+  }
 
   const total = Number(opt('frames', info.loop * loops));
   const filters = [];
@@ -78,15 +90,16 @@ async function main() {
   const args = [
     '-y', '-loglevel', 'error',
     '-f', 'image2pipe', '-framerate', String(info.fps), '-c:v', 'png', '-i', '-',
+    ...(wavFile ? ['-stream_loop', '-1', '-i', wavFile, '-map', '0:v', '-map', '1:a', '-c:a', 'aac', '-b:a', '192k', '-shortest'] : []),
     '-vf', filters.join(','),
-    '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-tune', 'animation',
+    '-c:v', 'libx264', '-preset', 'slow', '-crf', crf, '-tune', 'animation', '-profile:v', 'high',
     '-r', String(info.fps), '-movflags', '+faststart',
     outFile,
   ];
   const ff = spawn(ffmpegPath, args, { stdio: ['pipe', 'inherit', 'inherit'] });
   const ffDone = new Promise((res, rej) => { ff.on('error', rej); ff.on('close', code => (code === 0 ? res() : rej(new Error(`ffmpeg saiu com código ${code}`)))); });
 
-  console.log(`Renderizando ${total} quadros (${(total / info.fps).toFixed(1)} s a ${info.fps} fps, ${info.w}x${info.h}${size ? ` → ${size}` : ''}, VHS ${vhs ? 'ligado' : 'desligado'})`);
+  console.log(`Renderizando ${total} quadros (${(total / info.fps).toFixed(1)} s a ${info.fps} fps, ${info.w}x${info.h}${size ? ` → ${size}` : ''}, VHS ${vhs ? 'ligado' : 'desligado'}${wavFile ? ', com som' : ''})`);
   const t0 = Date.now();
   for (let n = 0; n < total; n++) {
     const dataUrl = await page.evaluate(i => window.RetroToon.frameDataURL(i, 'image/png'), n);

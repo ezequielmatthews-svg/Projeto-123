@@ -44,3 +44,44 @@ Como funciona: o Puppeteer abre `index.html?export=1`, chama `window.RetroToon.f
 ## Trocar a cena
 
 A linha do tempo fica no objeto `T` dentro de `index.html`: uma lista de keyframes `[quadro, valor, easing]` por propriedade. O trecho rodado em um é definido por `ACTION`, e as cores do personagem estão em `C`.
+
+---
+
+# Série de terror para TikTok: Fita Maldita
+
+`terror/index.html` usa as mesmas técnicas do Zarko (ink & paint, em um e em dois, squash and stretch, smears, VHS) num formato pensado para o TikTok.
+
+## Episódio 1: 3:33
+
+Um menino acorda às 3:33 com a TV ligando sozinha. Na tela, uma figura chega mais perto a cada corte, até bater a mão no vidro. Ele se esconde no cobertor, a TV desliga e vem o silêncio. “Ufa… sumiu?” A figura está atrás da cama.
+
+| Tempo | Momento | Para que serve no TikTok |
+|---|---|---|
+| 0–3 s | A TV liga sozinha + “NÃO olhe pra ela” | gancho para segurar o polegar |
+| 3–8 s | O menino acorda e dois olhos piscam na porta | easter egg que faz rever |
+| 8–12 s | A figura se aproxima na TV e bate no vidro | escalada |
+| 12–16 s | Close tremendo e coração acelerado | tensão |
+| 16–21 s | Silêncio, “Ufa… sumiu?” e a sombra | falso alívio |
+| 21–22 s | O susto, em um, com smear e quadro invertido | pico |
+| 22–24 s | “Você viu ele na porta?” e volta ao quadro 1 | comentários + loop perfeito |
+
+- **Formato:** 1080×1920 (9:16), 24 fps, 24 s.
+- **Loop perfeito:** o último quadro emenda no primeiro (a TV está apagada nos dois), então o vídeo parece não ter fim.
+- **Legendas e OSD** ficam dentro da zona segura. Na prévia, marque “Zona segura do TikTok” para ver o que a interface do app cobre.
+- **Som sintetizado no próprio código**, sem samples nem direitos autorais: chiado de fita, estática, caixinha de música desafinada, drone, coração, cobertor, rangido, respiração e o acorde do susto. Na prévia, clique em “Som”.
+
+```bash
+npm run render:terror      # out/fita-maldita-333.mp4 (vídeo + som AAC)
+npm run render:terror:3x   # 3 loops seguidos (72 s)
+```
+
+A página expõe `RetroToon.audioWAVBase64()`. O exportador grava a trilha em `.wav` e o FFmpeg junta tudo no MP4.
+
+## Fazer o próximo episódio
+
+Copie `terror/index.html` e mude:
+- `SHOTS`: a decupagem (plano, câmera e zoom por trecho de quadros);
+- `T`: as curvas de atuação (olhos, tremor, cobertor, susto…);
+- `ONES`: os trechos rodados em um;
+- `CAPS`: as legendas (`*palavra*` sai em vermelho);
+- `synth()`: os eventos de som, sincronizados pelos mesmos números de quadro.
