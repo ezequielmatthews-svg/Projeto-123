@@ -1044,7 +1044,8 @@ function synth() {
   }
   // 5) coração acelerando
   const thump = (s0, amp) => add(s0, .35, x => Math.sin(2 * Math.PI * (48 + 50 * Math.exp(-x * 30)) * x) * env(x, .006, 13) * amp);
-  for (let s = 12.1, bpm = 72; s < 16.4; s += 60 / bpm, bpm = Math.min(150, bpm * 1.06)) { thump(s, .55); thump(s + .17, .35); }
+  // o coração recua enquanto o menino chama "Mãe...?" (12,8 s a 14,7 s)
+  for (let s = 12.1, bpm = 72; s < 16.4; s += 60 / bpm, bpm = Math.min(150, bpm * 1.06)) { const k = s > 12.75 && s < 14.7 ? .45 : 1; thump(s, .55 * k); thump(s + .17, .35 * k); }
   for (let s = 19.0, bpm = 56; s < 20.7; s += 60 / bpm, bpm *= 1.12) { thump(s, .45); thump(s + .17, .28); }
   // 6) cobertor (fuuup), rangido do chão, respiração
   add(sec(352), .35, x => { lp = 0; return noise() * Math.sin(Math.PI * x / .35) * .22; });
@@ -1067,25 +1068,32 @@ function synth() {
   let nb = 0; add(21.5, .9, x => { nb += (noise() - nb) * .3; return nb * env(x, .003, 5) * .7; });
   const sc = [0, 0, 0];
   add(21.5, 1.05, x => { let v = 0; [1250, 1330, 1580].forEach((f, k) => { sc[k] += f * (1 + .03 * Math.sin(2 * Math.PI * 9 * x + k)) * (1 + x * .25) / SR; v += 2 * (sc[k] % 1) - 1; }); return v / 3 * env(x, .02, 2.4) * .2; });
-  // narração (voz Piper tratada como fita) + ducking: a cena abaixa quando a voz fala
+  // 1) master da cena sozinha (sem vozes): saturação suave e um nível mais baixo,
+  //    para sobrar espaço para as vozes por cima
+  let peak = 0;
+  for (let i = 0; i < N; i++) { out[i] = sat(out[i] * 1.3); peak = Math.max(peak, Math.abs(out[i])); }
+  const BED = .5, gb = BED / (peak || 1);
+  for (let i = 0; i < N; i++) out[i] *= gb;
+  // 2) vozes por cima + ducking forte: a cena abaixa ~15 dB quando alguém fala
+  //    (menos durante a pancada do susto, que não pode ser abafada)
   if (NARR) {
     const bin = atob(NARR.pcm), n16 = new Int16Array(bin.length >> 1);
     for (let i = 0; i < n16.length; i++) n16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
-    const ratio = NARR.sr / SR;
+    const ratio = NARR.sr / SR, VOICE = 1.3;
     let env = 0;
     for (let i = 0; i < N; i++) {
       const x = i * ratio, i0 = x | 0, fr = x - i0;
       const v = i0 + 1 < n16.length ? (n16[i0] * (1 - fr) + n16[i0 + 1] * fr) / 32768 : 0;
       const a = Math.abs(v);
-      env = a > env ? env + (a - env) * .02 : env * .99993;
-      out[i] = out[i] * (1 - Math.min(.78, env * 4)) + v * 1.5;
+      env = a > env ? env + (a - env) * .05 : env * .99995;
+      const s = i / SR, maxDuck = s > 21.4 && s < 22.2 ? .25 : .9;
+      out[i] = out[i] * (1 - Math.min(maxDuck, env * 12)) + v * VOICE;
     }
   }
-  // master: saturação suave e normalização
-  let peak = 0;
-  for (let i = 0; i < N; i++) { out[i] = sat(out[i] * 1.3); peak = Math.max(peak, Math.abs(out[i])); }
-  const g = .9 / (peak || 1);
-  for (let i = 0; i < N; i++) out[i] *= g;
+  // 3) limitador final (só age se algo passar do teto)
+  peak = 0;
+  for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(out[i]));
+  if (peak > .97) { const g = .97 / peak; for (let i = 0; i < N; i++) out[i] *= g; }
   // micro fade no início/fim para o loop não estalar
   for (let i = 0; i < 400; i++) { out[i] *= i / 400; out[N - 1 - i] *= i / 400; }
   AUDIO = out; return out;

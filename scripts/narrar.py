@@ -91,8 +91,12 @@ def read_wav(path: Path, tail: float = .25) -> array.array:
     i1 = len(a) - next((i for i, v in enumerate(reversed(a)) if abs(v) > thr), 0)
     pad = int(.03 * SR)
     a = a[max(0, i0 - pad):min(len(a), i1 + int(tail * SR))]  # mantém a cauda do eco
+    # cada fala no mesmo volume médio (RMS -18 dB), com o pico limitado a -1,5 dB:
+    # assim os sussurros não ficam mais baixos que as falas normais
     peak = max((abs(v) for v in a), default=1) or 1
-    g = .7 * 32767 / peak                                   # cada fala com pico em -3 dB
+    act = [v for v in a if abs(v) > peak * .05] or [1]
+    rms = math.sqrt(sum(v * v for v in act) / len(act))
+    g = min(.126 * 32767 / rms, .84 * 32767 / peak)
     return array.array("h", (int(v * g) for v in a))
 
 
