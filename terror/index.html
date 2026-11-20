@@ -599,21 +599,38 @@ function tracePath2(g, P) {
   g.closePath();
 }
 
-const SCR = { x: 361, y: 425, w: 92, h: 69 };
+const SCR = { x: 363, y: 427, w: 92, h: 69, r: 10, bulge: 2.5 };
+// retângulo arredondado com pontos densos: o traço suavizado mantém as quinas
+// (com só 4 pontos ele vira oval). bulge = curvatura do vidro do tubo.
+function rrPts(x, y, w, h, r, bulge = 0) {
+  const pts = [], step = 10;
+  const edge = (x0, y0, x1, y1, nx, ny) => {
+    const len = Math.hypot(x1 - x0, y1 - y0), n = Math.max(1, Math.round(len / step));
+    for (let i = 0; i < n; i++) { const u = i / n, b = Math.sin(Math.PI * u) * bulge; pts.push([x0 + (x1 - x0) * u + nx * b, y0 + (y1 - y0) * u + ny * b]); }
+  };
+  const arc = (cx, cy, a0) => { for (let i = 0; i < 4; i++) { const a = a0 + i / 4 * Math.PI / 2; pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); } };
+  edge(x + r, y, x + w - r, y, 0, -1); arc(x + w - r, y + r, -Math.PI / 2);
+  edge(x + w, y + r, x + w, y + h - r, 1, 0); arc(x + w - r, y + h - r, 0);
+  edge(x + w - r, y + h, x + r, y + h, 0, 1); arc(x + r, y + h - r, Math.PI / 2);
+  edge(x, y + h - r, x, y + r, -1, 0); arc(x + r, y + r, Math.PI);
+  return pts;
+}
+const GLASS = rrPts(SCR.x, SCR.y, SCR.w, SCR.h, SCR.r, SCR.bulge);
 function tvMatrix(d) { const sx = T.tvSx(d), sy = 1 / Math.pow(sx, .8); return new M().t(420, 522).s(sx, sy).t(-420, -522); }
 function drawTV(d) {
   const TM = tvMatrix(d);
   stroke(TM.map([[414, 404], [396, 372], [380, 340]]), 3, 160); stroke(TM.map([[426, 404], [442, 370], [458, 336]]), 3, 161);
   cel(TM.map(circ(380, 340, 4, 4, 6)), '#c9c2b4', null, 162, { lw: 2.4 }); cel(TM.map(circ(458, 336, 4, 4, 6)), '#c9c2b4', null, 163, { lw: 2.4 });
   cel(TM.map(circ(420, 406, 16, 7, 10)), '#4a4038', null, 164, { lw: 2.6 });
-  cel(TM.map([[352, 410], [488, 406], [492, 520], [348, 522]]), C.tv, C.tvSh, 165, { sh: 6 });
-  cel(TM.map([[356, 420], [458, 418], [460, 500], [354, 501]]), '#2b2a30', null, 166, { lw: 2.6 });
-  cel(TM.map([[SCR.x + 2, SCR.y], [SCR.x + SCR.w - 2, SCR.y], [SCR.x + SCR.w, SCR.y + 6], [SCR.x + SCR.w, SCR.y + SCR.h - 6], [SCR.x + SCR.w - 2, SCR.y + SCR.h], [SCR.x + 2, SCR.y + SCR.h], [SCR.x, SCR.y + SCR.h - 6], [SCR.x, SCR.y + 6]]), '#1d2725', null, 167, { lw: 2.2, j: .5 });
+  cel(TM.map(rrPts(348, 402, 144, 120, 16)), C.tv, C.tvSh, 165, { sh: 6, j: .9 });
+  cel(TM.map(rrPts(356, 414, 106, 94, 13)), '#2b2a30', '#1c1b20', 166, { lw: 2.6, sh: 3, j: .7 });
+  cel(TM.map(GLASS), '#1d2725', null, 167, { lw: 2.2, j: .3 });
   cel(TM.map(circ(474, 436, 7, 7, 8)), '#c9b28a', '#8a7454', 168, { sh: 2, lw: 2.4 });
   cel(TM.map(circ(474, 458, 7, 7, 8)), '#c9b28a', '#8a7454', 169, { sh: 2, lw: 2.4 });
   for (let i = 0; i < 5; i++) stroke(TM.map([[466, 476 + i * 6], [482, 476 + i * 6]]), 1.8, 170 + i);
-  cel(TM.map([[364, 522], [476, 522], [478, 540], [362, 540]]), '#2c2c36', '#1a1a22', 176, { sh: 2, lw: 2.6 });
-  cel(TM.map([[380, 526], [418, 526], [418, 536], [380, 536]]), '#120607', null, 177, { lw: 1.8, j: .3 });
+  cel(TM.map(rrPts(362, 522, 116, 18, 3)), '#2c2c36', '#1a1a22', 176, { sh: 2, lw: 2.6, j: .6 });
+  cel(TM.map(rrPts(380, 526, 38, 10, 2)), '#120607', null, 177, { lw: 1.8, j: .3 });
+  for (let i = 0; i < 3; i++) cel(TM.map(rrPts(430 + i * 14, 528, 9, 6, 1.5)), '#4a4a58', null, 178 + i, { lw: 1.6, j: .2 });
 }
 const tvState = t => {
   if (t < 12 || t >= 564) return 'off';
@@ -660,15 +677,13 @@ function drawTVScreen(t, d, f) {
   const TM = tvMatrix(d);
   c.save();
   c.transform(TM.a, TM.b, TM.c, TM.d, TM.e, TM.f);
-  c.beginPath(); c.roundRect(SCR.x, SCR.y, SCR.w, SCR.h, 6); c.clip();
+  trace(c, GLASS, true); c.clip();
+  const sheen = () => { // reflexo curvo do vidro (aceso ou apagado)
+    c.fillStyle = 'rgba(220,235,255,.10)'; c.beginPath(); c.ellipse(SCR.w * .3, SCR.h * .22, SCR.w * .3, SCR.h * .12, -.25, 0, 7); c.fill();
+    c.strokeStyle = 'rgba(220,235,255,.12)'; c.lineWidth = 1.5; c.beginPath(); c.arc(SCR.w * .5, SCR.h * 1.6, SCR.h * 1.45, Math.PI * 1.32, Math.PI * 1.5); c.stroke();
+  };
   c.translate(SCR.x, SCR.y);
-  if (s === 'off') {
-    c.restore();
-    const r = (SCR.w) / 2; // reflexo no vidro apagado
-    c.save(); c.transform(TM.a, TM.b, TM.c, TM.d, TM.e, TM.f);
-    c.fillStyle = 'rgba(200,220,255,.10)'; c.beginPath(); c.ellipse(SCR.x + 30, SCR.y + 18, r * .5, 10, -.3, 0, 7); c.fill();
-    c.restore(); return;
-  }
+  if (s === 'off') { sheen(); c.restore(); return; }
   let vScale = 1, hScale = 1, dot = 0;
   if (s === 'warming') { vScale = [.03, .1, .35, 1, 1, 1][t - 12]; }
   if (s === 'dying') {
@@ -699,6 +714,7 @@ function drawTVScreen(t, d, f) {
   }
   const vg = c.createRadialGradient(SCR.w / 2, SCR.h / 2, SCR.h * .3, SCR.w / 2, SCR.h / 2, SCR.w * .65);
   vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,.55)'); c.fillStyle = vg; c.fillRect(0, 0, SCR.w, SCR.h);
+  sheen();
   c.restore();
 }
 function drawClock(f) {
