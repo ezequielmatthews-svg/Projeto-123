@@ -838,7 +838,7 @@ function drawScene(t, f) {
   }
   // flashes
   c.setTransform(R, 0, 0, R, 0, 0);
-  if (t === 515 || t === 504) { c.globalCompositeOperation = 'lighter'; c.fillStyle = 'rgba(255,255,255,.75)'; c.fillRect(0, 0, LW, LH); }
+  if (t === 515) { c.globalCompositeOperation = 'lighter'; c.fillStyle = 'rgba(255,255,255,.75)'; c.fillRect(0, 0, LW, LH); }
   if (t === 516 || t === 517) { c.globalCompositeOperation = 'difference'; c.fillStyle = '#fff'; c.fillRect(0, 0, LW, LH); }
   if (t === 278) { c.globalCompositeOperation = 'lighter'; c.fillStyle = 'rgba(180,220,255,.35)'; c.fillRect(0, 0, LW, LH); }
   c.globalCompositeOperation = 'source-over';
@@ -859,6 +859,7 @@ const CAPS = NARR ? NARR.legendas : [
   [541, 564, 'VOCÊ VIU ELE *NA PORTA*?'],
 ];
 function drawCaption(g, t) {
+  if (t >= 514 && t < 540) return; // durante o avanço da criatura, só ela na tela
   const cap = CAPS.find(([a, b]) => t >= a && t < b);
   if (!cap) return;
   const [a, b, text, who] = cap;
