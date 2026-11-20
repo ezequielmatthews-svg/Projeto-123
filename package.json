@@ -1,0 +1,16 @@
+{
+  "name": "zarko-espada-relampago",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Desenho animado retrô (cel animation anos 80/90) em HTML5 Canvas, com exportação para MP4 via Puppeteer + FFmpeg.",
+  "type": "module",
+  "scripts": {
+    "render": "node export/render.mjs",
+    "render:hd": "node export/render.mjs --size 1440x1080 --loops 3",
+    "render:clean": "node export/render.mjs --no-vhs --out out/zarko-limpo.mp4"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "puppeteer": "^23.11.1"
+  }
+}
