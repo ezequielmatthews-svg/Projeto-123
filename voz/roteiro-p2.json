@@ -1,0 +1,96 @@
+{
+  "episodio": "Fita Maldita · Parte 2 · A Voz da Mãe",
+  "frames": 960,
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio (Deep, Warm, Calm Storyteller) · eleven_v4",
+    "menino": "ElevenLabs · Bianca (Quirky and Animated) com [childlike voice] · eleven_v4",
+    "criatura": "ElevenLabs · Rannox Elion (Dark Villain Cinematic) · eleven_v4",
+    "mae": "ElevenLabs · Lucinda (Earthy and Wise) · eleven_v4"
+  },
+  "falas": [
+    {
+      "personagem": "narrador",
+      "inicio": 0.1,
+      "arquivo": "voz/elevenlabs/p2/01-narrador-nao-grite.mp3",
+      "fala": "[whispers] Se ele te achar... NÃO grite.",
+      "legenda": "SE ELE TE ACHAR... *NÃO GRITE*.",
+      "limite": 3.0
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 3.4,
+      "arquivo": "voz/elevenlabs/p2/02-narrador-ele-ouve.mp3",
+      "fala": "[softly] Ele não enxerga no escuro. [whispers] Ele ouve.",
+      "legenda": "ELE NÃO ENXERGA NO ESCURO. ELE *OUVE*.",
+      "limite": 7.0
+    },
+    {
+      "personagem": "criatura",
+      "inicio": 7.6,
+      "arquivo": "voz/elevenlabs/p2/03-criatura-cade-voce.mp3",
+      "fala": "[raspy] [whispers] Léo... cadê você?",
+      "legenda": "LÉO... CADÊ VOCÊ?",
+      "limite": 10.8
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 11.2,
+      "arquivo": "voz/elevenlabs/p2/04-narrador-imita.mp3",
+      "fala": "[softly] E quando não te acha... [whispers] ele imita quem você mais confia.",
+      "legenda": "E QUANDO NÃO TE ACHA... ELE IMITA *QUEM VOCÊ MAIS CONFIA*.",
+      "limite": 15.0
+    },
+    {
+      "personagem": "mae",
+      "inicio": 15.4,
+      "arquivo": "voz/elevenlabs/p2/05-criatura-voz-da-mae.mp3",
+      "efeito": "imitacao",
+      "fala": "(criatura com a voz da mãe) [softly] [warmly] Filho... é a mamãe. Pode sair.",
+      "legenda": "FILHO... É A MAMÃE. PODE SAIR.",
+      "limite": 19.0
+    },
+    {
+      "personagem": "menino",
+      "inicio": 19.3,
+      "arquivo": "voz/elevenlabs/p2/06-menino-mae.mp3",
+      "fala": "[childlike voice] [trembling voice] [whispers] Mãe...?",
+      "legenda": "MÃE...?",
+      "limite": 22.0
+    },
+    {
+      "personagem": "mae",
+      "inicio": 22.7,
+      "arquivo": "voz/elevenlabs/p2/07-mae-com-quem.mp3",
+      "fala": "[tired] Léo? Com quem você tá falando?",
+      "legenda": "LÉO? COM QUEM VOCÊ TÁ FALANDO?",
+      "limite": 26.0
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 26.5,
+      "arquivo": "voz/elevenlabs/p2/08-narrador-duas.mp3",
+      "fala": "[whispers] Agora tem duas. Uma é sua mãe. [pause] A outra...",
+      "legenda": "AGORA TEM *DUAS*. UMA É SUA MÃE. A OUTRA...",
+      "limite": 31.0
+    },
+    {
+      "personagem": "ambas",
+      "inicio": 31.4,
+      "arquivos": [
+        "voz/elevenlabs/p2/09a-mae-vem.mp3",
+        "voz/elevenlabs/p2/09b-criatura-vem.mp3"
+      ],
+      "fala": "(mãe + criatura juntas) Vem com a mamãe.",
+      "legenda": "VEM COM A MAMÃE.",
+      "limite": 33.8
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 34.3,
+      "arquivo": "voz/elevenlabs/p2/10-narrador-escolha.mp3",
+      "fala": "[softly] Qual delas é a verdadeira? [pause] Comenta. Você decide a parte três.",
+      "legenda": "QUAL DELAS É A VERDADEIRA? *PORTA* OU *QUARTO*? COMENTA!",
+      "limite": 39.9
+    }
+  ]
+}

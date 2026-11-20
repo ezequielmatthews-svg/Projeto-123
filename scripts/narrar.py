@@ -6,7 +6,7 @@ Gera a narração de um episódio da Fita Maldita, 100% local e grátis.
                     ->  terror/narracao.js  (áudio + tempos das legendas, lido pela página)
 
 Cada fala pode ter: personagem (narrador | menino | criatura, define a cor da legenda),
-arquivo (áudio pronto), pausa_max (encurta pausas internas, em s), tempo (acelera sem mudar o tom).
+arquivo (áudio pronto) ou arquivos (várias vozes juntas), efeito ("imitacao"), pausa_max (encurta pausas internas, em s), tempo (acelera sem mudar o tom).
 
 Uso:
   python3 scripts/narrar.py [--roteiro voz/roteiro.json] [--saida terror/narracao.js]
@@ -68,9 +68,15 @@ def vhs(src: Path, dst: Path, pitch: float, echo: bool):
                     "-ac", "1", "-ar", str(SR), "-sample_fmt", "s16", str(dst)], check=True)
 
 
-def gravado(src: Path, dst: Path, pausa_max: float, tempo: float):
+EFEITOS = {
+    # a criatura imitando alguém: um pouco mais grave e com uma ondulação metálica sutil
+    "imitacao": ["rubberband=pitch=0.93:formant=preserved", "flanger=delay=1.5:depth=2.5:regen=-20:width=55:speed=0.35"],
+}
+
+
+def gravado(src: Path, dst: Path, pausa_max: float, tempo: float, efeito: str = ""):
     """Áudio já gravado (ex.: ElevenLabs): encurta pausas longas internas e, se pedido, acelera sem mudar o tom."""
-    chain = []
+    chain = list(EFEITOS.get(efeito, []))
     if pausa_max:
         chain.append(f"silenceremove=stop_periods=-1:stop_duration={pausa_max}:stop_threshold=-42dB:stop_silence={pausa_max * .8:.2f}")
     if tempo and tempo != 1:
@@ -110,22 +116,31 @@ def main():
     script = json.loads((ROOT / a.roteiro).read_text(encoding="utf-8"))
     fx = script.get("tratamento", {})
     model = None
+    frames = int(script.get("frames", FRAMES))
 
-    total = int(FRAMES / FPS * SR)
+    total = int(frames / FPS * SR)
     track = [0] * total
     captions, report, prev_end = [], [], 0.0
     with tempfile.TemporaryDirectory() as tmp:
         for i, line in enumerate(script["falas"]):
             raw, proc = Path(tmp) / f"{i}.wav", Path(tmp) / f"{i}_fx.wav"
             tail = .25
-            if line.get("arquivo"):  # fala gravada (ElevenLabs etc.)
-                gravado(ROOT / line["arquivo"], proc, line.get("pausa_max", 0), line.get("tempo", 1.0))
+            arquivos = line.get("arquivos") or ([line["arquivo"]] if line.get("arquivo") else [])
+            if arquivos:  # fala gravada (ElevenLabs etc.); várias = vozes juntas, em uníssono
                 tail = .12
+                partes = []
+                for k, arq in enumerate(arquivos):
+                    pk = Path(tmp) / f"{i}_{k}_fx.wav"
+                    gravado(ROOT / arq, pk, line.get("pausa_max", 0), line.get("tempo", 1.0), line.get("efeito", ""))
+                    partes.append(read_wav(pk, tail))
+                n = max(len(x) for x in partes)
+                g = 1.0 if len(partes) == 1 else .7
+                pcm = array.array("h", (max(-32768, min(32767, int(sum(x[j] for x in partes if j < len(x)) * g))) for j in range(n)))
             else:                    # fala sintetizada aqui com o Piper
                 model = model or ensure_voice(script.get("voz", "pt_BR-faber-medium"))
                 piper(model, line["fala"], fx.get("velocidade", 1.1) * line.get("velocidade", 1.0), raw)
                 vhs(raw, proc, fx.get("tom", .85), fx.get("eco", True))
-            pcm = read_wav(proc, tail)
+                pcm = read_wav(proc, tail)
             dur = len(pcm) / SR
             start = prev_end + .08 if line["inicio"] == "depois" else float(line["inicio"])
             if start < prev_end:
@@ -149,13 +164,13 @@ def main():
         cap[1] = max(cap[1], cap[0] + FPS)
         if i + 1 < len(captions):
             cap[1] = min(cap[1], captions[i + 1][0])
-        cap[1] = min(cap[1], FRAMES)
+        cap[1] = min(cap[1], frames)
 
     pcm = array.array("h", track).tobytes()
     out = ROOT / a.saida
     out.write_text(
         "// Gerado por scripts/narrar.py a partir de voz/roteiro.json. Não edite à mão.\n"
-        "window.NARRACAO = " + json.dumps({"sr": SR, "frames": FRAMES, "legendas": captions,
+        "window.NARRACAO = " + json.dumps({"sr": SR, "frames": frames, "legendas": captions,
                                            "pcm": base64.b64encode(pcm).decode()}, ensure_ascii=False) + ";\n",
         encoding="utf-8")
     print("Narração:\n" + "\n".join(report))
