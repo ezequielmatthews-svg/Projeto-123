@@ -10,7 +10,8 @@
     "render:clean": "node export/render.mjs --no-vhs --out out/zarko-limpo.mp4",
     "render:terror": "node export/render.mjs --page terror/index.html --loops 1 --out out/fita-maldita-333.mp4",
     "render:terror:3x": "node export/render.mjs --page terror/index.html --loops 3 --out out/fita-maldita-333-loop3.mp4",
-    "narrar": "python3 scripts/narrar.py"
+    "narrar": "python3 scripts/narrar.py",
+    "render:parte2": "node export/render.mjs --page terror/parte2.html --loops 1 --out out/fita-maldita-parte2.mp4"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
