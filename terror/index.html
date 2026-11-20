@@ -130,6 +130,7 @@ code { font-family: var(--font-mono); color: var(--amber); }
   </div>
 </div>
 
+<script src="narracao.js"></script>
 <script>
 (() => {
 'use strict';
@@ -846,7 +847,9 @@ function drawScene(t, f) {
 /* ============================================================
    LEGENDAS (estilo TikTok, dentro da zona segura)
    ============================================================ */
-const CAPS = [
+// legendas: vêm da narração (scripts/narrar.py) quando ela existe; senão, estas
+const NARR = window.NARRACAO || null;
+const CAPS = NARR ? NARR.legendas : [
   [2, 40, 'SE A TV LIGAR SOZINHA ÀS *3:33*...'],
   [40, 72, '*NÃO* OLHE PRA ELA.'],
   [80, 186, 'TODA NOITE. MESMO HORÁRIO.'],
@@ -1062,6 +1065,20 @@ function synth() {
   let nb = 0; add(21.5, .9, x => { nb += (noise() - nb) * .3; return nb * env(x, .003, 5) * .7; });
   const sc = [0, 0, 0];
   add(21.5, 1.05, x => { let v = 0; [1250, 1330, 1580].forEach((f, k) => { sc[k] += f * (1 + .03 * Math.sin(2 * Math.PI * 9 * x + k)) * (1 + x * .25) / SR; v += 2 * (sc[k] % 1) - 1; }); return v / 3 * env(x, .02, 2.4) * .2; });
+  // narração (voz Piper tratada como fita) + ducking: a cena abaixa quando a voz fala
+  if (NARR) {
+    const bin = atob(NARR.pcm), n16 = new Int16Array(bin.length >> 1);
+    for (let i = 0; i < n16.length; i++) n16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
+    const ratio = NARR.sr / SR;
+    let env = 0;
+    for (let i = 0; i < N; i++) {
+      const x = i * ratio, i0 = x | 0, fr = x - i0;
+      const v = i0 + 1 < n16.length ? (n16[i0] * (1 - fr) + n16[i0 + 1] * fr) / 32768 : 0;
+      const a = Math.abs(v);
+      env = a > env ? env + (a - env) * .02 : env * .99993;
+      out[i] = out[i] * (1 - Math.min(.78, env * 4)) + v * 1.5;
+    }
+  }
   // master: saturação suave e normalização
   let peak = 0;
   for (let i = 0; i < N; i++) { out[i] = sat(out[i] * 1.3); peak = Math.max(peak, Math.abs(out[i])); }

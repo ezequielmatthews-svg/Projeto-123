@@ -18,6 +18,13 @@ else
   echo "  (Opcional: brew install ffmpeg  |  sudo apt install ffmpeg  |  winget install Gyan.FFmpeg)"
 fi
 
+if command -v python3 >/dev/null 2>&1; then
+  echo "• Instalando a voz neural local (Piper) para a narração…"
+  python3 -m pip install -q piper-tts || echo "  (não foi possível instalar o piper-tts; a narração já gerada continua funcionando)"
+else
+  echo "• Python 3 não encontrado: a narração já gerada funciona, mas para regravar instale Python 3 e rode: pip install piper-tts"
+fi
+
 echo "• Instalando dependências npm (Puppeteer baixa um Chrome headless, ~150 MB)…"
 npm install
 
@@ -26,3 +33,5 @@ echo "Tudo pronto. Para gerar o vídeo:"
 echo "  npm run render        → out/zarko.mp4 (960x720, 14 s)"
 echo "  npm run render:hd     → 1440x1080, 21 s"
 echo "  npm run render:clean  → sem efeitos VHS"
+echo "  npm run narrar        → regrava a narração da Fita Maldita (voz/roteiro.json)"
+echo "  npm run render:terror → out/fita-maldita-333.mp4"

@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+"""
+Gera a narração de um episódio da Fita Maldita, 100% local e grátis.
+
+  voz/roteiro.json  ->  Piper (voz neural pt-BR)  ->  FFmpeg (tratamento de fita VHS)
+                    ->  terror/narracao.js  (áudio + tempos das legendas, lido pela página)
+
+Uso:
+  python3 scripts/narrar.py [--roteiro voz/roteiro.json] [--saida terror/narracao.js]
+
+Precisa de: pip install piper-tts  e  ffmpeg (com o filtro rubberband).
+A voz (voz/pt_BR-faber-medium.onnx, ~60 MB) é baixada do Hugging Face na primeira vez.
+"""
+import argparse
+import array
+import base64
+import json
+import math
+import shutil
+import subprocess
+import sys
+import tempfile
+import urllib.request
+import wave
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+FPS, FRAMES = 24, 576          # mesma linha do tempo da página (24 s)
+SR = 22050                     # taxa nativa da voz do Piper
+VOICE_URL = "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/{name}/{q}/{voice}.onnx"
+
+
+def ensure_voice(voice: str) -> Path:
+    model = ROOT / "voz" / f"{voice}.onnx"
+    if model.exists() and (model.with_suffix(".onnx.json")).exists():
+        return model
+    lang, name, q = voice.split("-")
+    base = VOICE_URL.format(name=name, q=q, voice=voice)
+    for url, dest in ((base, model), (base + ".json", model.with_suffix(".onnx.json"))):
+        if not dest.exists():
+            print(f"Baixando {dest.name}…")
+            urllib.request.urlretrieve(url, dest)
+    return model
+
+
+def piper(model: Path, text: str, length_scale: float, out: Path):
+    subprocess.run(
+        [sys.executable, "-m", "piper", "-m", str(model), "-f", str(out),
+         "--length-scale", f"{length_scale:.3f}", "--noise-scale", "0.6", "--noise-w-scale", "0.75"],
+        input=text.encode("utf-8"), check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def vhs(src: Path, dst: Path, pitch: float, echo: bool):
+    chain = [
+        f"rubberband=pitch={pitch}:formant=preserved",   # mais grave, sem mudar a velocidade
+        "highpass=f=150", "lowpass=f=5200",               # banda estreita de VHS
+        "acompressor=threshold=-22dB:ratio=3:attack=5:release=150:makeup=2",
+    ]
+    if echo:
+        chain.append("aecho=0.85:0.6:55|130:0.22|0.12")     # quarto pequeno
+    # oscilação de fita (wow/flutter). Fica no fim: antes dos filtros ele faz o
+    # highpass/lowpass do FFmpeg divergir e saturar o áudio inteiro.
+    chain += ["vibrato=f=0.9:d=0.05", f"aresample={SR}"]
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-af", ",".join(chain),
+                    "-ac", "1", "-ar", str(SR), "-sample_fmt", "s16", str(dst)], check=True)
+
+
+def read_wav(path: Path) -> array.array:
+    with wave.open(str(path)) as w:
+        assert w.getframerate() == SR and w.getnchannels() == 1 and w.getsampwidth() == 2
+        a = array.array("h"); a.frombytes(w.readframes(w.getnframes()))
+    # corta o silêncio do começo e do fim
+    peak0 = max((abs(v) for v in a), default=1) or 1
+    thr = peak0 * .04
+    i0 = next((i for i, v in enumerate(a) if abs(v) > thr), 0)
+    i1 = len(a) - next((i for i, v in enumerate(reversed(a)) if abs(v) > thr), 0)
+    pad = int(.03 * SR)
+    a = a[max(0, i0 - pad):min(len(a), i1 + int(.25 * SR))]  # mantém a cauda do eco
+    peak = max((abs(v) for v in a), default=1) or 1
+    g = .7 * 32767 / peak                                   # cada fala com pico em -3 dB
+    return array.array("h", (int(v * g) for v in a))
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--roteiro", default="voz/roteiro.json")
+    ap.add_argument("--saida", default="terror/narracao.js")
+    a = ap.parse_args()
+    if not shutil.which("ffmpeg"):
+        sys.exit("ffmpeg não encontrado.")
+    script = json.loads((ROOT / a.roteiro).read_text(encoding="utf-8"))
+    fx = script.get("tratamento", {})
+    model = ensure_voice(script.get("voz", "pt_BR-faber-medium"))
+
+    total = int(FRAMES / FPS * SR)
+    track = [0] * total
+    captions, report, prev_end = [], [], 0.0
+    with tempfile.TemporaryDirectory() as tmp:
+        for i, line in enumerate(script["falas"]):
+            raw, proc = Path(tmp) / f"{i}.wav", Path(tmp) / f"{i}_fx.wav"
+            piper(model, line["fala"], fx.get("velocidade", 1.1) * line.get("velocidade", 1.0), raw)
+            vhs(raw, proc, fx.get("tom", .85), fx.get("eco", True))
+            pcm = read_wav(proc)
+            dur = len(pcm) / SR
+            start = prev_end + .08 if line["inicio"] == "depois" else float(line["inicio"])
+            if start < prev_end:
+                report.append(f"  ! fala {i + 1} empurrada de {start:.2f}s para {prev_end:.2f}s (a anterior ainda não acabou)")
+                start = prev_end
+            end = start + dur
+            lim = line.get("limite")
+            if lim and end - .2 > lim:  # a cauda do eco pode passar
+                report.append(f"  ! fala {i + 1} termina em {end:.2f}s, depois do limite {lim:.2f}s: encurte o texto ou aumente a velocidade")
+            o = int(start * SR)
+            for k, v in enumerate(pcm):
+                if o + k < total:
+                    track[o + k] = max(-32768, min(32767, track[o + k] + v))
+            speech_end = end - .2  # sem a cauda do eco
+            captions.append([math.floor(start * FPS), math.ceil(speech_end * FPS) + 10, line["legenda"]])
+            report.append(f"  {i + 1}. {start:5.2f}s → {end:5.2f}s  ({dur:.2f}s)  {line['fala']}")
+            prev_end = speech_end
+
+    # legenda fica pelo menos 1 s na tela, sem invadir a próxima
+    for i, cap in enumerate(captions):
+        cap[1] = max(cap[1], cap[0] + FPS)
+        if i + 1 < len(captions):
+            cap[1] = min(cap[1], captions[i + 1][0])
+        cap[1] = min(cap[1], FRAMES)
+
+    pcm = array.array("h", track).tobytes()
+    out = ROOT / a.saida
+    out.write_text(
+        "// Gerado por scripts/narrar.py a partir de voz/roteiro.json. Não edite à mão.\n"
+        "window.NARRACAO = " + json.dumps({"sr": SR, "frames": FRAMES, "legendas": captions,
+                                           "pcm": base64.b64encode(pcm).decode()}, ensure_ascii=False) + ";\n",
+        encoding="utf-8")
+    print("Narração:\n" + "\n".join(report))
+    print(f"→ {out.relative_to(ROOT)} ({out.stat().st_size / 1e6:.1f} MB)")
+
+
+if __name__ == "__main__":
+    main()

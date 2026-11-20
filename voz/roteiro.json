@@ -1,0 +1,58 @@
+{
+  "episodio": "Fita Maldita 3:33",
+  "voz": "pt_BR-faber-medium",
+  "tratamento": {
+    "tom": 0.84,
+    "velocidade": 1.12,
+    "eco": true
+  },
+  "falas": [
+    {
+      "inicio": 0.15,
+      "fala": "Se a TV ligar sozinha às três e trinta e três...",
+      "legenda": "SE A TV LIGAR SOZINHA ÀS *3:33*...",
+      "velocidade": 0.8,
+      "limite": 3.2
+    },
+    {
+      "inicio": "depois",
+      "fala": "não olhe pra ela.",
+      "legenda": "*NÃO* OLHE PRA ELA.",
+      "velocidade": 0.95,
+      "limite": 4.9
+    },
+    {
+      "inicio": 5.0,
+      "fala": "Toda noite. Mesmo horário.",
+      "legenda": "TODA NOITE. MESMO HORÁRIO.",
+      "limite": 7.9
+    },
+    {
+      "inicio": 8.4,
+      "fala": "E a cada noite... ele chega mais perto.",
+      "legenda": "E A CADA NOITE... ELE CHEGA *MAIS PERTO*.",
+      "limite": 11.4
+    },
+    {
+      "inicio": 16.7,
+      "fala": "Silêncio.",
+      "legenda": "...SILÊNCIO.",
+      "velocidade": 1.3,
+      "limite": 18.6
+    },
+    {
+      "inicio": 19.0,
+      "fala": "Ufa... sumiu?",
+      "legenda": "UFA... SUMIU?",
+      "limite": 20.3,
+      "velocidade": 0.88
+    },
+    {
+      "inicio": 22.38,
+      "fala": "Viu ele... na porta?",
+      "legenda": "VIU ELE *NA PORTA*?",
+      "limite": 23.98,
+      "velocidade": 0.92
+    }
+  ]
+}

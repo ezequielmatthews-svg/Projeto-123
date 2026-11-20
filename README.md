@@ -77,11 +77,22 @@ npm run render:terror:3x   # 3 loops seguidos (72 s)
 
 A página expõe `RetroToon.audioWAVBase64()`. O exportador grava a trilha em `.wav` e o FFmpeg junta tudo no MP4.
 
+## Narração (voz neural local, grátis)
+
+A narração é gerada no seu computador com o [Piper](https://github.com/rhasspy/piper), uma voz neural de código aberto em português do Brasil. Não usa serviço pago nem tem restrição de uso comercial.
+
+1. Escreva as falas em `voz/roteiro.json`: `inicio` (segundos, ou `"depois"` para vir logo após a anterior), `fala` (como deve ser dita, com números por extenso), `legenda` (o texto na tela, com `*palavra*` em vermelho), `velocidade` (opcional, maior = mais lento) e `limite` (até quando a fala precisa terminar).
+2. Rode `npm run narrar`. Na primeira vez, a voz `pt_BR-faber-medium` (~60 MB) é baixada do Hugging Face.
+3. O script gera cada fala, aplica o tratamento de fita (tom mais grave sem mudar a velocidade, banda estreita de VHS, compressão, eco de quarto e oscilação de fita) e grava `terror/narracao.js`. Esse arquivo leva o áudio e os tempos das legendas. Se alguma fala passar do limite, o script avisa.
+4. A página mistura a voz com a trilha e abaixa a cena automaticamente quando ela fala (ducking). As legendas seguem a duração real de cada fala.
+
+A voz é gerada com um pouco de variação a cada execução, então o tempo de cada fala pode mudar alguns centésimos de segundo.
+
 ## Fazer o próximo episódio
 
 Copie `terror/index.html` e mude:
 - `SHOTS`: a decupagem (plano, câmera e zoom por trecho de quadros);
 - `T`: as curvas de atuação (olhos, tremor, cobertor, susto…);
 - `ONES`: os trechos rodados em um;
-- `CAPS`: as legendas (`*palavra*` sai em vermelho);
+- `voz/roteiro.json`: a narração e as legendas (depois rode `npm run narrar`);
 - `synth()`: os eventos de som, sincronizados pelos mesmos números de quadro.
