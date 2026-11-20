@@ -861,7 +861,8 @@ const CAPS = NARR ? NARR.legendas : [
 function drawCaption(g, t) {
   const cap = CAPS.find(([a, b]) => t >= a && t < b);
   if (!cap) return;
-  const [a, b, text] = cap;
+  const [a, b, text, who] = cap;
+  const baseColor = who === 'menino' ? '#a8dcff' : who === 'criatura' ? '#ff2a3d' : '#ffffff';
   const big = t >= 541;
   const size = big ? 31 : 28, maxW = 400, cx = 252, cy = 646;
   g.save(); g.setTransform(R, 0, 0, R, 0, 0);
@@ -880,7 +881,7 @@ function drawCaption(g, t) {
     let x = -ln.width / 2; const y = y0 + li * lh;
     ln.cur.forEach(wd => {
       g.lineJoin = 'round'; g.lineWidth = size * .26; g.strokeStyle = '#000'; g.strokeText(wd.w, x, y);
-      g.fillStyle = wd.hot ? '#ff2a3d' : '#ffffff'; g.fillText(wd.w, x, y);
+      g.fillStyle = wd.hot ? '#ff2a3d' : baseColor; g.fillText(wd.w, x, y);
       x += g.measureText(wd.w).width + sp;
     });
   });
@@ -1032,7 +1033,7 @@ function synth() {
     if (fr < 396) return .12;
     if (fr < 456) return 0;
     if (fr < 504) return lerp(0, .08, (fr - 456) / 48);
-    if (fr < 540) return .16 * Math.exp(-(s - 21) * .8);
+    if (fr < 540) return s < 21.45 ? .03 : .16 * Math.exp(-(s - 21.45) * .8);
     return 0;
   };
   for (let i = 0; i < N; i++) {
@@ -1059,8 +1060,9 @@ function synth() {
       return v / freqs.length * env(x, .008, 1.6) * amp;
     });
   };
-  stab(21.0, 1.6, [311, 330, 466, 494, 698, 740], .55);
-  add(21.0, .25, x => noise() * env(x, .002, 18) * .5);
+  // a criatura aparece em silêncio (só o sussurro); a pancada vem quando ela avança
+  stab(21.45, 1.6, [311, 330, 466, 494, 698, 740], .55);
+  add(21.45, .25, x => noise() * env(x, .002, 18) * .5);
   add(21.5, 1.6, x => Math.sin(2 * Math.PI * (62 * Math.exp(-x * 2.5) + 28) * x) * env(x, .004, 2.2) * .9);
   let nb = 0; add(21.5, .9, x => { nb += (noise() - nb) * .3; return nb * env(x, .003, 5) * .7; });
   const sc = [0, 0, 0];

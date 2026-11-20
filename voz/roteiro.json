@@ -1,58 +1,84 @@
 {
   "episodio": "Fita Maldita 3:33",
-  "voz": "pt_BR-faber-medium",
-  "tratamento": {
-    "tom": 0.84,
-    "velocidade": 1.12,
-    "eco": true
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio (Deep, Warm, Calm Storyteller) · eleven_v4",
+    "menino": "ElevenLabs · Bianca (Quirky and Animated) com [childlike voice] · eleven_v4",
+    "criatura": "ElevenLabs · Rannox Elion (Dark Villain Cinematic) · eleven_v4"
   },
   "falas": [
     {
-      "inicio": 0.15,
-      "fala": "Se a TV ligar sozinha às três e trinta e três...",
+      "personagem": "narrador",
+      "inicio": 0.1,
+      "arquivo": "voz/elevenlabs/01-narrador-gancho_b.mp3",
+      "fala": "[softly] [nervous] Se a TV ligar sozinha... às três e trinta e três...",
       "legenda": "SE A TV LIGAR SOZINHA ÀS *3:33*...",
-      "velocidade": 0.8,
-      "limite": 3.2
+      "limite": 3.8
     },
     {
+      "personagem": "narrador",
       "inicio": "depois",
-      "fala": "não olhe pra ela.",
+      "arquivo": "voz/elevenlabs/02-narrador-nao-olhe_b.mp3",
+      "fala": "[whispers] NÃO olhe pra ela.",
       "legenda": "*NÃO* OLHE PRA ELA.",
-      "velocidade": 0.95,
-      "limite": 4.9
+      "limite": 5.2
     },
     {
-      "inicio": 5.0,
-      "fala": "Toda noite. Mesmo horário.",
+      "personagem": "narrador",
+      "inicio": 5.3,
+      "arquivo": "voz/elevenlabs/03-narrador-toda-noite_b.mp3",
+      "fala": "[softly] Toda noite. [short pause] Mesmo horário.",
       "legenda": "TODA NOITE. MESMO HORÁRIO.",
       "limite": 7.9
     },
     {
-      "inicio": 8.4,
-      "fala": "E a cada noite... ele chega mais perto.",
+      "personagem": "narrador",
+      "inicio": 8.3,
+      "arquivo": "voz/elevenlabs/04-narrador-mais-perto_b.mp3",
+      "fala": "[softly] E a cada noite... [whispers] ele chega mais perto.",
       "legenda": "E A CADA NOITE... ELE CHEGA *MAIS PERTO*.",
       "limite": 11.4
     },
     {
-      "inicio": 16.7,
-      "fala": "Silêncio.",
+      "personagem": "menino",
+      "inicio": 12.85,
+      "arquivo": "voz/elevenlabs/05-menino-mae_b.mp3",
+      "fala": "[childlike voice] [trembling voice] [whispers] Mãe...?",
+      "legenda": "MÃE...?",
+      "limite": 14.6
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 16.25,
+      "arquivo": "voz/elevenlabs/06-narrador-silencio_a.mp3",
+      "fala": "[whispers] Silêncio.",
       "legenda": "...SILÊNCIO.",
-      "velocidade": 1.3,
-      "limite": 18.6
+      "limite": 17.25
     },
     {
-      "inicio": 19.0,
-      "fala": "Ufa... sumiu?",
+      "personagem": "menino",
+      "inicio": 17.25,
+      "arquivo": "voz/elevenlabs/07-menino-ufa_a.mp3",
+      "tempo": 1.13,
+      "fala": "[childlike voice] [exhales] [whispers] Ufa... [nervous] sumiu?",
       "legenda": "UFA... SUMIU?",
-      "limite": 20.3,
-      "velocidade": 0.88
+      "limite": 20.6
     },
     {
-      "inicio": 22.38,
-      "fala": "Viu ele... na porta?",
+      "personagem": "criatura",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/08-criatura-achei_b.mp3",
+      "fala": "[whispers] [raspy] Achei você.",
+      "legenda": "ACHEI VOCÊ.",
+      "limite": 21.9
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 22.05,
+      "arquivo": "voz/elevenlabs/09-narrador-na-porta_a.mp3",
+      "tempo": 1.15,
+      "fala": "[softly] Viu ele... [whispers] na porta?",
       "legenda": "VIU ELE *NA PORTA*?",
-      "limite": 23.98,
-      "velocidade": 0.92
+      "limite": 23.98
     }
   ]
 }

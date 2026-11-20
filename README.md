@@ -77,16 +77,25 @@ npm run render:terror:3x   # 3 loops seguidos (72 s)
 
 A página expõe `RetroToon.audioWAVBase64()`. O exportador grava a trilha em `.wav` e o FFmpeg junta tudo no MP4.
 
-## Narração (voz neural local, grátis)
+## Vozes: narrador e personagens
 
-A narração é gerada no seu computador com o [Piper](https://github.com/rhasspy/piper), uma voz neural de código aberto em português do Brasil. Não usa serviço pago nem tem restrição de uso comercial.
+Cada papel tem uma voz própria, gerada no ElevenLabs (modelo `eleven_v4`, com tags de interpretação como `[whispers]`, `[childlike voice]` e `[trembling voice]`):
 
-1. Escreva as falas em `voz/roteiro.json`: `inicio` (segundos, ou `"depois"` para vir logo após a anterior), `fala` (como deve ser dita, com números por extenso), `legenda` (o texto na tela, com `*palavra*` em vermelho), `velocidade` (opcional, maior = mais lento) e `limite` (até quando a fala precisa terminar).
-2. Rode `npm run narrar`. Na primeira vez, a voz `pt_BR-faber-medium` (~60 MB) é baixada do Hugging Face.
-3. O script gera cada fala, aplica o tratamento de fita (tom mais grave sem mudar a velocidade, banda estreita de VHS, compressão, eco de quarto e oscilação de fita) e grava `terror/narracao.js`. Esse arquivo leva o áudio e os tempos das legendas. Se alguma fala passar do limite, o script avisa.
-4. A página mistura a voz com a trilha e abaixa a cena automaticamente quando ela fala (ducking). As legendas seguem a duração real de cada fala.
+| Papel | Voz | Falas |
+|---|---|---|
+| Narrador | Antônio (Deep, Warm, Calm Storyteller) | gancho, “Toda noite”, “Silêncio”, “Viu ele na porta?” |
+| Menino | Bianca (Quirky and Animated) com voz infantil | “Mãe…?”, “Ufa… sumiu?” |
+| Criatura | Rannox Elion (Dark Villain Cinematic) | “Achei você.” |
 
-A voz é gerada com um pouco de variação a cada execução, então o tempo de cada fala pode mudar alguns centésimos de segundo.
+Os áudios ficam em `voz/elevenlabs/`, com duas versões (`_a`/`_b`) de cada fala. Depois de gravados, tudo é montado aqui, sem gastar créditos:
+
+1. Em `voz/roteiro.json`, cada fala indica `personagem` (define a cor da legenda: branco, azul-claro ou vermelho), `arquivo`, `inicio` (segundos, ou `"depois"`), `legenda` (`*palavra*` em vermelho), `limite` (até quando precisa terminar) e, se precisar, `tempo` (acelera sem mudar o tom).
+2. Rode `npm run narrar` para gravar `terror/narracao.js` (áudio + tempos das legendas). O script avisa se alguma fala passar do limite.
+3. A página mistura as vozes com a trilha e abaixa a cena quando alguém fala.
+
+Para trocar uma fala, gere outra no ElevenLabs, salve em `voz/elevenlabs/` e aponte o `arquivo` para ela. **Licença:** confira se o seu plano do ElevenLabs permite uso comercial antes de monetizar. Até onde sei, o plano grátis exige dar crédito ao ElevenLabs e não permite uso comercial.
+
+O `narrar.py` também sabe gerar falas localmente com o Piper (voz neural grátis), para quem não quiser usar o ElevenLabs: é só deixar a fala sem `arquivo`. O resultado é bem menos natural.
 
 ## Fazer o próximo episódio
 

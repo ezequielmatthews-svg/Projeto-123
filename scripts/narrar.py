@@ -2,8 +2,11 @@
 """
 Gera a narração de um episódio da Fita Maldita, 100% local e grátis.
 
-  voz/roteiro.json  ->  Piper (voz neural pt-BR)  ->  FFmpeg (tratamento de fita VHS)
+  voz/roteiro.json  ->  falas gravadas ("arquivo", ex.: ElevenLabs) ou Piper (voz neural local)
                     ->  terror/narracao.js  (áudio + tempos das legendas, lido pela página)
+
+Cada fala pode ter: personagem (narrador | menino | criatura, define a cor da legenda),
+arquivo (áudio pronto), pausa_max (encurta pausas internas, em s), tempo (acelera sem mudar o tom).
 
 Uso:
   python3 scripts/narrar.py [--roteiro voz/roteiro.json] [--saida terror/narracao.js]
@@ -65,7 +68,19 @@ def vhs(src: Path, dst: Path, pitch: float, echo: bool):
                     "-ac", "1", "-ar", str(SR), "-sample_fmt", "s16", str(dst)], check=True)
 
 
-def read_wav(path: Path) -> array.array:
+def gravado(src: Path, dst: Path, pausa_max: float, tempo: float):
+    """Áudio já gravado (ex.: ElevenLabs): encurta pausas longas internas e, se pedido, acelera sem mudar o tom."""
+    chain = []
+    if pausa_max:
+        chain.append(f"silenceremove=stop_periods=-1:stop_duration={pausa_max}:stop_threshold=-42dB:stop_silence={pausa_max * .8:.2f}")
+    if tempo and tempo != 1:
+        chain.append(f"atempo={tempo}")
+    chain.append(f"aresample={SR}")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src), "-af", ",".join(chain),
+                    "-ac", "1", "-ar", str(SR), "-sample_fmt", "s16", str(dst)], check=True)
+
+
+def read_wav(path: Path, tail: float = .25) -> array.array:
     with wave.open(str(path)) as w:
         assert w.getframerate() == SR and w.getnchannels() == 1 and w.getsampwidth() == 2
         a = array.array("h"); a.frombytes(w.readframes(w.getnframes()))
@@ -75,7 +90,7 @@ def read_wav(path: Path) -> array.array:
     i0 = next((i for i, v in enumerate(a) if abs(v) > thr), 0)
     i1 = len(a) - next((i for i, v in enumerate(reversed(a)) if abs(v) > thr), 0)
     pad = int(.03 * SR)
-    a = a[max(0, i0 - pad):min(len(a), i1 + int(.25 * SR))]  # mantém a cauda do eco
+    a = a[max(0, i0 - pad):min(len(a), i1 + int(tail * SR))]  # mantém a cauda do eco
     peak = max((abs(v) for v in a), default=1) or 1
     g = .7 * 32767 / peak                                   # cada fala com pico em -3 dB
     return array.array("h", (int(v * g) for v in a))
@@ -90,7 +105,7 @@ def main():
         sys.exit("ffmpeg não encontrado.")
     script = json.loads((ROOT / a.roteiro).read_text(encoding="utf-8"))
     fx = script.get("tratamento", {})
-    model = ensure_voice(script.get("voz", "pt_BR-faber-medium"))
+    model = None
 
     total = int(FRAMES / FPS * SR)
     track = [0] * total
@@ -98,9 +113,15 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         for i, line in enumerate(script["falas"]):
             raw, proc = Path(tmp) / f"{i}.wav", Path(tmp) / f"{i}_fx.wav"
-            piper(model, line["fala"], fx.get("velocidade", 1.1) * line.get("velocidade", 1.0), raw)
-            vhs(raw, proc, fx.get("tom", .85), fx.get("eco", True))
-            pcm = read_wav(proc)
+            tail = .25
+            if line.get("arquivo"):  # fala gravada (ElevenLabs etc.)
+                gravado(ROOT / line["arquivo"], proc, line.get("pausa_max", 0), line.get("tempo", 1.0))
+                tail = .12
+            else:                    # fala sintetizada aqui com o Piper
+                model = model or ensure_voice(script.get("voz", "pt_BR-faber-medium"))
+                piper(model, line["fala"], fx.get("velocidade", 1.1) * line.get("velocidade", 1.0), raw)
+                vhs(raw, proc, fx.get("tom", .85), fx.get("eco", True))
+            pcm = read_wav(proc, tail)
             dur = len(pcm) / SR
             start = prev_end + .08 if line["inicio"] == "depois" else float(line["inicio"])
             if start < prev_end:
@@ -108,15 +129,15 @@ def main():
                 start = prev_end
             end = start + dur
             lim = line.get("limite")
-            if lim and end - .2 > lim:  # a cauda do eco pode passar
+            if lim and end - tail > lim:  # a cauda pode passar
                 report.append(f"  ! fala {i + 1} termina em {end:.2f}s, depois do limite {lim:.2f}s: encurte o texto ou aumente a velocidade")
             o = int(start * SR)
             for k, v in enumerate(pcm):
                 if o + k < total:
                     track[o + k] = max(-32768, min(32767, track[o + k] + v))
-            speech_end = end - .2  # sem a cauda do eco
-            captions.append([math.floor(start * FPS), math.ceil(speech_end * FPS) + 10, line["legenda"]])
-            report.append(f"  {i + 1}. {start:5.2f}s → {end:5.2f}s  ({dur:.2f}s)  {line['fala']}")
+            speech_end = end - tail + .05  # sem a cauda
+            captions.append([math.floor(start * FPS), math.ceil(speech_end * FPS) + 10, line["legenda"], line.get("personagem", "narrador")])
+            report.append(f"  {i + 1}. {start:5.2f}s → {end:5.2f}s  ({dur:.2f}s)  [{line.get('personagem', 'narrador')}] {line['fala']}")
             prev_end = speech_end
 
     # legenda fica pelo menos 1 s na tela, sem invadir a próxima
