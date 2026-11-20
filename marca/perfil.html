@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Fita Maldita · Foto de perfil</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Permanent+Marker&display=swap">
+<style>html,body{margin:0;background:#07060b}canvas{display:block;width:540px;height:540px}</style>
+</head><body><canvas id="c" width="1080" height="1080"></canvas>
+<script>
+// Foto de perfil do canal: fita VHS-criatura. Gera 1080x1080; o conteúdo cabe no círculo do TikTok.
+(async () => {
+const S = 1080, cv = document.getElementById('c'), g = cv.getContext('2d');
+const INK = '#120d16';
+let seed = 7; const R = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+try { await Promise.race([Promise.all(['80px Creepster', '60px "Permanent Marker"'].map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 3000))]); } catch (e) {}
+
+// fundo: roxo-escuro com brilho de tubo
+let rg = g.createRadialGradient(S/2, S*.45, 60, S/2, S/2, S*.75);
+rg.addColorStop(0, '#3a1a5c'); rg.addColorStop(.55, '#170c26'); rg.addColorStop(1, '#050408');
+g.fillStyle = rg; g.fillRect(0, 0, S, S);
+// halo vermelho atrás da fita
+rg = g.createRadialGradient(S/2, S/2, 100, S/2, S/2, 470);
+rg.addColorStop(0, 'rgba(255,42,61,.30)'); rg.addColorStop(1, 'rgba(255,42,61,0)');
+g.fillStyle = rg; g.fillRect(0, 0, S, S);
+
+// traço de nanquim irregular
+const jit = (pts, a = 3) => pts.map(p => [p[0] + (R() - .5) * a, p[1] + (R() - .5) * a]);
+function path(P) { const n = P.length; g.beginPath(); g.moveTo((P[n-1][0]+P[0][0])/2, (P[n-1][1]+P[0][1])/2);
+  for (let i = 0; i < n; i++) { const p = P[i], q = P[(i+1)%n]; g.quadraticCurveTo(p[0], p[1], (p[0]+q[0])/2, (p[1]+q[1])/2); } g.closePath(); }
+function rr(x, y, w, h, r) { const pts = [], st = 30;
+  const edge = (x0,y0,x1,y1) => { const n = Math.max(1, Math.round(Math.hypot(x1-x0,y1-y0)/st)); for (let i=0;i<n;i++) pts.push([x0+(x1-x0)*i/n, y0+(y1-y0)*i/n]); };
+  const arc = (cx,cy,a0) => { for (let i=0;i<4;i++){ const a=a0+i/4*Math.PI/2; pts.push([cx+Math.cos(a)*r, cy+Math.sin(a)*r]); } };
+  edge(x+r,y,x+w-r,y); arc(x+w-r,y+r,-Math.PI/2); edge(x+w,y+r,x+w,y+h-r); arc(x+w-r,y+h-r,0);
+  edge(x+w-r,y+h,x+r,y+h); arc(x+r,y+h-r,Math.PI/2); edge(x,y+h-r,x,y+r); arc(x+r,y+r,Math.PI); return pts; }
+function cel(P, base, shade, lw = 10, sh = 14) {
+  P = jit(P, 3);
+  g.save(); path(P); g.fillStyle = shade || base; g.fill();
+  if (shade) { g.clip(); g.translate(-sh, -sh * .8); path(P); g.fillStyle = base; g.fill(); }
+  g.restore();
+  g.save(); g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = lw; path(P); g.stroke();
+  g.lineWidth = lw * .55; g.translate(3, 4); path(jit(P, 2)); g.stroke(); g.restore();
+}
+const circ = (cx, cy, r, n = 18) => Array.from({ length: n }, (_, i) => [cx + Math.cos(i/n*Math.PI*2)*r, cy + Math.sin(i/n*Math.PI*2)*r]);
+
+g.save(); g.translate(S/2, S/2 + 10); g.rotate(-.06); g.scale(1.13, 1.13); g.translate(-S/2, -S/2 - 12);
+// sombra
+g.fillStyle = 'rgba(0,0,0,.55)'; g.beginPath(); g.ellipse(S/2 + 20, 820, 330, 40, 0, 0, 7); g.fill();
+// corpo da fita
+const X = 170, Y = 300, Wd = 740, Ht = 460;
+cel(rr(X, Y, Wd, Ht, 34), '#2a2633', '#17141d', 12, 18);
+// etiqueta de papel
+cel(rr(X + 70, Y + 34, Wd - 140, 150, 10), '#efe6cf', '#cbbd9c', 8, 8);
+g.save(); g.strokeStyle = 'rgba(200,40,50,.35)'; g.lineWidth = 3;
+for (let i = 0; i < 3; i++) { g.beginPath(); g.moveTo(X + 90, Y + 70 + i * 40); g.lineTo(X + Wd - 90, Y + 68 + i * 40); g.stroke(); }
+g.restore();
+g.save(); g.translate(S/2, Y + 120); g.rotate(-.03);
+g.font = '112px Creepster, "Permanent Marker", Impact, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+g.fillStyle = '#c81e30'; g.fillText('FITA MALDITA', 0, 0);
+g.restore();
+// janela central (a boca)
+const mx = X + 150, my = Y + 220, mw = Wd - 300, mh = 190;
+cel(rr(mx, my, mw, mh, 26), '#0c0910', null, 10);
+g.save(); path(rr(mx + 6, my + 6, mw - 12, mh - 12, 22)); g.clip();
+g.fillStyle = '#2a0008'; g.fillRect(mx, my, mw, mh);
+// sorriso: lábio superior e inferior com dentes
+const n = 9, up = [], lo = [];
+for (let i = 0; i <= n; i++) { const u = i / n * 2 - 1, x = mx + 20 + (mw - 40) * i / n; up.push([x, my + 30 + 26 * u * u]); lo.push([x, my + mh - 30 - 26 * u * u]); }
+g.fillStyle = '#f3eedb';
+for (let i = 0; i < n; i++) {
+  const a = up[i], b = up[i+1]; g.beginPath(); g.moveTo(a[0], a[1] - 30); g.lineTo(b[0], b[1] - 30); g.lineTo((a[0]+b[0])/2, (a[1]+b[1])/2 + 34 + R() * 10); g.closePath(); g.fill();
+  const c2 = lo[i], d = lo[i+1]; g.beginPath(); g.moveTo(c2[0], c2[1] + 30); g.lineTo(d[0], d[1] + 30); g.lineTo((c2[0]+d[0])/2, (c2[1]+d[1])/2 - 30 - R() * 10); g.closePath(); g.fill();
+}
+// fita magnética saindo
+g.strokeStyle = '#3b2a1e'; g.lineWidth = 14; g.beginPath(); g.moveTo(mx + 40, my + mh - 20); g.bezierCurveTo(mx + 120, my + mh + 40, mx + 260, my + mh - 70, mx + mw - 40, my + mh - 20); g.stroke();
+g.restore();
+// carretéis = olhos
+[[X + 150, Y + 312], [X + Wd - 150, Y + 312]].forEach(([cx, cy], k) => {
+  const glow = g.createRadialGradient(cx, cy, 10, cx, cy, 170);
+  glow.addColorStop(0, 'rgba(255,250,220,.55)'); glow.addColorStop(1, 'rgba(255,250,220,0)');
+  g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = glow; g.beginPath(); g.arc(cx, cy, 170, 0, 7); g.fill(); g.restore();
+  cel(circ(cx, cy, 92), '#0c0910', null, 10);
+  cel(circ(cx, cy, 70), '#fffbe8', '#e2d9b8', 7, 10);
+  // dentes do carretel
+  g.save(); g.strokeStyle = 'rgba(18,13,22,.35)'; g.lineWidth = 5;
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2 + k; g.beginPath(); g.moveTo(cx + Math.cos(a) * 30, cy + Math.sin(a) * 30); g.lineTo(cx + Math.cos(a) * 58, cy + Math.sin(a) * 58); g.stroke(); }
+  g.restore();
+  g.fillStyle = INK; g.beginPath(); g.arc(cx + (k ? -8 : 8), cy + 6, 17, 0, 7); g.fill();
+  g.fillStyle = '#fff'; g.beginPath(); g.arc(cx + (k ? -14 : 2), cy - 2, 5, 0, 7); g.fill();
+});
+// parafusos
+[[X + 40, Y + 40], [X + Wd - 40, Y + 40], [X + 40, Y + Ht - 40], [X + Wd - 40, Y + Ht - 40]].forEach(([x, y]) => cel(circ(x, y, 12, 8), '#8a8494', '#5a5466', 4, 3));
+g.restore();
+
+// VHS: grão, scanlines, vinheta
+const im = g.getImageData(0, 0, S, S), d = im.data;
+for (let i = 0; i < d.length; i += 4) { const n = (R() - .5) * 26; d[i] += n; d[i+1] += n; d[i+2] += n; }
+g.putImageData(im, 0, 0);
+g.fillStyle = 'rgba(0,0,0,.22)'; for (let y = 0; y < S; y += 6) g.fillRect(0, y + 3, S, 3);
+rg = g.createRadialGradient(S/2, S/2, S*.36, S/2, S/2, S*.72);
+rg.addColorStop(0, 'rgba(0,0,0,0)'); rg.addColorStop(1, 'rgba(0,0,0,.75)'); g.fillStyle = rg; g.fillRect(0, 0, S, S);
+window.READY = true;
+})();
+</script></body></html>
