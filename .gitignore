@@ -3,3 +3,4 @@ out/
 voz/*.onnx
 voz/*.onnx.json
 __pycache__/
+voz/kokoro/
