@@ -117,13 +117,13 @@ code { font-family: var(--font-mono); color: var(--amber); }
     </div>
 
     <ol class="beats">
-      <li class="hot"><b>0–3 s</b><span>A lâmpada pisca. “Se você ouvir 3 batidas nesse vídeo… não olha pra porta.”</span></li>
-      <li><b>3–6 s</b><span>Zoom digital lento até a porta 42. O relógio da câmera chega a 03:16:59.</span></li>
-      <li><b>6–8 s</b><span>03:17. Três batidas — de DENTRO. A porta incha, a poeira cai, a lâmpada balança.</span></li>
-      <li><b>8–13 s</b><span>“Mas olha a câmera…” Corte pra CAM 03: o corredor inteiro vazio.</span></li>
-      <li><b>13–16 s</b><span>“O morador do 42 nunca abriu. Até ontem.” Plano parado.</span></li>
-      <li><b>16–21 s</b><span>A porta abre sozinha. Dedos no batente, a cabeça espia de lado, ele sai alto demais — e vira pra câmera.</span></li>
-      <li class="hot"><b>21–25 s</b><span>Zoom no rosto: “Agora… é a sua porta.” Ele avança, sinal perdido, 3 batidas atrás de você — e recomeça.</span></li>
+      <li class="hot"><b>0–3,5 s</b><span>A lâmpada apaga por 5 quadros — e ele está parado na frente do 42. Volta a luz: ninguém. “Ninguém mora no 42. Mas toda noite, às 3h17… alguém bate.”</span></li>
+      <li><b>3,5–6 s</b><span>Zoom digital até a porta. 03:16:59.</span></li>
+      <li><b>6–7,9 s</b><span>Três batidas, um corte em cada: câmera → close da porta inchando (lascas, poeira) → olho mágico piscando verde… com um olho do outro lado.</span></li>
+      <li><b>7,9–10,3 s</b><span>A fresta debaixo da porta: dois pés andam do lado de dentro e param. “As batidas vêm de dentro.”</span></li>
+      <li><b>10,3–13 s</b><span>A maçaneta treme, gira devagar até o fim… e para. (espera sem susto)</span></li>
+      <li><b>13–21 s</b><span>“Eu moro no 41. E ontem… ela abriu.” Dedos, cabeça espiando, ele se ergue alto demais e vira pra câmera.</span></li>
+      <li class="hot"><b>21–25 s</b><span>Zoom no rosto: “Agora… é a sua porta.” Ele avança, sem sinal, 3 batidas — e recomeça.</span></li>
     </ol>
 
     <div class="export"><p>Gerar o MP4 para postar (vídeo + som): <code>npm run render:corredor</code> → <code>out/camera-do-corredor.mp4</code></p></div>
@@ -148,7 +148,7 @@ const WIN = { x: 0, y: 165, w: 540, h: 405 };  // janela 4:3 da "fita" dentro do
 const FPS = 24, L = 600;                      // 25 s (o fim emenda no começo)
 const BGS = EXPORT ? 5 : 3;                   // resolução da pintura de fundo (para os closes)
 const INK = '#120d16';
-const ONES = [[140, 204], [384, 420], [458, 504], [540, 600]];  // batidas, porta abrindo, ele se ergue e vira, avanço final
+const ONES = [[0, 14], [140, 204], [384, 420], [458, 504], [540, 600]];  // batidas, porta abrindo, ele se ergue e vira, avanço final
 const isOnes = t => ONES.some(([a, b]) => t >= a && t <= b);
 const loopT = f => ((f % L) + L) % L;
 const drawnOf = t => (isOnes(t) ? t : t - (t % 2));
@@ -344,8 +344,9 @@ function swing(d) {
   if (d >= 491) { const x = (d - 491) / FPS; a += .3 * Math.exp(-x * .7) * Math.sin(x * 5.2); }
   return a;
 }
+const GLIMPSE = d => d >= 4 && d <= 8;
 function bulbI(d) {
-  if (d < 14) return [1, .2, 1, 1, .12, .12, 1, .35, 1, 1, 1, .25, 1, 1][d];   // pisca no 1º segundo (gancho)
+  if (d < 14) return [1, 1, .3, 1, .03, .03, .03, .03, .03, 1, 1, .25, 1, 1][d];   // pisca no 1º segundo (gancho)
   if (KF.some(k => d >= k && d < k + 2)) return .3;
   if (d >= 491 && d < 497) return .06;                                          // apaga quando ele vira a cabeça
   if (d >= 384) return h2(d, 77) < .12 ? .3 : .8;
@@ -365,7 +366,7 @@ const T = {
   wide:   track([[0, 0], [492, 0], [493, 1, 'l'], [502, .55], [L, .55]]),
   grin:   track([[0, .12], [500, .12], [515, 1, 'o'], [L, 1]]),
   tilt:   track([[0, 0], [498, 0], [508, .13], [sec(22.3), -.07], [L, -.07]]),
-  shake:  d => knockAmp(d) * 3.5 + (d >= 491 && d < 496 ? 3 : 0) + (d >= 542 && d < 557 ? (d - 542) * .45 : 0),
+  shake:  d => knockAmp(d) * (LAST.cine ? 9 : 3.5) + (d >= 491 && d < 496 ? 3 : 0) + (d >= 542 && d < 557 ? (d - 542) * .45 : 0),
 };
 
 /* ============================================================
@@ -399,9 +400,9 @@ function bulbPos(d, Z = 1.65) {
 }
 
 /* ---------- ELE: alto demais pra porta, braços até os joelhos ---------- */
-function eleGeom(d) {
-  const st = T.step(d), stoop = T.stoop(d);
-  const Zc = lerp(2.8, 2.36, st), Xc = lerp(.13, 0, E.o(Math.min(1, st * 1.35)));
+function eleGeom(d, F) {
+  const st = F ? 1 : T.step(d), stoop = F ? 0 : T.stoop(d);
+  const Zc = F ? 2.42 : lerp(2.8, 2.36, st), Xc = F ? 0 : lerp(.13, 0, E.o(Math.min(1, st * 1.35)));
   const k = FYp / Zc, [ox, oy] = P3(Xc, 0, Zc);
   const up = 1 - .24 * stoop;                    // > 1 quando passa do ponto ao se erguer
   const wide = 1 / Math.sqrt(up);                // estica pra cima e afina (squash & stretch)
@@ -467,10 +468,11 @@ function drawHead(hc, k, rot, s, pass, id) {
   c.restore();
 }
 
-function drawEle(d, pass) {
-  if (T.step(d) <= 0) return;   // antes de sair, só os dedos e a cabeça espiando
-  const g = eleGeom(d), k = g.k, S = (x, y) => toS(g, x, y), W2 = g.wide;
-  const inside = g.Zc > ZF - .02;
+function drawEle(d, pass, F) {
+  if (!F && T.step(d) <= 0) return;   // antes de sair, só os dedos e a cabeça espiando
+  const g = eleGeom(d, F), k = g.k, S = (x, y) => toS(g, x, y), W2 = g.wide;
+  const inside = !F && g.Zc > ZF - .02;
+  const HS = F ? { tr: 0, sq: 0, we: .4, grin: .75, mouth: 0, smear: false } : headState(d);
   if (pass === 'base') {
     if (inside) { c.save(); trace(c, HOLE(), true); c.clip(); }
     // pernas (andando: uma passa na frente da outra)
@@ -498,11 +500,11 @@ function drawEle(d, pass) {
     // pescoço e cabeça
     const hc = S(...g.head);
     cel(limb([S(0, g.shY + .01), S(g.head[0] * .5, (g.shY + g.head[1]) / 2 + .02), [hc[0], hc[1] + .06 * k]], [.026 * k, .022 * k, .02 * k]), SKINE, SKINESH, 90, { lw: 2.4 });
-    drawHead(hc, k, g.tilt, headState(d), 'base', 100);
+    drawHead(hc, k, g.tilt, HS, 'base', 100);
     if (inside) c.restore();
   } else if (pass === 'glow') {
     if (inside) { c.save(); trace(c, HOLE(), true); c.clip(); }
-    drawHead(S(...g.head), k, g.tilt, headState(d), 'glow', 100);
+    drawHead(S(...g.head), k, g.tilt, HS, 'glow', 100);
     if (inside) c.restore();
   }
 }
@@ -578,6 +580,7 @@ function drawCorredor(d, f, o, pass) {
         const [kx, ky] = P3(.2 * (1 + .1 * bb), .36, Zd); c.fillStyle = '#cfc6a0'; c.beginPath(); c.arc(kx, ky, 4, 0, 7); c.fill();
         const [px, py] = P3(0, .53 + .04 * bb, Zd); c.fillStyle = '#0a0a08'; c.beginPath(); c.arc(px, py, 2.4, 0, 7); c.fill();   // olho mágico
       }
+      if (GLIMPSE(d)) drawEle(d, 'base', true);
       // poeira que cai do batente a cada batida
       for (const k of KF) {
         const x = (d - k) / FPS; if (x < 0 || x > 1.3) continue;
@@ -613,6 +616,7 @@ function drawCorredor(d, f, o, pass) {
       wallText('SAÍDA', 0, .885, ZF, 34, '#7dff9a', 'Bungee, Impact, sans-serif'); c.restore();
       return;
     }
+    if (GLIMPSE(d)) drawEle(d, 'glow', true);
     const a = T.open(d), ka = knockAmp(d);
     // luz verde vazando por baixo da porta (pulsa com as batidas)
     if (a <= .002) {
@@ -642,15 +646,129 @@ function drawCorredor(d, f, o, pass) {
 }
 
 /* ============================================================
+   CLOSES DE CINEMA (cortam no som, entre os planos da câmera)
+   ============================================================ */
+const WOOD = '#6e5a46', WOODSH = '#544434', BRASS = '#b59a5a', BRASSSH = '#7f6a3a';
+function woodGrain(x0, y0, w, h, id, n = 14) {
+  for (let i = 0; i < n; i++) {
+    const y = y0 + (i + .5) * h / n, a = h2(id, i) * 6;
+    stroke([[x0, y + a], [x0 + w * .3, y - a * .5], [x0 + w * .65, y + a], [x0 + w, y - a]], .9, id + i, 'rgba(25,18,12,.35)', .5);
+  }
+}
+function dust(d, k0, cx, w, n, id) {
+  const x = (d - k0) / FPS; if (x < 0 || x > 1.6) return;
+  for (let i = 0; i < n; i++) {
+    const px = cx + (h2(id, i) - .5) * w + Math.sin(x * 3 + i) * 6, py = -10 + h2(id, i + 9) * 40 + 260 * x * x + 30 * x;
+    c.fillStyle = 'rgba(230,228,215,.9)'; c.fillRect(px, py, 2.6, 2.6);
+  }
+}
+// porta em close, inchando com a 2ª batida (lascas quando passa do ponto)
+function drawPorta(d, f, o, pass) {
+  const b = bulge(d);
+  if (pass === 'base') {
+    rect(0, 0, 540, 405, '#6c6f64');
+    cel(box(-20, -40, 92, 500, 2), '#3a3128', null, 1, { lw: 3 }); cel(box(468, -40, 92, 500, 2), '#3a3128', null, 2, { lw: 3 });
+    const m = new M().t(270, 205).s(1 + .08 * b, 1 + .05 * b).t(-270, -205);
+    cel(m.map(box(72, -30, 396, 470, 2)), WOOD, WOODSH, 3, { lw: 3.4 });
+    woodGrain(80, -20, 380, 450, 300, 18);
+    const mp = new M().t(270, 205).s(1 + .26 * b, 1 + .18 * b).t(-270, -205);
+    cel(mp.map(box(125, 20, 290, 150, 4)), '#634f3d', '#4f3f30', 4, { lw: 2.6 });
+    cel(mp.map(box(125, 220, 290, 200, 4)), '#634f3d', '#4f3f30', 5, { lw: 2.6 });
+    if (b > .45) [[150, 30, 190, 80], [390, 160, 350, 120], [200, 230, 240, 270]].forEach(([a1, a2, a3, a4], i) => stroke(mp.map([[a1, a2], [(a1 + a3) / 2 + 6, (a2 + a4) / 2], [a3, a4]]), 2, 40 + i));
+    const [kx, ky] = mp.p(430, 200); cel(circ(kx, ky, 14, 14, 12), BRASS, BRASSSH, 6, { lw: 2.4 });
+    dust(d, KF[1], 270, 420, 26, 77);
+  } else if (pass === 'light') {
+    const gr = c.createRadialGradient(80, -40, 10, 80, -40, 520); gr.addColorStop(0, 'rgba(255,236,190,.42)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.fillRect(0, 0, 540, 405);
+  }
+}
+// olho mágico: pisca verde na 3ª batida... e tem um olho do outro lado
+function drawOlho(d, f, o, pass) {
+  const eyeK = E.o(Math.max(0, Math.min(1, (d - KF[2] - 3) / 7)));
+  if (pass === 'base') {
+    rect(0, 0, 540, 405, WOOD); woodGrain(0, 0, 540, 405, 400, 16);
+    cel(circ(270, 200, 92, 92, 28), BRASS, BRASSSH, 1, { lw: 3.4, sh: 8 });
+    cel(circ(270, 200, 66, 66, 24), '#3a3a30', null, 2, { lw: 3 });
+    cel(circ(270, 200, 50, 50, 24), '#0c120e', null, 3, { lw: 2.4 });
+    if (eyeK > 0) {   // o olho, distorcido pela lente
+      c.save(); c.beginPath(); c.arc(270, 200, 49, 0, 7); c.clip(); c.globalAlpha = eyeK;
+      cel(circ(270, 202, 44, 26 * eyeK, 20), '#d8dccb', '#a9ae9b', 4, { lw: 2.4 });
+      cel(circ(270 + Math.sin(d * .3) * 2, 202, 17, 17 * Math.min(1, eyeK * 1.2), 16), '#3d5a3f', null, 5, { lw: 1.8 });
+      c.fillStyle = '#050605'; c.beginPath(); c.arc(270 + Math.sin(d * .3) * 2, 202, lerp(9, 5, eyeK), 0, 7); c.fill();
+      c.restore();
+    }
+  } else if (pass === 'light') {
+    const gr = c.createRadialGradient(110, 0, 10, 110, 0, 520); gr.addColorStop(0, 'rgba(255,236,190,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.fillRect(0, 0, 540, 405);
+  } else if (pass === 'glow') {
+    const fl = knockAmp(d), base = .25 + 1.2 * fl;
+    c.save(); c.globalCompositeOperation = 'lighter';
+    const gr = c.createRadialGradient(270, 200, 4, 270, 200, 50 + 60 * fl);
+    gr.addColorStop(0, `rgba(120,255,160,${Math.min(.9, base) * (1 - .6 * eyeK)})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.beginPath(); c.arc(270, 200, 50 + 60 * fl, 0, 7); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.5)'; c.beginPath(); c.ellipse(250, 182, 10, 5, -.6, 0, 7); c.fill();   // reflexo do vidro
+    if (eyeK > .5) { c.shadowColor = 'rgba(210,255,210,.9)'; c.shadowBlur = 6 * R; c.fillStyle = '#f2fff0'; c.beginPath(); c.arc(266, 197, 2.2, 0, 7); c.fill(); }
+    c.restore();
+  }
+}
+// fresta debaixo da porta: luz verde... e a sombra de dois pés andando do lado de dentro
+const FEET = d => { const k = Math.max(0, Math.min(1, (d - sec(8.1)) / sec(1.3))); return { x: lerp(-90, 270, E.o(k)), k, step: Math.sin(k * Math.PI * 4) }; };
+function drawFresta(d, f, o, pass) {
+  const gy = 138, ft = FEET(d);
+  const feet = [[ft.x - 36 + (ft.k < 1 ? ft.step * 10 : 0), 46], [ft.x + 14 - (ft.k < 1 ? ft.step * 10 : 0), 46]];
+  if (pass === 'base') {
+    cel(box(-20, -40, 580, gy + 40, 2), WOOD, WOODSH, 1, { lw: 3.4 }); woodGrain(0, -30, 540, gy + 20, 500, 8);
+    rect(0, gy, 540, 10, '#0d1a12');
+    cel(dense([[-40, gy + 10], [580, gy + 10], [900, 460], [-360, 460]], 12), '#585b50', '#47493f', 2, { lw: 2.6 });
+    for (let i = 0; i < 6; i++) { const y = gy + 10 + Math.pow(i / 6, 1.7) * 300; stroke([[-40, y], [580, y]], 1.1, 10 + i, 'rgba(18,13,22,.45)', .3); }
+    for (let i = -4; i <= 4; i++) stroke([[270 + i * 60, gy + 10], [270 + i * 200, 420]], 1.1, 20 + i, 'rgba(18,13,22,.45)', .3);
+  } else if (pass === 'glow') {
+    c.save(); c.globalCompositeOperation = 'lighter';
+    // a luz que vaza, cortada pelos pés
+    const segs = [[0, 540]]; feet.forEach(([x, w]) => { const s = segs.pop(); if (x > s[0] && x < s[1]) { segs.push([s[0], x]); segs.push([x + w, s[1]]); } else segs.push(s); });
+    segs.forEach(([a, b]) => {
+      c.fillStyle = 'rgba(110,255,150,.95)'; c.fillRect(a, gy + 1, b - a, 8);
+      const gr = c.createLinearGradient(0, gy + 10, 0, gy + 230); gr.addColorStop(0, 'rgba(70,220,120,.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      fillPoly([[a, gy + 10], [b, gy + 10], [b + (b - 270) * .9, gy + 230], [a + (a - 270) * .9, gy + 230]], gr);
+    });
+    for (let i = 0; i < 18; i++) { const px = (h2(i, 1) * 540 + f * (h2(i, 2) - .5) * 1.4) % 540, py = gy + 20 + ((h2(i, 3) * 160 + f * .5 * h2(i, 4)) % 160); c.fillStyle = `rgba(160,255,190,${.25 + .35 * h2(i, 5)})`; c.fillRect(px, py, 1.6, 1.6); }
+    c.restore();
+  }
+}
+// maçaneta: treme, gira devagar até o fim... e para
+const KNOB = track([[0, 0], [sec(10.3), 0], [sec(10.6), .04], [sec(10.75), -.03], [sec(10.9), .03], [sec(11.05), 0], [sec(12.3), .66, 'io'], [L, .66]]);
+function drawMacaneta(d, f, o, pass) {
+  const a = KNOB(d) + (d > sec(12.3) ? Math.sin(d * 2.1) * .006 : 0);
+  if (pass === 'base') {
+    rect(0, 0, 540, 405, WOOD); woodGrain(0, 0, 540, 405, 600, 16);
+    cel(box(200, 70, 100, 280, 40), BRASS, BRASSSH, 1, { lw: 3.2, sh: 7 });
+    cel(dense([[242, 268], [258, 268], [262, 300], [238, 300]], 4), '#0a0a08', null, 2, { lw: 2 });   // fechadura
+    c.fillStyle = 'rgba(0,0,0,.35)'; c.save(); c.translate(256, 176); c.rotate(a); c.beginPath(); c.roundRect(0, 0, 190, 34, 16); c.fill(); c.restore();   // sombra
+    const m = new M().t(250, 165).r(a);
+    cel(m.map(dense([[0, -22], [180, -16], [196, 0], [180, 16], [0, 22], [-14, 0]], 8)), '#c8ad6a', '#8f7a45', 3, { lw: 3.2, sh: 6 });
+    cel(circ(250, 165, 30, 30, 16), '#c8ad6a', '#8f7a45', 4, { lw: 3 });
+  } else if (pass === 'light') {
+    const gr = c.createRadialGradient(120, 20, 10, 120, 20, 480); gr.addColorStop(0, 'rgba(255,236,190,.4)'); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.fillRect(0, 0, 540, 405);
+  } else if (pass === 'glow') {
+    c.save(); c.globalCompositeOperation = 'lighter'; c.fillStyle = 'rgba(255,250,220,.35)';
+    const m = new M().t(250, 165).r(a); const p = m.p(120, -12); c.beginPath(); c.ellipse(p[0], p[1], 40, 4, a, 0, 7); c.fill(); c.restore();
+  }
+}
+const ENVS = { corredor: drawCorredor, porta: drawPorta, olho: drawOlho, fresta: drawFresta, macaneta: drawMacaneta };
+
+/* ============================================================
    PLANOS (uma câmera fixa; "zoom digital" nos momentos-chave)
    ============================================================ */
 const S = (a, b, env, cam, o = {}) => ({ a: sec(a), b: sec(b), env, cam, o });
 const SHOTS = [
-  S(0, 3, 'corredor', [1, 270, 202.5, 1.04, 270, 202.5]),
-  S(3, 6, 'corredor', [1.12, 270, 202.5, 2.0, 270, 200]),
-  S(6, 8.2, 'corredor', [2.45, 270, 205, 2.6, 270, 205]),
-  S(8.2, 10, 'corredor', [1, 270, 202.5, 1.03, 270, 202.5]),
-  S(10, 13, 'corredor', [1, 270, 202.5, 1.06, 270, 202.5], { rev: 1, cam: 3 }),
+  S(0, 3.5, 'corredor', [1.35, 270, 192, 1.55, 270, 194]),
+  S(3.5, 6, 'corredor', [1.7, 270, 196, 2.35, 270, 203]),
+  S(6, 6.6, 'corredor', [2.5, 270, 205, 2.6, 270, 205]),
+  S(6.6, 7.12, 'porta', [1.0, 270, 202.5, 1.12, 270, 202.5], { cine: 1 }),
+  S(7.12, 7.9, 'olho', [1.15, 270, 200, 1.6, 270, 200], { cine: 1 }),
+  S(7.9, 10.3, 'fresta', [1.0, 270, 202.5, 1.1, 270, 190], { cine: 1 }),
+  S(10.3, 13, 'macaneta', [1.0, 270, 202.5, 1.18, 300, 180], { cine: 1 }),
   S(13, 16, 'corredor', [1, 270, 202.5, 1.32, 270, 198]),
   S(16, 21, 'corredor', [1.75, 270, 190, 1.92, 270, 186], { follow: 1 }),
   S(21, 23.2, 'corredor', [6.2, 0, 0, 7.4, 0, 0], { face: 1, pix: 1 }),
@@ -683,7 +801,7 @@ function drawScene(t, f) {
     if (d >= 542) z *= 1 + 2.4 * E.i(Math.min(1, (d - 542) / 15));   // avança na câmera
   }
   if (o.follow) cy = lerp(cy, 166, E.io(Math.max(0, Math.min(1, (d - 452) / 22))));   // a câmera sobe junto quando ele se ergue
-  LAST.z = z; LAST.cam = o.cam || 2; LAST.black = shot.env === 'black';
+  LAST.z = z; LAST.cam = o.cam || 2; LAST.black = shot.env === 'black'; LAST.cine = !!o.cine;
   c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
   c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
   if (LAST.black) {
@@ -691,16 +809,17 @@ function drawScene(t, f) {
     return;
   }
   c.save(); c.setTransform(R, 0, 0, R, 0, 0); c.beginPath(); c.rect(WIN.x, WIN.y, WIN.w, WIN.h); c.clip();
-  setCam(z, cx, cy); drawCorredor(d, f, o, 'base');
+  const DRAW = ENVS[shot.env];
+  setCam(z, cx, cy); DRAW(d, f, o, 'base');
   c.setTransform(R, 0, 0, R, 0, 0);
-  c.globalCompositeOperation = 'multiply'; c.fillStyle = 'rgb(100,104,112)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
-  c.globalCompositeOperation = 'lighter'; setCam(z, cx, cy); drawCorredor(d, f, o, 'light');
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = o.cine ? 'rgb(150,152,158)' : GLIMPSE(d) ? 'rgb(62,64,70)' : 'rgb(116,120,128)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
+  c.globalCompositeOperation = 'lighter'; setCam(z, cx, cy); DRAW(d, f, o, 'light');
   c.setTransform(R, 0, 0, R, 0, 0);
   // câmera de segurança: monocromática, puxada pro verde; só o que brilha mantém a cor
-  c.globalCompositeOperation = 'saturation'; c.fillStyle = 'rgb(128,128,128)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
-  c.globalCompositeOperation = 'multiply'; c.fillStyle = '#b9d2b0'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
+  c.globalCompositeOperation = 'saturation'; c.fillStyle = 'rgb(128,128,128)'; c.globalAlpha = o.cine ? .75 : 1; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h); c.globalAlpha = 1;
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = o.cine ? '#d4dccb' : '#b9d2b0'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
   c.globalCompositeOperation = 'source-over';
-  setCam(z, cx, cy); drawCorredor(d, f, o, 'glow');
+  setCam(z, cx, cy); DRAW(d, f, o, 'glow');
   c.setTransform(R, 0, 0, R, 0, 0);
   if (o.pix) {   // zoom digital: a imagem "estoura" em blocos
     pixX.imageSmoothingEnabled = true;
@@ -720,12 +839,11 @@ function drawScene(t, f) {
 // legendas: vêm da narração (scripts/narrar.py) quando ela existe; senão, estas
 const NARR = window.NARRACAO || null;
 const CAPS = NARR ? NARR.legendas : [
-  [0, 72, 'SE VOCÊ OUVIR *3 BATIDAS*... *NÃO OLHA PRA PORTA*.', 'narrador'],
-  [72, 144, 'ESSA CÂMERA GRAVA O CORREDOR DO MEU PRÉDIO TODA NOITE.', 'narrador'],
-  [144, 192, '*03:17*', 'narrador'],
-  [192, 240, 'ALGUÉM BATE NA PORTA DO *42*. MAS OLHA A CÂMERA...', 'narrador'],
-  [240, 312, '...NÃO TEM *NINGUÉM*.', 'narrador'],
-  [312, 384, 'O MORADOR DO 42 NUNCA ABRIU. *ATÉ ONTEM*.', 'narrador'],
+  [0, 144, 'NINGUÉM MORA NO *42*. MAS TODA NOITE, ÀS *3H17*... ALGUÉM BATE.', 'narrador'],
+  [144, 190, '*TOC. TOC. TOC.*', 'narrador'],
+  [190, 247, 'AS BATIDAS VÊM *DE DENTRO*.', 'narrador'],
+  [247, 312, 'A MAÇANETA GIROU... *E PAROU*.', 'narrador'],
+  [312, 384, 'EU MORO NO 41. E ONTEM... *ELA ABRIU*.', 'narrador'],
   [504, 557, '*AGORA... É A SUA PORTA.*', 'coisa'],
 ];
 function drawCaption(g, t) {
@@ -733,7 +851,7 @@ function drawCaption(g, t) {
   if (!cap) return;
   const [a, b, text, who] = cap;
   const baseColor = { rafa: '#a8dcff', coisa: '#ff2a3d', avo: '#ffd79a' }[who] || '#ffffff';
-  const big = t < 72 || (t >= 504 && t < 557);   // gancho e a fala dele: frase inteira em letras maiores
+  const big = t < 144 || (t >= 504 && t < 557);   // gancho e a fala dele: frase inteira em letras maiores
   const size = big ? 33 : 28, maxW = 410, cx = 252, cy = 646;
   g.save(); g.setTransform(R, 0, 0, R, 0, 0);
   g.font = `${size}px Bungee, "Arial Black", Impact, sans-serif`; g.textBaseline = 'middle'; g.textAlign = 'left';
@@ -829,7 +947,8 @@ function compose(f) {
     g.setTransform(R, 0, 0, R, 0, 0);
     g.font = '24px VT323, ui-monospace, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
     const osd = (txt, x, y, col = '#f4f4f4') => { g.fillStyle = 'rgba(0,0,0,.55)'; g.fillText(txt, x + 2, y + 2); g.fillStyle = col; g.fillText(txt, x, y); };
-    // OSD da câmera de segurança
+    // OSD da câmera de segurança (some nos closes de cinema)
+    if (!LAST.cine) {
     const blink = Math.floor(f / 12) % 2 === 0;
     if (LAST.black) {
       g.textAlign = 'center'; g.font = '34px VT323, ui-monospace, monospace';
@@ -845,6 +964,7 @@ function compose(f) {
     g.textAlign = 'left'; osd('21-11-2026  ' + clock, WIN.x + 16, WIN.y + WIN.h - 34, ss === 0 && mm === 17 ? '#ff3b3b' : '#f4f4f4');
     if (!LAST.black && LAST.z > 1.08) { g.textAlign = 'right'; osd('ZOOM ' + LAST.z.toFixed(1) + 'x', WIN.x + WIN.w - 16, WIN.y + WIN.h - 34); }
     g.textAlign = 'left';
+    }
   }
   drawFrame(g, t);
   drawCaption(g, t);
@@ -936,7 +1056,7 @@ function wavBase64() {
 /* ============================================================
    FOLHA DE EXPOSIÇÃO
    ============================================================ */
-const SECTIONS = [[0, 144, 'GANCHO'], [144, 240, 'BATIDAS'], [240, 384, 'NINGUÉM'], [384, 504, 'A PORTA ABRE'], [504, 557, 'ELE'], [557, 600, 'SEM SINAL']];
+const SECTIONS = [[0, 144, 'GANCHO'], [144, 190, 'BATIDAS'], [190, 247, 'DE DENTRO'], [247, 312, 'MAÇANETA'], [312, 384, 'ATÉ ONTEM'], [384, 504, 'A PORTA ABRE'], [504, 557, 'ELE'], [557, 600, 'SEM SINAL']];
 const xs = document.getElementById('xs'), xctx = xs.getContext('2d');
 function drawXSheet(t) {
   const dpr = window.devicePixelRatio || 1, w = xs.clientWidth, h = xs.clientHeight;
