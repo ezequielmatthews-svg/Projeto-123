@@ -1,0 +1,1052 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Câmera do Corredor</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Creepster&family=Permanent+Marker&family=VT323&display=swap">
+<style>
+/* Layout: celular em pé à esquerda com o vídeo 9:16; painel de controle e folha de exposição ao lado (empilha no celular). */
+:root {
+  --void: #07060b;
+  --panel: #14111c;
+  --edge: #2a2236;
+  --text: #e9e4ef;
+  --muted: #9a90aa;
+  --blood: #ff2a3d;
+  --static: #9fd8ff;
+  --amber: #ffb627;
+  --font-display: "Creepster", "Bungee", Impact, system-ui, sans-serif;
+  --font-ui: "Bungee", "Arial Black", system-ui, sans-serif;
+  --font-mono: "VT323", ui-monospace, "Courier New", monospace;
+  color-scheme: dark;
+}
+html, body { background: var(--void); color: var(--text); }
+body {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  line-height: 1.25;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: radial-gradient(ellipse at 30% 10%, #1a1030 0%, var(--void) 55%) var(--void);
+}
+.wrap { max-width: 1040px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 24px 32px; align-items: start; }
+.phone {
+  background: #000;
+  border: 3px solid var(--edge);
+  border-radius: 34px;
+  padding: 10px;
+  box-shadow: 0 30px 80px #000c, 0 0 0 1px #ffffff10 inset;
+}
+.screen { position: relative; aspect-ratio: 9 / 16; max-width: 100%; border-radius: 24px; overflow: hidden; background: #000; }
+.screen canvas { display: block; width: 100%; height: 100%; }
+.side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(40px, 7vw, 68px); line-height: .95; margin: 0; color: var(--blood); text-shadow: 0 0 18px #ff2a3d55, 3px 3px 0 #000; letter-spacing: .02em; text-wrap: balance; }
+.side > p { margin: 0; color: var(--muted); }
+.deck { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: var(--panel); border: 2px solid var(--edge); border-radius: 14px; padding: 12px; }
+.btn {
+  appearance: none; display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-ui); font-size: 14px; letter-spacing: .04em;
+  color: #000; background: var(--text); border: 3px solid #000; border-radius: 10px;
+  padding: 8px 12px; box-shadow: 0 4px 0 #000; cursor: pointer;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+.btn:focus-visible, .chk input:focus-visible, .xs:focus-visible { outline: 3px solid var(--static); outline-offset: 3px; }
+.btn.primary { background: var(--blood); color: #fff; }
+.btn.on { background: var(--static); }
+.btn svg { width: 16px; height: 16px; display: block; }
+.btn svg[hidden] { display: none; }
+.chk { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.chk input { width: 18px; height: 18px; accent-color: var(--blood); }
+.readout { display: flex; flex-wrap: wrap; gap: 4px 14px; font-variant-numeric: tabular-nums; color: var(--text); }
+.pill { padding: 0 10px; border-radius: 999px; border: 2px solid #000; background: var(--static); color: #000; white-space: nowrap; }
+.pill.ones { background: var(--amber); }
+.xsheet { display: flex; flex-direction: column; gap: 6px; }
+.xsheet .head { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 12px; color: var(--muted); }
+.xs { width: 100%; height: 64px; display: block; border-radius: 8px; border: 2px solid var(--edge); background: #0b0910; cursor: pointer; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--muted); }
+.legend span::before { content: ""; display: inline-block; width: 13px; height: 13px; margin-right: 6px; vertical-align: -1px; border: 2px solid #000; background: var(--sw); }
+.beats { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.beats li { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 10px; padding: 6px 10px; background: var(--panel); border-left: 4px solid var(--edge); border-radius: 6px; }
+.beats li.hot { border-left-color: var(--blood); }
+.beats b { font-weight: 400; color: var(--static); font-variant-numeric: tabular-nums; }
+code { font-family: var(--font-mono); color: var(--amber); }
+.export { background: var(--panel); border: 2px solid var(--edge); border-radius: 12px; padding: 10px 12px; }
+.export p { margin: 0; }
+@media (max-width: 760px) { .wrap { grid-template-columns: minmax(0, 1fr); } .phone { max-width: 400px; width: 100%; margin: 0 auto; box-sizing: border-box; } }
+@media (prefers-reduced-motion: reduce) { .btn:active { transform: none; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="phone">
+    <div class="screen"><canvas id="tv" aria-label="Curta de terror: a câmera de segurança do corredor grava três batidas na porta 42 às 3h17"></canvas></div>
+  </div>
+
+  <div class="side">
+    <h1>A Câmera do Corredor</h1>
+    <p>Fita Maldita · parte única · 9:16, 1080×1920, 25 s · câmera de segurança fixa com zoom digital · o fim emenda no começo</p>
+
+    <div class="deck" role="group" aria-label="Controles">
+      <button class="btn primary" id="play" type="button" aria-pressed="false">
+        <svg id="icoPause" viewBox="0 0 20 20" aria-hidden="true" hidden><rect x="3" y="2" width="5" height="16" fill="currentColor"/><rect x="12" y="2" width="5" height="16" fill="currentColor"/></svg>
+        <svg id="icoPlay" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 2 L18 10 L4 18 Z" fill="currentColor"/></svg>
+        <span id="playLabel">Play</span>
+      </button>
+      <button class="btn" id="sound" type="button" aria-pressed="false">Som: desligado</button>
+      <button class="btn" id="back" type="button" aria-label="Voltar um quadro"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15 3 L5 10 L15 17 Z" fill="currentColor"/></svg></button>
+      <button class="btn" id="fwd" type="button" aria-label="Avançar um quadro"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3 L15 10 L5 17 Z" fill="currentColor"/></svg></button>
+      <label class="chk"><input type="checkbox" id="fx" checked> VHS</label>
+      <label class="chk"><input type="checkbox" id="safe"> Zona segura do TikTok</label>
+    </div>
+    <div class="readout" aria-live="off"><span id="frameNum">QUADRO 001/2280</span><span id="timeNum">0,0 s</span><span class="pill" id="mode">EM DOIS · 12 fps</span></div>
+
+    <div class="xsheet">
+      <div class="head"><span>FOLHA DE EXPOSIÇÃO · 2280 quadros</span><span>clique para ir a um quadro</span></div>
+      <canvas class="xs" id="xs" height="64" tabindex="0" aria-label="Linha do tempo; use as setas para navegar"></canvas>
+      <div class="legend">
+        <span style="--sw: var(--static)">em dois</span>
+        <span style="--sw: var(--amber)">em um (tensão e susto)</span>
+        <span style="--sw: var(--blood)">smear frame</span>
+      </div>
+    </div>
+
+    <ol class="beats">
+      <li class="hot"><b>0–3 s</b><span>A lâmpada pisca. “Se você ouvir 3 batidas nesse vídeo… não olha pra porta.”</span></li>
+      <li><b>3–6 s</b><span>Zoom digital lento até a porta 42. O relógio da câmera chega a 03:16:59.</span></li>
+      <li><b>6–8 s</b><span>03:17. Três batidas — de DENTRO. A porta incha, a poeira cai, a lâmpada balança.</span></li>
+      <li><b>8–13 s</b><span>“Mas olha a câmera…” Corte pra CAM 03: o corredor inteiro vazio.</span></li>
+      <li><b>13–16 s</b><span>“O morador do 42 nunca abriu. Até ontem.” Plano parado.</span></li>
+      <li><b>16–21 s</b><span>A porta abre sozinha. Dedos no batente, a cabeça espia de lado, ele sai alto demais — e vira pra câmera.</span></li>
+      <li class="hot"><b>21–25 s</b><span>Zoom no rosto: “Agora… é a sua porta.” Ele avança, sinal perdido, 3 batidas atrás de você — e recomeça.</span></li>
+    </ol>
+
+    <div class="export"><p>Gerar o MP4 para postar (vídeo + som): <code>npm run render:corredor</code> → <code>out/camera-do-corredor.mp4</code></p></div>
+  </div>
+</div>
+
+<script src="sons-corredor.js"></script>
+<script src="narracao-corredor.js"></script>
+<script>
+(() => {
+'use strict';
+
+/* ============================================================
+   CONFIGURAÇÃO
+   ============================================================ */
+const qs = new URLSearchParams(location.search);
+const EXPORT = qs.has('export');
+const R = EXPORT || qs.has('hd') ? 2 : 1;      // prévia em 540x960, exportação em 1080x1920
+const LW = 540, LH = 960;                     // coordenadas lógicas (9:16)
+const W = LW * R, H = LH * R;
+const WIN = { x: 0, y: 165, w: 540, h: 405 };  // janela 4:3 da "fita" dentro do 9:16
+const FPS = 24, L = 600;                      // 25 s (o fim emenda no começo)
+const BGS = EXPORT ? 5 : 3;                   // resolução da pintura de fundo (para os closes)
+const INK = '#120d16';
+const ONES = [[140, 204], [384, 420], [458, 504], [540, 600]];  // batidas, porta abrindo, ele se ergue e vira, avanço final
+const isOnes = t => ONES.some(([a, b]) => t >= a && t <= b);
+const loopT = f => ((f % L) + L) % L;
+const drawnOf = t => (isOnes(t) ? t : t - (t % 2));
+
+const C = {
+  skin: '#f4c29a', skinSh: '#c98a66',
+  hair: '#6a4028', hairSh: '#432616',
+  pj: '#5d8fd6', pjSh: '#3a5fa0',
+  blanket: '#d24c42', blanketSh: '#8e2b2b',
+  pillow: '#e8e4f4', pillowSh: '#a9a2c8',
+  wood: '#8c5b3b', woodSh: '#5b3824',
+  tv: '#8a7660', tvSh: '#56483a',
+};
+
+/* ============================================================
+   RUÍDO, TEMPO, MATRIZ (mesmas ferramentas do Zarko)
+   ============================================================ */
+function hash(n) {
+  n = (n | 0) ^ 0x9e3779b9;
+  n = Math.imul(n ^ (n >>> 16), 0x85ebca6b);
+  n = Math.imul(n ^ (n >>> 13), 0xc2b2ae35);
+  n ^= n >>> 16;
+  return (n >>> 0) / 4294967296;
+}
+const h2 = (a, b) => hash(Math.imul(a | 0, 7919) + Math.imul(b | 0, 104729) + 17);
+function rng(seed) {
+  let a = seed | 0;
+  return () => {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const E = {
+  l: t => t, i: t => t * t * t, o: t => 1 - Math.pow(1 - t, 3),
+  io: t => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+};
+function track(keys) {
+  return t => {
+    t = ((t % L) + L) % L;
+    if (t <= keys[0][0]) return keys[0][1];
+    for (let k = 1; k < keys.length; k++) {
+      const [f1, v1, e] = keys[k], [f0, v0] = keys[k - 1];
+      if (t <= f1) return v0 + (v1 - v0) * E[e || 'io']((t - f0) / (f1 - f0 || 1));
+    }
+    return keys[keys.length - 1][1];
+  };
+}
+class M {
+  constructor(a = 1, b = 0, c = 0, d = 1, e = 0, f = 0) { this.a = a; this.b = b; this.c = c; this.d = d; this.e = e; this.f = f; }
+  mul(o) { return new M(this.a*o.a + this.c*o.b, this.b*o.a + this.d*o.b, this.a*o.c + this.c*o.d, this.b*o.c + this.d*o.d, this.a*o.e + this.c*o.f + this.e, this.b*o.e + this.d*o.f + this.f); }
+  t(x, y) { return this.mul(new M(1, 0, 0, 1, x, y)); }
+  r(a) { const c = Math.cos(a), s = Math.sin(a); return this.mul(new M(c, s, -s, c, 0, 0)); }
+  s(x, y) { return this.mul(new M(x, 0, 0, y ?? x, 0, 0)); }
+  p(x, y) { return [this.a*x + this.c*y + this.e, this.b*x + this.d*y + this.f]; }
+  map(pts) { return pts.map(q => this.p(q[0], q[1])); }
+}
+const add = (a, b) => [a[0] + b[0], a[1] + b[1]];
+const sub = (a, b) => [a[0] - b[0], a[1] - b[1]];
+const mulv = (a, k) => [a[0] * k, a[1] * k];
+const lerp = (a, b, k) => a + (b - a) * k;
+const lerpPts = (A, B, k) => A.map((p, i) => [lerp(p[0], B[i][0], k), lerp(p[1], B[i][1], k)]);
+const norm = a => { const l = Math.hypot(a[0], a[1]) || 1; return [a[0] / l, a[1] / l]; };
+const circ = (cx, cy, rx, ry, n = 12, rot = 0) => Array.from({ length: n }, (_, i) => {
+  const a = rot + i / n * Math.PI * 2; return [cx + Math.cos(a) * rx, cy + Math.sin(a) * ry];
+});
+
+/* ============================================================
+   CANVAS
+   ============================================================ */
+const out = document.getElementById('tv');
+out.width = W; out.height = H;
+const octx = out.getContext('2d');
+const scene = document.createElement('canvas');
+scene.width = W; scene.height = H;
+const c = scene.getContext('2d');
+
+/* ============================================================
+   NANQUIM & TINTA (espessura constante na tela, mesmo em close)
+   ============================================================ */
+let SEED = 0, ZK = 1;
+const jit = (pts, seed, amp) => pts.map((p, i) => [p[0] + (h2(seed, i * 2) - .5) * 2 * amp, p[1] + (h2(seed, i * 2 + 1) - .5) * 2 * amp]);
+function trace(g, P, closed) {
+  const n = P.length;
+  g.beginPath();
+  if (closed) {
+    g.moveTo((P[n-1][0] + P[0][0]) / 2, (P[n-1][1] + P[0][1]) / 2);
+    for (let i = 0; i < n; i++) { const p = P[i], q = P[(i + 1) % n]; g.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
+    g.closePath();
+  } else {
+    g.moveTo(P[0][0], P[0][1]);
+    for (let i = 1; i < n - 1; i++) g.quadraticCurveTo(P[i][0], P[i][1], (P[i][0] + P[i+1][0]) / 2, (P[i][1] + P[i+1][1]) / 2);
+    g.lineTo(P[n-1][0], P[n-1][1]);
+  }
+}
+function inkLine(P, closed, lw, seed) {
+  c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.strokeStyle = INK;
+  c.lineWidth = lw * ZK; trace(c, P, closed); c.stroke();
+  c.lineWidth = lw * .6 * ZK;
+  trace(c, jit(P, seed + 77, .8 * ZK).map(p => [p[0] + 1.1 * ZK, p[1] + 1.3 * ZK]), closed); c.stroke();
+  c.restore();
+}
+function cel(pts, base, shade, id, o = {}) {
+  const seed = SEED * 131 + id * 7;
+  const P = jit(pts, seed, (o.j ?? 1.2) * ZK);
+  c.save();
+  if (o.alpha != null) c.globalAlpha = o.alpha;
+  trace(c, P, true); c.fillStyle = shade || base; c.fill();
+  if (shade) { c.clip(); const sh = (o.sh ?? 5) * ZK; c.translate(-sh, -sh * .8); trace(c, P, true); c.fillStyle = base; c.fill(); }
+  c.restore();
+  if (o.ink !== false) { c.save(); if (o.alpha != null) c.globalAlpha = o.alpha; inkLine(P, true, o.lw ?? 3.2, seed); c.restore(); }
+}
+function stroke(pts, lw, id, color = INK, amp = 1) {
+  const P = jit(pts, SEED * 131 + id * 7, amp * ZK);
+  c.save(); c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = color; c.lineWidth = lw * ZK;
+  trace(c, P, false); c.stroke(); c.restore();
+}
+function limb(pts, ws) {
+  const n = pts.length, A = [], B = [];
+  for (let i = 0; i < n; i++) {
+    const p = pts[i], q = pts[Math.min(i + 1, n - 1)], o = pts[Math.max(i - 1, 0)];
+    const d = norm(sub(q, o)), nn = [-d[1], d[0]];
+    A.push(add(p, mulv(nn, ws[i] / 2))); B.push(sub(p, mulv(nn, ws[i] / 2)));
+  }
+  const d1 = norm(sub(pts[n-1], pts[n-2])), d0 = norm(sub(pts[0], pts[1]));
+  return [...A, add(pts[n-1], mulv(d1, ws[n-1] * .55)), ...B.reverse(), add(pts[0], mulv(d0, ws[0] * .55))];
+}
+
+/* ============================================================
+   UTILITÁRIOS DE CENA
+   ============================================================ */
+let ROOM = null, FX = true, SAFE = false;
+const WCX = WIN.x + WIN.w / 2, WCY = WIN.y + WIN.h / 2;
+const sec = s => Math.round(s * FPS);
+function paintRoom() { return true; }
+function makeNoise(w, h) { const cv = document.createElement('canvas'); cv.width = w; cv.height = h; return { cv, x: cv.getContext('2d'), img: cv.getContext('2d').createImageData(w, h) }; }
+const tapeNoise = makeNoise(180, 135);
+function fillNoise(N, seed, tint = [1, 1, 1]) {
+  const Rn = rng(seed), d = N.img.data;
+  for (let i = 0; i < d.length; i += 4) { const v = Rn() * 255; d[i] = v * tint[0]; d[i + 1] = v * tint[1]; d[i + 2] = v * tint[2]; d[i + 3] = 255; }
+  N.x.putImageData(N.img, 0, 0); return N.cv;
+}
+function rrPts(x, y, w, h, r) {
+  const pts = [], step = 12;
+  const edge = (x0, y0, x1, y1) => { const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / step)); for (let i = 0; i < n; i++) pts.push([x0 + (x1 - x0) * i / n, y0 + (y1 - y0) * i / n]); };
+  const arc = (cx, cy, a0) => { for (let i = 0; i < 4; i++) { const a = a0 + i / 4 * Math.PI / 2; pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]); } };
+  edge(x + r, y, x + w - r, y); arc(x + w - r, y + r, -Math.PI / 2);
+  edge(x + w, y + r, x + w, y + h - r); arc(x + w - r, y + h - r, 0);
+  edge(x + w - r, y + h, x + r, y + h); arc(x + r, y + h - r, Math.PI / 2);
+  edge(x, y + h - r, x, y + r); arc(x + r, y + r, Math.PI);
+  return pts;
+}
+// retângulo com quinas: pontos densos para o traço suavizado não virar oval
+const box = (x, y, w, h, r = 3) => rrPts(x, y, w, h, Math.min(r, w / 2, h / 2));
+function rect(x, y, w, h, col) { c.fillStyle = col; c.fillRect(x, y, w, h); }
+function txt(s, x, y, size, font, col, align = 'center', strokeW = 0) {
+  c.save(); c.font = `${size}px ${font}`; c.textAlign = align; c.textBaseline = 'middle';
+  if (strokeW) { c.lineJoin = 'round'; c.lineWidth = strokeW; c.strokeStyle = INK; c.strokeText(s, x, y); }
+  c.fillStyle = col; c.fillText(s, x, y); c.restore();
+}
+
+/* câmera: coordenadas locais da janela 4:3 (540×405) */
+let CAM = { z: 1, cx: 270, cy: 202.5 };
+function setCam(z, cx, cy) {
+  CAM = { z, cx, cy }; ZK = 1 / z;
+  c.setTransform(R * z, 0, 0, R * z, R * (WCX - cx * z), R * (WCY - cy * z));
+}
+const toWin = (x, y) => [(x - CAM.cx) * CAM.z + WCX, (y - CAM.cy) * CAM.z + WCY];
+
+/* ============================================================
+   CURVAS E TEMPO
+   ============================================================ */
+const KNOCKS = [6.0, 6.58, 7.12];        // batidas na porta 42 (casadas com sons/valenca/08-batidas.mp3)
+const KNOCKS2 = [23.58, 24.16, 24.70];   // batidas finais, "atrás de você" (emendam no começo)
+const KF = KNOCKS.map(sec), KF2 = KNOCKS2.map(sec);
+// a porta "incha" a cada batida (vem de DENTRO do apartamento):
+// antecipação (puxa 2 quadros pra dentro), estica pra fora, passa do ponto e treme até assentar
+function bulge(d) {
+  let b = 0;
+  for (const k of KF) {
+    const x = (d - k) / FPS;
+    if (x >= -2 / FPS && x < 0) b -= .35;
+    else if (x >= 0 && x < .55) b += Math.exp(-x * 8) * Math.cos(x * 34);
+  }
+  return b;
+}
+const knockAmp = d => [...KF, ...KF2].reduce((s, k) => { const x = (d - k) / FPS; return s + (x >= 0 && x < .3 ? Math.exp(-x * 14) : 0); }, 0);
+// lâmpada pendurada: balança sozinha e leva um tranco a cada batida (ação secundária)
+function swing(d) {
+  let a = .07 * Math.sin(d / FPS * 2.1);
+  for (const k of KF) { const x = (d - k) / FPS; if (x >= 0) a += .26 * Math.exp(-x * .6) * Math.sin(x * 4.6); }
+  if (d >= 491) { const x = (d - 491) / FPS; a += .3 * Math.exp(-x * .7) * Math.sin(x * 5.2); }
+  return a;
+}
+function bulbI(d) {
+  if (d < 14) return [1, .2, 1, 1, .12, .12, 1, .35, 1, 1, 1, .25, 1, 1][d];   // pisca no 1º segundo (gancho)
+  if (KF.some(k => d >= k && d < k + 2)) return .3;
+  if (d >= 491 && d < 497) return .06;                                          // apaga quando ele vira a cabeça
+  if (d >= 384) return h2(d, 77) < .12 ? .3 : .8;
+  return h2(d, 78) < .03 ? .5 : 1;
+}
+const TALK = [[21.35, 22.55]];
+const talking = d => TALK.some(([a, b]) => d >= sec(a) && d < sec(b));
+const isSmear = d => d === 491 || d === 492;
+const T = {
+  open:   track([[0, 0], [sec(16), 0], [sec(16.35), .12, 'o'], [sec(16.6), .12], [sec(16.72), .06], [sec(17.12), 1.07, 'o'], [sec(17.38), .96], [sec(17.55), 1], [L, 1]]),
+  fing:   track([[0, 0], [sec(17.5), 0], [sec(18.05), 1, 'o'], [449, 1], [453, 0], [L, 0]]),
+  peek:   track([[0, 0], [sec(17.95), 0], [sec(18.55), 1, 'o'], [L, 1]]),
+  step:   track([[0, 0], [sec(18.7), 0], [sec(19.75), 1, 'io'], [L, 1]]),
+  stoop:  track([[0, 1], [459, 1], [471, -.3, 'o'], [477, .07], [482, 0], [L, 0]]),
+  turn:   track([[0, -.3], [449, -.3], [468, .85], [484, .9], [489, 1.05, 'o'], [491, 1.05], [493, -.28, 'l'], [498, .09], [503, 0], [L, 0]]),
+  squint: track([[0, 0], [484, 0], [489, 1, 'o'], [492, 1], [493, 0, 'l'], [L, 0]]),
+  wide:   track([[0, 0], [492, 0], [493, 1, 'l'], [502, .55], [L, .55]]),
+  grin:   track([[0, .12], [500, .12], [515, 1, 'o'], [L, 1]]),
+  tilt:   track([[0, 0], [498, 0], [508, .13], [sec(22.3), -.07], [L, -.07]]),
+  shake:  d => knockAmp(d) * 3.5 + (d >= 491 && d < 496 ? 3 : 0) + (d >= 542 && d < 557 ? (d - 542) * .45 : 0),
+};
+
+/* ============================================================
+   O CORREDOR: perspectiva de 1 ponto, câmera de segurança no teto
+   ============================================================ */
+const VPX = 270, VPY = 150, FXp = 300, FYp = 400, CAMH = .8, ZF = 2.6;
+const P3 = (X, Y, Z) => [VPX + X * FXp / Z, VPY + (CAMH - Y) * FYp / Z];
+function dense(P, step = 9) {
+  const o = [], n = P.length;
+  for (let i = 0; i < n; i++) {
+    const a = P[i], b = P[(i + 1) % n], m = Math.max(1, Math.round(Math.hypot(b[0] - a[0], b[1] - a[1]) / step));
+    for (let k = 0; k < m; k++) o.push([lerp(a[0], b[0], k / m), lerp(a[1], b[1], k / m)]);
+  }
+  return o;
+}
+const Q = (...p3) => dense(p3.map(p => P3(p[0], p[1], p[2])));
+function fillPoly(P, col) { c.beginPath(); P.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.closePath(); c.fillStyle = col; c.fill(); }
+function wallText(s, X, Y, Z, size, col, font = 'VT323, monospace') { const [x, y] = P3(X, Y, Z); txt(s, x, y, size * FYp / Z / 400, font, col); }
+const HOLE = () => Q([-.27, 0, ZF], [-.27, .72, ZF], [.27, .72, ZF], [.27, 0, ZF]);
+
+function sideDoor(X, z0, z1, num, id) {
+  cel(Q([X, 0, z0 - .03], [X, .78, z0 - .03], [X, .78, z1 + .03], [X, 0, z1 + .03]), '#3a3128', null, id, { j: .5, lw: 2.2 });
+  cel(Q([X, 0, z0], [X, .72, z0], [X, .72, z1], [X, 0, z1]), '#5a4a3a', '#46392c', id + 1, { j: .5, lw: 2.2 });
+  const s = X < 0 ? 1 : -1;
+  const [kx, ky] = P3(X, .36, z1 - .05); c.fillStyle = '#c9c2a0'; c.beginPath(); c.arc(kx, ky, 5 / z1, 0, 7); c.fill();
+  wallText(String(num), X + s * .001, .85, (z0 + z1) / 2, 30, '#d8d3bd');
+}
+function bulbPos(d, Z = 1.65) {
+  const a = swing(d), len = .15, X0 = -.4;
+  return { anchor: P3(X0, 1, Z), pos: P3(X0 + Math.sin(a) * len, 1 - Math.cos(a) * len, Z), Z, X0 };
+}
+
+/* ---------- ELE: alto demais pra porta, braços até os joelhos ---------- */
+function eleGeom(d) {
+  const st = T.step(d), stoop = T.stoop(d);
+  const Zc = lerp(2.8, 2.36, st), Xc = lerp(.13, 0, E.o(Math.min(1, st * 1.35)));
+  const k = FYp / Zc, [ox, oy] = P3(Xc, 0, Zc);
+  const up = 1 - .24 * stoop;                    // > 1 quando passa do ponto ao se erguer
+  const wide = 1 / Math.sqrt(up);                // estica pra cima e afina (squash & stretch)
+  const walk = st > 0 && st < 1 ? Math.sin(st * Math.PI * 3) : 0;
+  const breath = Math.sin(d / FPS * 1.6) * .004;
+  const hipY = -.43 * up + Math.abs(walk) * .01, shY = hipY - .33 * up + breath;
+  const tilt = .55 * Math.max(0, stoop) + T.tilt(d);
+  const nl = .065 * up + Math.max(0, -stoop) * .22;   // pescoço estica na subida
+  const head = [Math.sin(tilt) * (nl + .075), shY - Math.cos(tilt) * (nl + .075)];
+  return { st, Zc, Xc, k, ox, oy, up, wide, walk, hipY, shY, tilt, head };
+}
+const toS = (g, x, y) => [g.ox + x * g.k, g.oy + y * g.k];
+
+const SKINE = '#d3d7c6', SKINESH = '#a2a795', COAT = '#23261f', COATSH = '#14160f';
+function headState(d, o = {}) {
+  return { tr: o.tr ?? T.turn(d), sq: T.squint(d), we: T.wide(d), grin: o.grin ?? T.grin(d),
+    mouth: talking(d) ? .35 + .65 * Math.abs(Math.sin(d * .95)) : (d >= 542 ? 1.6 : 0), smear: isSmear(d) };
+}
+function drawHead(hc, k, rot, s, pass, id) {
+  const rx = .062 * k, ry = .085 * k;
+  const shape = circ(0, 0, rx, ry, 20).map(([x, y]) => (y > 0 ? [x * (1 - .38 * y / ry), y * 1.2] : [x, y * 1.04]));
+  const m = new M().t(hc[0], hc[1]).r(rot);
+  const ang = s.tr * Math.PI / 2 * .9, cs = Math.cos(ang), sn = Math.sin(ang);
+  const eyeY = -ry * .12, eh = ry * .27 * (1 - .7 * s.sq) * (1 + .45 * s.we), ew0 = rx * .25 * (1 + .25 * s.we);
+  const feats = fxo => [-1, 1].map(sd => ({ x: fxo + sd * rx * .4 * cs, w: ew0 * (1 - .55 * Math.max(0, sd * sn)) }));
+  const offsets = s.smear ? [.85, .35, -.15].map(v => Math.sin(v * Math.PI / 2 * .9) * rx * .78) : [sn * rx * .78];
+  const alphas = s.smear ? [.35, .6, 1] : [1];
+  if (pass === 'glow') {
+    c.save(); c.shadowColor = 'rgba(210,255,210,.95)'; c.shadowBlur = 7 * R;
+    offsets.forEach((fxo, j) => feats(fxo).forEach(e => {
+      const p = m.p(e.x, eyeY); c.globalAlpha = alphas[j] * (s.sq > .8 ? .4 : 1);
+      c.fillStyle = '#f6fff0'; c.beginPath(); c.ellipse(p[0], p[1], Math.max(.6, e.w * .28), Math.max(.6, Math.min(eh, ew0) * .3), rot, 0, 7); c.fill();
+    }));
+    c.restore(); return;
+  }
+  if (s.smear) {   // smear: cabeça esticada no sentido do giro, com rastro de olhos (quadro borrado)
+    cel(m.map(shape.map(([x, y]) => [x * 2.1 - rx * .35, y])), SKINE, null, id + 9, { alpha: .9, lw: 2.4 });
+    for (let i = 0; i < 4; i++) stroke(m.map([[rx * 1.6, -ry * .6 + i * ry * .4], [rx * 3.1, -ry * .6 + i * ry * .4]]), 1.6, id + 20 + i);
+  }
+  cel(m.map(shape), SKINE, SKINESH, id, { lw: 3 });
+  const P = jit(m.map(shape), SEED * 131 + id * 7, 1.2 * ZK);
+  c.save(); trace(c, P, true); c.clip();
+  offsets.forEach((fxo, j) => {
+    c.globalAlpha = alphas[j];
+    feats(fxo).forEach((e, i) => {
+      const p = m.p(e.x, eyeY);
+      c.fillStyle = '#12140f'; c.beginPath(); c.ellipse(p[0], p[1], e.w, eh, rot, 0, 7); c.fill();
+      stroke(m.map([[e.x - e.w, eyeY + eh * 1.5], [e.x, eyeY + eh * 1.9], [e.x + e.w, eyeY + eh * 1.5]]), 1.2, id + 30 + i, 'rgba(18,13,22,.6)', .3);  // olheiras
+    });
+    // sorriso: crescente que abre até as orelhas
+    const mx = fxo * .92, my = ry * .42, mw = rx * (.42 + .5 * s.grin) * (.55 + .45 * cs);
+    const lift = ry * .2 * s.grin, open = ry * (.05 + .12 * s.grin + .22 * s.mouth);
+    const up = [], lo = [];
+    for (let i = 0; i <= 10; i++) { const u = i / 10 * 2 - 1, x = mx + u * mw, yc = my - lift * u * u; up.push([x, yc - open * .15 * (1 - u * u)]); lo.push([x, yc + open * (1 - u * u)]); }
+    const mouth = m.map([...up, ...lo.reverse()]);
+    trace(c, mouth, true); c.fillStyle = '#0b0c09'; c.fill();
+    c.save(); trace(c, mouth, true); c.clip();
+    c.strokeStyle = '#e4e7d6'; c.lineWidth = 1.3 * ZK;
+    for (let i = 1; i < 9; i++) { const u = i / 9 * 2 - 1, x = mx + u * mw, yc = my - lift * u * u; const a = m.p(x, yc - open * .2), b = m.p(x, yc + open * .45 * (1 - u * u)); c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); }
+    c.restore();
+    c.globalAlpha = 1;
+  });
+  c.restore();
+}
+
+function drawEle(d, pass) {
+  if (T.step(d) <= 0) return;   // antes de sair, só os dedos e a cabeça espiando
+  const g = eleGeom(d), k = g.k, S = (x, y) => toS(g, x, y), W2 = g.wide;
+  const inside = g.Zc > ZF - .02;
+  if (pass === 'base') {
+    if (inside) { c.save(); trace(c, HOLE(), true); c.clip(); }
+    // pernas (andando: uma passa na frente da outra)
+    [-1, 1].forEach((sd, i) => {
+      const sw = g.walk * sd;
+      const pts = [S(sd * .035 * W2, g.hipY), S(sd * .042 + sw * .02, g.hipY * .5), S(sd * .045 + sw * .045, -.005)];
+      cel(limb(pts, [.034 * k, .028 * k, .024 * k]), COAT, COATSH, 60 + i, { lw: 2.6 });
+      cel(dense([S(sd * .045 + sw * .045 - .02, -.012), S(sd * .045 + sw * .045 + .035 * sd, -.006), S(sd * .045 + sw * .045 + .03 * sd, .004), S(sd * .045 + sw * .045 - .02, .004)], 3), '#0e0f0b', null, 64 + i, { lw: 2 });
+    });
+    // casaco
+    cel(dense([S(-.088 * W2, g.shY), S(.088 * W2, g.shY), S(.06 * W2, g.hipY + .01), S(.075 * W2, g.hipY + .07), S(-.075 * W2, g.hipY + .07), S(-.06 * W2, g.hipY + .01)], 4), COAT, COATSH, 66, { lw: 3 });
+    stroke([S(0, g.shY + .02), S(0, g.hipY + .06)], 1.4, 67, 'rgba(0,0,0,.6)', .4);
+    // braços compridos demais, mãos pendendo abaixo dos joelhos
+    [-1, 1].forEach((sd, i) => {
+      const sw = -g.walk * sd * .03, sway = Math.sin(d / FPS * 1.3 + i) * .006;
+      const sh = S(sd * .082 * W2, g.shY + .015), el = S(sd * .118 + sw, g.shY + .19 * g.up), wr = S(sd * .108 + sw * 1.6 + sway, g.shY + .4 * g.up);
+      cel(limb([sh, el, wr], [.03 * k, .026 * k, .02 * k]), COAT, COATSH, 70 + i, { lw: 2.6 });
+      const wx = (wr[0] - g.ox) / k, wy = (wr[1] - g.oy) / k;
+      for (let j = 0; j < 4; j++) {
+        const a = Math.PI / 2 + sd * (-.35 + j * .2), L2 = .07 + (j === 1 || j === 2 ? .015 : 0);
+        const p0 = [wx, wy + .008], p1 = [wx + Math.cos(a) * L2 * .55, wy + Math.sin(a) * L2 * .55], p2 = [wx + Math.cos(a + sd * .25) * L2, wy + Math.sin(a + sd * .25) * L2];
+        cel(limb([S(...p0), S(...p1), S(...p2)], [.011 * k, .009 * k, .006 * k]), SKINE, SKINESH, 74 + i * 4 + j, { lw: 1.6, sh: 2 });
+      }
+    });
+    // pescoço e cabeça
+    const hc = S(...g.head);
+    cel(limb([S(0, g.shY + .01), S(g.head[0] * .5, (g.shY + g.head[1]) / 2 + .02), [hc[0], hc[1] + .06 * k]], [.026 * k, .022 * k, .02 * k]), SKINE, SKINESH, 90, { lw: 2.4 });
+    drawHead(hc, k, g.tilt, headState(d), 'base', 100);
+    if (inside) c.restore();
+  } else if (pass === 'glow') {
+    if (inside) { c.save(); trace(c, HOLE(), true); c.clip(); }
+    drawHead(S(...g.head), k, g.tilt, headState(d), 'glow', 100);
+    if (inside) c.restore();
+  }
+}
+// antes de sair: os dedos dobram o batente e a cabeça espia, de lado
+function drawPeek(d, pass) {
+  const fg = T.fing(d), pk = T.peek(d);
+  if (pass === 'base' && fg > 0) {
+    for (let j = 0; j < 4; j++) {
+      const Y = .47 + j * .036, reach = E.o(fg);
+      const pts = [P3(.24, Y, ZF + .05), P3(.29 + .02 * reach, Y + .006, ZF + .005), P3(.3 + .05 * reach, Y - .004 - .01 * reach, ZF - .01)];
+      cel(limb(pts, [7 / ZF, 6 / ZF, 4 / ZF]), SKINE, SKINESH, 120 + j, { lw: 1.8, sh: 2 });
+    }
+  }
+  if (pk > 0 && T.step(d) <= 0) {
+    const hcW = P3(lerp(.42, .19, E.o(pk)), .5, ZF + .06), k = FYp / (ZF + .06);
+    c.save(); trace(c, HOLE(), true); c.clip();
+    drawHead(hcW, k, -1.05, { tr: -.3, sq: 0, we: .3, grin: .25, mouth: 0, smear: false }, pass, 130);
+    c.restore();
+  }
+}
+
+function drawCorredor(d, f, o, pass) {
+  const rev = !!o.rev;
+  const b = bulbPos(d, rev ? 1.6 : 1.65), I = bulbI(d);
+  if (pass === 'base') {
+    cel(Q([-1, 1, 1], [1, 1, 1], [1, 1, ZF], [-1, 1, ZF]), '#5f6259', '#4f5249', 1, { j: .5, lw: 2.4 });
+    cel(Q([-1, 0, 1], [1, 0, 1], [1, 0, ZF], [-1, 0, ZF]), '#585b50', '#47493f', 2, { j: .5, lw: 2.4 });
+    for (let i = 1; i < 10; i++) { const Z = 1 + (ZF - 1) * Math.pow(i / 10, 1.3); stroke([P3(-1, 0, Z), P3(1, 0, Z)], 1.1, 30 + i, 'rgba(18,13,22,.4)', .3); }
+    for (let i = -3; i <= 3; i++) stroke([P3(i / 3.4, 0, 1), P3(i / 3.4, 0, ZF)], 1.1, 50 + i, 'rgba(18,13,22,.4)', .3);
+    cel(Q([-1, 0, 1], [-1, 1, 1], [-1, 1, ZF], [-1, 0, ZF]), '#7d8073', '#6a6d61', 3, { j: .5, lw: 2.4 });
+    cel(Q([1, 0, 1], [1, 1, 1], [1, 1, ZF], [1, 0, ZF]), '#75786b', '#63665a', 4, { j: .5, lw: 2.4 });
+    fillPoly(Q([-1, 0, 1], [-1, .06, 1], [-1, .06, ZF], [-1, 0, ZF]), '#3e4038');
+    fillPoly(Q([1, 0, 1], [1, .06, 1], [1, .06, ZF], [1, 0, ZF]), '#3e4038');
+    // manchas de umidade
+    for (let i = 0; i < 5; i++) { const X = i % 2 ? 1 : -1, Z = 1.2 + h2(i, 3) * 1.2, Y = .55 + h2(i, 4) * .35; const [x, y] = P3(X, Y, Z); c.fillStyle = 'rgba(40,42,34,.16)'; c.beginPath(); c.ellipse(x, y, 26 / Z * (.6 + h2(i, 5)), 14 / Z * (.6 + h2(i, 6)), 0, 0, 7); c.fill(); }
+    // portas laterais
+    sideDoor(-1, 1.3, 1.66, rev ? 46 : 41, 10); sideDoor(-1, 1.98, 2.28, rev ? 44 : 43, 13);
+    sideDoor(1, 1.38, 1.74, rev ? 45 : 44, 16); sideDoor(1, 2.02, 2.3, rev ? 43 : 45, 19);
+    // extintor
+    cel(Q([1, .3, 1.86], [1, .56, 1.86], [1, .56, 1.92], [1, .3, 1.92]), '#9a2a24', '#6e1c18', 22, { lw: 1.8 });
+    // parede do fundo
+    cel(Q([-1, 0, ZF], [1, 0, ZF], [1, 1, ZF], [-1, 1, ZF]), '#707368', '#5d6055', 5, { j: .5, lw: 2.4 });
+    if (rev) {
+      // CAM 03: janela gradeada e a placa de SAÍDA
+      cel(Q([-.42, .28, ZF], [-.42, .74, ZF], [.42, .74, ZF], [.42, .28, ZF]), '#1c2430', null, 24, { lw: 2.6 });
+      for (let i = 1; i < 7; i++) stroke([P3(-.42 + i * .12, .28, ZF), P3(-.42 + i * .12, .74, ZF)], 2.2, 25 + i);
+      stroke([P3(-.42, .51, ZF), P3(.42, .51, ZF)], 2.2, 33);
+      cel(Q([-.16, .84, ZF], [-.16, .93, ZF], [.16, .93, ZF], [.16, .84, ZF]), '#1d3b24', null, 34, { lw: 2 });
+    } else {
+      stroke([P3(.45, 1, ZF), P3(.5, .8, ZF), P3(.46, .66, ZF), P3(.52, .5, ZF)], 1.3, 36, 'rgba(18,13,22,.7)', .5);   // rachadura
+      // capacho e os sapatos do morador
+      fillPoly(Q([-.24, 0, ZF - .17], [.24, 0, ZF - .17], [.24, 0, ZF - .02], [-.24, 0, ZF - .02]), '#4e3b2c');
+      [[-.09, -1], [.04, 1]].forEach(([X, s], i) => { const [x, y] = P3(X, 0, ZF - .09); cel(circ(x, y - 2, 11, 4.5, 10), '#1c1915', null, 37 + i, { lw: 1.8 }); });
+      // batente + placa 42
+      cel(Q([-.33, 0, ZF], [-.33, .79, ZF], [.33, .79, ZF], [.33, 0, ZF]), '#3a3128', null, 6, { j: .5, lw: 2.6 });
+      cel(Q([-.08, .83, ZF], [-.08, .93, ZF], [.08, .93, ZF], [.08, .83, ZF]), '#b8ab7c', null, 7, { lw: 1.8 });
+      wallText('42', 0, .88, ZF, 34, '#1a140c', 'Bungee, Impact, sans-serif');
+      const a = T.open(d);
+      if (a > .002) {
+        cel(HOLE(), '#0c1510', null, 8, { lw: 2.6 });
+        // folha da porta abrindo pra dentro, presa na dobradiça da esquerda
+        const ang = Math.min(1.07, a) * Math.PI / 2 * .9, ex = -.27 + .54 * Math.cos(ang), ez = ZF + .54 * Math.sin(ang);
+        cel(dense([P3(-.27, 0, ZF), P3(-.27, .72, ZF), P3(ex, .72, ez), P3(ex, 0, ez)], 6), '#5a4a3a', '#46392c', 9, { lw: 2.6 });
+        drawEle(d, 'base');
+        drawPeek(d, 'base');
+      } else {
+        // porta fechada, inchando com as batidas (comprime e estica)
+        const bb = bulge(d), Zd = ZF - .03 * bb;
+        const leaf = (x0, y0, x1, y1, sc, scy) => Q(...[[x0, y0], [x0, y1], [x1, y1], [x1, y0]].map(([X, Y]) => [X * sc, .36 + (Y - .36) * scy, Zd]));
+        cel(leaf(-.27, 0, .27, .72, 1 + .05 * bb, 1 + .025 * bb), '#5a4a3a', '#46392c', 9, { lw: 2.8 });
+        cel(leaf(-.19, .42, .19, .66, 1 + .17 * bb, 1 + .1 * bb), '#634f3d', '#4f3f30', 11, { lw: 1.8 });
+        cel(leaf(-.19, .06, .19, .34, 1 + .17 * bb, 1 + .1 * bb), '#634f3d', '#4f3f30', 12, { lw: 1.8 });
+        const [kx, ky] = P3(.2 * (1 + .1 * bb), .36, Zd); c.fillStyle = '#cfc6a0'; c.beginPath(); c.arc(kx, ky, 4, 0, 7); c.fill();
+        const [px, py] = P3(0, .53 + .04 * bb, Zd); c.fillStyle = '#0a0a08'; c.beginPath(); c.arc(px, py, 2.4, 0, 7); c.fill();   // olho mágico
+      }
+      // poeira que cai do batente a cada batida
+      for (const k of KF) {
+        const x = (d - k) / FPS; if (x < 0 || x > 1.3) continue;
+        for (let i = 0; i < 10; i++) {
+          const Y = .79 - (h2(k, i + 20) * .15 * x + 1.4 * x * x); if (Y < 0) continue;
+          const [qx, qy] = P3(-.33 + h2(k, i) * .66 + (h2(k, i + 40) - .5) * .06 * x, Y, ZF - .04);
+          c.fillStyle = 'rgba(225,225,210,.9)'; c.fillRect(qx, qy, 2.2, 2.2);
+        }
+      }
+    }
+    // fio e lâmpada
+    stroke([b.anchor, b.pos], 1.6, 40);
+    cel(circ(b.anchor[0], b.anchor[1] + 1, 7, 3, 10), '#2a2b25', null, 41, { lw: 1.6 });
+    cel(circ(b.pos[0], b.pos[1] + 5, 6.5, 8, 12), '#e9e3c4', '#c9c2a0', 42, { lw: 1.8, sh: 2 });
+  } else if (pass === 'light') {
+    const [bx, by] = b.pos;
+    let gr = c.createRadialGradient(bx, by + 4, 2, bx, by + 4, 240);
+    gr.addColorStop(0, `rgba(255,236,190,${.55 * I})`); gr.addColorStop(.35, `rgba(220,200,160,${.2 * I})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.fillRect(0, 0, 540, 405);
+    const [fx, fy] = P3(b.X0 + Math.sin(swing(d)) * .15, 0, b.Z);
+    c.save(); c.translate(fx, fy); c.scale(1, .3);
+    gr = c.createRadialGradient(0, 0, 4, 0, 0, 200); gr.addColorStop(0, `rgba(255,236,190,${.35 * I})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = gr; c.beginPath(); c.arc(0, 0, 200, 0, 7); c.fill(); c.restore();
+    if (rev) {
+      const [wx, wy] = P3(0, .5, ZF); gr = c.createRadialGradient(wx, wy, 5, wx, wy, 120); gr.addColorStop(0, 'rgba(140,170,220,.35)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = gr; c.fillRect(0, 0, 540, 405);
+    }
+  } else if (pass === 'glow') {
+    const [bx, by] = b.pos;
+    c.save(); c.globalAlpha = I; c.shadowColor = 'rgba(255,240,200,.9)'; c.shadowBlur = 14 * R; c.fillStyle = '#fff8e0';
+    c.beginPath(); c.ellipse(bx, by + 5, 4.5, 5.5, 0, 0, 7); c.fill(); c.restore();
+    if (rev) {
+      c.save(); c.shadowColor = 'rgba(80,255,120,.9)'; c.shadowBlur = 10 * R;
+      wallText('SAÍDA', 0, .885, ZF, 34, '#7dff9a', 'Bungee, Impact, sans-serif'); c.restore();
+      return;
+    }
+    const a = T.open(d), ka = knockAmp(d);
+    // luz verde vazando por baixo da porta (pulsa com as batidas)
+    if (a <= .002) {
+      c.save(); c.globalCompositeOperation = 'lighter';
+      fillPoly(Q([-.26, 0, ZF - .006], [.26, 0, ZF - .006], [.26, .016, ZF - .006], [-.26, .016, ZF - .006]), `rgba(90,255,140,${.45 + .5 * Math.min(1, ka)})`);
+      const [gx, gy] = P3(0, 0, ZF - .05); const gr = c.createRadialGradient(gx, gy, 2, gx, gy, 90);
+      gr.addColorStop(0, `rgba(60,200,100,${.22 + .3 * Math.min(1, ka)})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      c.save(); c.translate(gx, gy); c.scale(1, .25); c.translate(-gx, -gy); c.fillStyle = gr; c.beginPath(); c.arc(gx, gy, 90, 0, 7); c.fill(); c.restore();
+      const [px, py] = P3(0, .53 + .04 * bulge(d), ZF); c.fillStyle = `rgba(120,255,160,${.35 + .6 * Math.min(1, ka)})`; c.beginPath(); c.arc(px, py, 1.6, 0, 7); c.fill();
+      c.restore();
+    } else {
+      // porta aberta: o apartamento é só luz verde; a luz se espalha pelo chão
+      c.save(); c.globalCompositeOperation = 'lighter';
+      const [hx, hy] = P3(0, .36, ZF);
+      let gr = c.createRadialGradient(hx, hy, 4, hx, hy, 70); gr.addColorStop(0, `rgba(120,255,160,${.75 * Math.min(1, a)})`); gr.addColorStop(1, `rgba(30,120,60,${.35 * Math.min(1, a)})`);
+      c.save(); trace(c, HOLE(), true); c.clip(); c.fillStyle = gr; c.fillRect(0, 0, 540, 405); c.restore();
+      const wedge = [P3(-.27, 0, ZF), P3(.27, 0, ZF), P3(.75, 0, 1.45), P3(-.55, 0, 1.45)];
+      const [, y0] = P3(0, 0, ZF), [, y1] = P3(0, 0, 1.45);
+      gr = c.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, `rgba(90,230,130,${.4 * Math.min(1, a)})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      fillPoly(wedge, gr);
+      c.restore();
+      // a silhueta corta a luz (desenhada de novo por cima da luz) + olhos acesos
+      drawEle(d, 'base'); drawPeek(d, 'base');
+      drawEle(d, 'glow'); drawPeek(d, 'glow');
+    }
+  }
+}
+
+/* ============================================================
+   PLANOS (uma câmera fixa; "zoom digital" nos momentos-chave)
+   ============================================================ */
+const S = (a, b, env, cam, o = {}) => ({ a: sec(a), b: sec(b), env, cam, o });
+const SHOTS = [
+  S(0, 3, 'corredor', [1, 270, 202.5, 1.04, 270, 202.5]),
+  S(3, 6, 'corredor', [1.12, 270, 202.5, 2.0, 270, 200]),
+  S(6, 8.2, 'corredor', [2.45, 270, 205, 2.6, 270, 205]),
+  S(8.2, 10, 'corredor', [1, 270, 202.5, 1.03, 270, 202.5]),
+  S(10, 13, 'corredor', [1, 270, 202.5, 1.06, 270, 202.5], { rev: 1, cam: 3 }),
+  S(13, 16, 'corredor', [1, 270, 202.5, 1.32, 270, 198]),
+  S(16, 21, 'corredor', [1.75, 270, 190, 1.92, 270, 186], { follow: 1 }),
+  S(21, 23.2, 'corredor', [6.2, 0, 0, 7.4, 0, 0], { face: 1, pix: 1 }),
+  S(23.2, 25, 'black', [1, 270, 202.5, 1, 270, 202.5]),
+];
+const shotAt = t => SHOTS.find(s => t >= s.a && t < s.b) || SHOTS[SHOTS.length - 1];
+const LAST = { z: 1, cam: 2, black: false };
+
+/* ============================================================
+   QUADRO
+   ============================================================ */
+const pixCv = document.createElement('canvas'); pixCv.width = 170; pixCv.height = 128;
+const pixX = pixCv.getContext('2d');
+function glitchRows(f, amt) {
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  const x0 = WIN.x * R, y0 = WIN.y * R, w = WIN.w * R, h = WIN.h * R;
+  for (let y = 0; y < h; y += 5 * R) if (h2(f, y) < amt) { const off = (h2(f, y + 1) - .5) * 60 * R; c.drawImage(scene, x0, y0 + y, w, 5 * R, x0 + off, y0 + y, w, 5 * R); }
+  c.setTransform(R, 0, 0, R, 0, 0);
+}
+function drawScene(t, f) {
+  const d = drawnOf(t);
+  SEED = d;
+  const shot = shotAt(t), o = shot.o;
+  const u = E.io((t - shot.a) / Math.max(1, shot.b - shot.a));
+  const [z0, x0, y0, z1, x1, y1] = shot.cam;
+  let z = lerp(z0, z1, u), cx = lerp(x0, x1, u), cy = lerp(y0, y1, u);
+  if (o.face) {
+    const g = eleGeom(d), hc = toS(g, g.head[0], g.head[1]);
+    cx = hc[0]; cy = hc[1] + 4;
+    if (d >= 542) z *= 1 + 2.4 * E.i(Math.min(1, (d - 542) / 15));   // avança na câmera
+  }
+  if (o.follow) cy = lerp(cy, 166, E.io(Math.max(0, Math.min(1, (d - 452) / 22))));   // a câmera sobe junto quando ele se ergue
+  LAST.z = z; LAST.cam = o.cam || 2; LAST.black = shot.env === 'black';
+  c.setTransform(1, 0, 0, 1, 0, 0); c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+  c.fillStyle = '#000'; c.fillRect(0, 0, W, H);
+  if (LAST.black) {
+    if (t < shot.a + 6) { c.setTransform(R, 0, 0, R, 0, 0); c.globalAlpha = .9 - (t - shot.a) * .12; c.drawImage(fillNoise(tapeNoise, f * 13 + 5, [.8, 1, .85]), WIN.x, WIN.y, WIN.w, WIN.h); c.globalAlpha = 1; }
+    return;
+  }
+  c.save(); c.setTransform(R, 0, 0, R, 0, 0); c.beginPath(); c.rect(WIN.x, WIN.y, WIN.w, WIN.h); c.clip();
+  setCam(z, cx, cy); drawCorredor(d, f, o, 'base');
+  c.setTransform(R, 0, 0, R, 0, 0);
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = 'rgb(100,104,112)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
+  c.globalCompositeOperation = 'lighter'; setCam(z, cx, cy); drawCorredor(d, f, o, 'light');
+  c.setTransform(R, 0, 0, R, 0, 0);
+  // câmera de segurança: monocromática, puxada pro verde; só o que brilha mantém a cor
+  c.globalCompositeOperation = 'saturation'; c.fillStyle = 'rgb(128,128,128)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = '#b9d2b0'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h);
+  c.globalCompositeOperation = 'source-over';
+  setCam(z, cx, cy); drawCorredor(d, f, o, 'glow');
+  c.setTransform(R, 0, 0, R, 0, 0);
+  if (o.pix) {   // zoom digital: a imagem "estoura" em blocos
+    pixX.imageSmoothingEnabled = true;
+    pixX.drawImage(scene, WIN.x * R, WIN.y * R, WIN.w * R, WIN.h * R, 0, 0, pixCv.width, pixCv.height);
+    c.imageSmoothingEnabled = false; c.drawImage(pixCv, WIN.x, WIN.y, WIN.w, WIN.h); c.imageSmoothingEnabled = true;
+  }
+  c.globalAlpha = .1; c.drawImage(fillNoise(tapeNoise, f * 7 + 1, [.85, 1, .9]), WIN.x, WIN.y, WIN.w, WIN.h); c.globalAlpha = 1;
+  if (d >= 489 && d <= 495) glitchRows(f, .14);
+  if (d >= 546) glitchRows(f, .15 + (d - 546) * .05);
+  if (shot.a === t && t > 0 && !o.face) { c.fillStyle = 'rgba(255,255,255,.08)'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h); }
+  c.restore();
+}
+
+/* ============================================================
+   LEGENDAS (estilo TikTok, dentro da zona segura)
+   ============================================================ */
+// legendas: vêm da narração (scripts/narrar.py) quando ela existe; senão, estas
+const NARR = window.NARRACAO || null;
+const CAPS = NARR ? NARR.legendas : [
+  [0, 72, 'SE VOCÊ OUVIR *3 BATIDAS*... *NÃO OLHA PRA PORTA*.', 'narrador'],
+  [72, 144, 'ESSA CÂMERA GRAVA O CORREDOR DO MEU PRÉDIO TODA NOITE.', 'narrador'],
+  [144, 192, '*03:17*', 'narrador'],
+  [192, 240, 'ALGUÉM BATE NA PORTA DO *42*. MAS OLHA A CÂMERA...', 'narrador'],
+  [240, 312, '...NÃO TEM *NINGUÉM*.', 'narrador'],
+  [312, 384, 'O MORADOR DO 42 NUNCA ABRIU. *ATÉ ONTEM*.', 'narrador'],
+  [504, 557, '*AGORA... É A SUA PORTA.*', 'coisa'],
+];
+function drawCaption(g, t) {
+  const cap = CAPS.find(([a, b]) => t >= a && t < b);
+  if (!cap) return;
+  const [a, b, text, who] = cap;
+  const baseColor = { rafa: '#a8dcff', coisa: '#ff2a3d', avo: '#ffd79a' }[who] || '#ffffff';
+  const big = t < 72 || (t >= 504 && t < 557);   // gancho e a fala dele: frase inteira em letras maiores
+  const size = big ? 33 : 28, maxW = 410, cx = 252, cy = 646;
+  g.save(); g.setTransform(R, 0, 0, R, 0, 0);
+  g.font = `${size}px Bungee, "Arial Black", Impact, sans-serif`; g.textBaseline = 'middle'; g.textAlign = 'left';
+  const words = text.split(' ').map(w => ({ w: w.replace(/\*/g, ''), hot: /\*/.test(w) }));
+  // palavras marcadas com *...* (podem abranger várias)
+  let on = false; text.split(' ').forEach((w, i) => { const st = w.startsWith('*'), en = w.endsWith('*') || w.replace(/[.?!,]+$/, '').endsWith('*'); if (st) on = true; words[i].hot = on; if (en) on = false; });
+  // como nos virais: blocos curtos (até 4 palavras) trocando no ritmo da fala
+  let ws = words, cs = a;
+  if (!big && words.length > 4) {
+    const n = Math.ceil(words.length / 4), per = Math.ceil(words.length / n);
+    const idx = Math.min(n - 1, Math.floor((t - a) / Math.max(1, b - a) * n));
+    ws = words.slice(idx * per, idx * per + per); cs = a + idx * (b - a) / n;
+  }
+  const lines = []; let cur = [], width = 0; const sp = g.measureText(' ').width;
+  ws.forEach(wd => { const ww = g.measureText(wd.w).width; if (cur.length && width + sp + ww > maxW) { lines.push({ cur, width }); cur = []; width = 0; } width += (cur.length ? sp : 0) + ww; cur.push(wd); });
+  lines.push({ cur, width });
+  const age = t - cs, pop = age < 3 && cs > 0 ? lerp(1.18, 1, E.o(age / 3)) : 1, fade = b - t <= 3 && b < L ? (b - t) / 3 : 1;
+  g.globalAlpha = fade;
+  g.translate(cx, cy); g.scale(pop, pop);
+  const lh = size * 1.15, y0 = -(lines.length - 1) * lh / 2;
+  lines.forEach((ln, li) => {
+    let x = -ln.width / 2; const y = y0 + li * lh;
+    ln.cur.forEach(wd => {
+      g.lineJoin = 'round'; g.lineWidth = size * .26; g.strokeStyle = '#000'; g.strokeText(wd.w, x, y);
+      g.fillStyle = wd.hot ? '#ff2a3d' : baseColor; g.fillText(wd.w, x, y);
+      x += g.measureText(wd.w).width + sp;
+    });
+  });
+  g.restore();
+}
+
+/* ============================================================
+   PÓS: VHS, grão, scanlines, vinheta, OSD
+   ============================================================ */
+const grains = Array.from({ length: 6 }, (_, k) => {
+  const g = document.createElement('canvas'); g.width = 270; g.height = 480;
+  const x = g.getContext('2d'); const im = x.createImageData(270, 480); const Rn = rng(900 + k);
+  for (let i = 0; i < im.data.length; i += 4) { const v = 128 + (Rn() - .5) * 160; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+  x.putImageData(im, 0, 0); return g;
+});
+const scan = (() => { const p = document.createElement('canvas'); p.width = 2; p.height = 3 * R; const x = p.getContext('2d'); x.fillStyle = 'rgba(0,0,0,.28)'; x.fillRect(0, 2 * R, 2, R); return octx.createPattern(p, 'repeat'); })();
+const vignette = (() => {
+  const v = document.createElement('canvas'); v.width = W; v.height = H; const x = v.getContext('2d');
+  const rg = x.createRadialGradient(W / 2, H / 2, H * .28, W / 2, H / 2, H * .62);
+  rg.addColorStop(0, 'rgba(0,0,0,0)'); rg.addColorStop(1, 'rgba(0,0,0,.7)'); x.fillStyle = rg; x.fillRect(0, 0, W, H); return v;
+})();
+
+// moldura: título da série no topo (abaixo das abas do TikTok) e borda da janela 4:3
+function drawFrame(g, t) {
+  g.save(); g.setTransform(R, 0, 0, R, 0, 0);
+  g.strokeStyle = 'rgba(160,150,190,.35)'; g.lineWidth = 1.5;
+  g.strokeRect(WIN.x + .75, WIN.y - .75, WIN.w - 1.5, WIN.h + 1.5);
+  g.textBaseline = 'alphabetic'; g.lineJoin = 'round';
+  g.font = '40px Creepster, Bungee, Impact, sans-serif'; g.textAlign = 'center';
+  g.lineWidth = 6; g.strokeStyle = '#000'; g.strokeText('FITA MALDITA', LW / 2 - 44, 152);
+  g.fillStyle = '#ff2a3d'; g.shadowColor = 'rgba(255,42,61,.55)'; g.shadowBlur = 12; g.fillText('FITA MALDITA', LW / 2 - 44, 152);
+  g.shadowBlur = 0;
+  g.font = '26px VT323, ui-monospace, monospace'; g.fillStyle = '#e9e4ef'; g.textAlign = 'left';
+  g.fillText('CÂMERA 02', LW / 2 + 78, 150);
+  g.restore();
+}
+
+function compose(f) {
+  const t = loopT(f), d = drawnOf(t);
+  drawScene(t, f);
+  const g = octx;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  const A = T.shake(d) * R;
+  const sx = (h2(d, 7) - .5) * 2 * A + (FX ? (h2(f, 1) - .5) * 2 * R : 0);
+  const sy = (h2(d, 8) - .5) * 2 * A + (FX ? (h2(f, 2) - .5) * 2 * R : 0);
+  const pad = 8 * R;
+  g.drawImage(scene, -pad + sx, -pad + sy, W + pad * 2, H + pad * 2);
+  if (FX) {
+    g.globalCompositeOperation = 'screen'; g.globalAlpha = .12;
+    g.drawImage(scene, -pad + sx + 4 * R, -pad + sy, W + pad * 2, H + pad * 2);
+    g.globalAlpha = 1;
+    g.globalCompositeOperation = 'lighter'; g.fillStyle = 'rgb(14,10,20)'; g.fillRect(0, 0, W, H);
+    g.globalCompositeOperation = 'source-over';
+    const by = ((f * 11) % (H / R + 300) - 150) * R;
+    if (by > 0 && by < H - 16 * R) {
+      g.drawImage(scene, 0, by, W, 14 * R, (h2(f, 3) - .2) * 16 * R, by, W, 14 * R);
+      for (let i = 0; i < 50; i++) { g.fillStyle = `rgba(255,255,255,${h2(f, 40 + i) * .35})`; g.fillRect(h2(f, 90 + i) * W, by + h2(f, 140 + i) * 14 * R, (6 + h2(f, 190 + i) * 30) * R, R); }
+    }
+    g.globalCompositeOperation = 'overlay'; g.globalAlpha = .26;
+    g.drawImage(grains[(hash(f) * grains.length) | 0], -h2(f, 4) * 40 * R, -h2(f, 5) * 40 * R, W + 40 * R, H + 40 * R);
+    g.globalAlpha = 1; g.globalCompositeOperation = 'source-over';
+    if (h2(f, 6) < .4) for (let i = 0; i < 1 + ((h2(f, 9) * 3) | 0); i++) { g.fillStyle = 'rgba(10,5,10,.75)'; g.beginPath(); g.ellipse(h2(f, 20 + i) * W, h2(f, 30 + i) * H, (1 + h2(f, 50 + i) * 2) * R, (1 + h2(f, 60 + i) * 1.5) * R, h2(f, 70 + i) * 3, 0, 7); g.fill(); }
+    if (h2(f, 11) < .1) { const x = h2(f, 12) * W; g.strokeStyle = 'rgba(255,250,240,.2)'; g.lineWidth = R; g.beginPath(); g.moveTo(x, 0); g.lineTo(x + (h2(f, 13) - .5) * 8 * R, H); g.stroke(); }
+    g.fillStyle = scan; g.fillRect(0, 0, W, H);
+    g.drawImage(vignette, 0, 0);
+    // OSD do videocassete (dentro da zona segura)
+    g.setTransform(R, 0, 0, R, 0, 0);
+    g.font = '24px VT323, ui-monospace, monospace'; g.textBaseline = 'top'; g.textAlign = 'left';
+    const osd = (txt, x, y, col = '#f4f4f4') => { g.fillStyle = 'rgba(0,0,0,.55)'; g.fillText(txt, x + 2, y + 2); g.fillStyle = col; g.fillText(txt, x, y); };
+    // OSD da câmera de segurança
+    const blink = Math.floor(f / 12) % 2 === 0;
+    if (LAST.black) {
+      g.textAlign = 'center'; g.font = '34px VT323, ui-monospace, monospace';
+      if (blink) osd('SEM SINAL', LW / 2, WIN.y + WIN.h / 2 - 16, '#ff3b3b');
+      g.font = '24px VT323, ui-monospace, monospace'; g.textAlign = 'left';
+    }
+    osd('CAM 0' + LAST.cam + (LAST.cam === 3 ? '  ESCADA' : '  CORREDOR 4º'), WIN.x + 16, WIN.y + 10);
+    g.textAlign = 'right';
+    if (blink) { g.fillStyle = '#ff2a2a'; g.beginPath(); g.arc(WIN.x + WIN.w - 70, WIN.y + 23, 6, 0, 7); g.fill(); }
+    osd('REC', WIN.x + WIN.w - 16, WIN.y + 10);
+    const secs = 3 * 3600 + 16 * 60 + 54 + Math.floor(t / FPS), hh = Math.floor(secs / 3600), mm = Math.floor(secs / 60) % 60, ss = secs % 60;
+    const clock = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
+    g.textAlign = 'left'; osd('21-11-2026  ' + clock, WIN.x + 16, WIN.y + WIN.h - 34, ss === 0 && mm === 17 ? '#ff3b3b' : '#f4f4f4');
+    if (!LAST.black && LAST.z > 1.08) { g.textAlign = 'right'; osd('ZOOM ' + LAST.z.toFixed(1) + 'x', WIN.x + WIN.w - 16, WIN.y + WIN.h - 34); }
+    g.textAlign = 'left';
+  }
+  drawFrame(g, t);
+  drawCaption(g, t);
+  if (SAFE && !EXPORT) {
+    g.setTransform(R, 0, 0, R, 0, 0);
+    g.fillStyle = 'rgba(255,42,61,.28)';
+    g.fillRect(0, 0, LW, 110); g.fillRect(0, 760, LW, 200); g.fillRect(470, 380, 70, 380);
+    g.strokeStyle = '#9fd8ff'; g.lineWidth = 1.5; g.setLineDash([6, 4]); g.strokeRect(WIN.x + 1, WIN.y, WIN.w - 2, WIN.h); g.setLineDash([]);
+    g.fillStyle = '#fff'; g.font = '20px VT323, monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('abas do TikTok', LW / 2, 60); g.fillText('legenda, @ e música', LW / 2, 860);
+    g.save(); g.translate(505, 570); g.rotate(-Math.PI / 2); g.fillText('botões', 0, 0); g.restore();
+  }
+}
+
+/* ============================================================
+   SOM: sintetizado no próprio código (sem direitos autorais)
+   ============================================================ */
+const SR = 44100;
+let AUDIO = null;
+function synth() {
+  if (AUDIO) return AUDIO;
+  const N = Math.round(L / FPS * SR), out = new Float32Array(N), Rn = rng(3330);
+  const sec = fr => fr / FPS;
+  const at = s => Math.round(s * SR);
+  const noise = () => Rn() * 2 - 1;
+  const env = (x, a, d) => (x < a ? x / a : Math.exp(-(x - a) * d));
+  const sat = x => Math.tanh(x);
+  // base: um leve chiado (para não ter silêncio digital) + drone grave que cresce até o fim
+  let lp2 = 0;
+  const droneAmp = s => s < 16 ? lerp(.03, .05, s / 16) : s < 23.2 ? lerp(.06, .13, (s - 16) / 7.2) : .02;
+  for (let i = 0; i < N; i++) {
+    const s = i / SR, n = noise(); lp2 += (n - lp2) * .02;
+    const a = droneAmp(s), lfo = .7 + .3 * Math.sin(2 * Math.PI * .21 * s);
+    out[i] = lp2 * .03 + (Math.sin(2 * Math.PI * 49 * s) + .8 * Math.sin(2 * Math.PI * 51.7 * s) + .35 * Math.sin(2 * Math.PI * 98.4 * s)) * a * lfo;
+  }
+  // efeitos reais (ElevenLabs), posicionados por scripts/sonorizar.py a partir de sons/valenca/efeitos.json
+  const SONS = window.SONS || null;
+  if (SONS) {
+    const bin = atob(SONS.pcm), s16 = new Int16Array(bin.length >> 1);
+    for (let i = 0; i < s16.length; i++) s16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
+    const ratio = SONS.sr / SR;
+    for (let i = 0; i < N; i++) {
+      const x = i * ratio, i0 = x | 0, fr = x - i0;
+      if (i0 + 1 < s16.length) out[i] += (s16[i0] * (1 - fr) + s16[i0 + 1] * fr) / 32768;
+    }
+  }
+  // 1) master da cena sozinha (sem vozes): saturação suave e um nível mais baixo,
+  //    para sobrar espaço para as vozes por cima
+  let peak = 0;
+  for (let i = 0; i < N; i++) { out[i] = sat(out[i] * 1.3); peak = Math.max(peak, Math.abs(out[i])); }
+  const BED = .5, gb = BED / (peak || 1);
+  for (let i = 0; i < N; i++) out[i] *= gb;
+  // 2) vozes por cima + ducking forte: a cena abaixa ~15 dB quando alguém fala
+  //    (menos durante a pancada do susto, que não pode ser abafada)
+  if (NARR) {
+    const bin = atob(NARR.pcm), n16 = new Int16Array(bin.length >> 1);
+    for (let i = 0; i < n16.length; i++) n16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
+    const ratio = NARR.sr / SR, VOICE = 1.3;
+    let env = 0;
+    for (let i = 0; i < N; i++) {
+      const x = i * ratio, i0 = x | 0, fr = x - i0;
+      const v = i0 + 1 < n16.length ? (n16[i0] * (1 - fr) + n16[i0 + 1] * fr) / 32768 : 0;
+      const a = Math.abs(v);
+      env = a > env ? env + (a - env) * .05 : env * .99995;
+      const maxDuck = .9;
+      out[i] = out[i] * (1 - Math.min(maxDuck, env * 12)) + v * VOICE;
+    }
+  }
+  // 3) limitador final (só age se algo passar do teto)
+  peak = 0;
+  for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(out[i]));
+  if (peak > .97) { const g = .97 / peak; for (let i = 0; i < N; i++) out[i] *= g; }
+  // micro fade no início/fim para o loop não estalar
+  for (let i = 0; i < 400; i++) { out[i] *= i / 400; out[N - 1 - i] *= i / 400; }
+  AUDIO = out; return out;
+}
+function wavBase64() {
+  const s = synth(), N = s.length, buf = new ArrayBuffer(44 + N * 2), v = new DataView(buf);
+  const str = (o, txt) => { for (let i = 0; i < txt.length; i++) v.setUint8(o + i, txt.charCodeAt(i)); };
+  str(0, 'RIFF'); v.setUint32(4, 36 + N * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, SR, true);
+  v.setUint32(28, SR * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, N * 2, true);
+  for (let i = 0; i < N; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, s[i])) * 32767, true);
+  const bytes = new Uint8Array(buf); let bin = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(bin);
+}
+
+/* ============================================================
+   FOLHA DE EXPOSIÇÃO
+   ============================================================ */
+const SECTIONS = [[0, 144, 'GANCHO'], [144, 240, 'BATIDAS'], [240, 384, 'NINGUÉM'], [384, 504, 'A PORTA ABRE'], [504, 557, 'ELE'], [557, 600, 'SEM SINAL']];
+const xs = document.getElementById('xs'), xctx = xs.getContext('2d');
+function drawXSheet(t) {
+  const dpr = window.devicePixelRatio || 1, w = xs.clientWidth, h = xs.clientHeight;
+  if (!w) return;
+  if (xs.width !== Math.round(w * dpr)) { xs.width = Math.round(w * dpr); xs.height = Math.round(h * dpr); }
+  const g = xctx; g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+  const cw = w / L, top = 6, ch = 24;
+  for (let fr = 0; fr < L;) {
+    const d = drawnOf(fr); let span = 1; while (fr + span < L && drawnOf(fr + span) === d) span++;
+    g.fillStyle = isOnes(d) ? '#ffb627' : '#9fd8ff'; g.globalAlpha = fr <= t && t < fr + span ? 1 : .5;
+    g.fillRect(fr * cw, top, Math.max(.6, span * cw - .6), ch);
+    if (isSmear(d)) { g.fillStyle = '#ff2a3d'; g.fillRect(fr * cw, top, Math.max(.6, span * cw - .6), 7); }
+    fr += span;
+  }
+  g.globalAlpha = 1; g.font = '15px VT323, ui-monospace, monospace'; g.textBaseline = 'top';
+  SECTIONS.forEach(([a, b, name]) => {
+    g.fillStyle = '#4a4058'; g.fillRect(a * cw, top + ch + 3, 1, 26);
+    g.fillStyle = '#9a90aa'; if ((b - a) * cw > g.measureText(name).width + 6) g.fillText(name, a * cw + 4, top + ch + 9);
+  });
+  g.fillStyle = '#fff'; g.fillRect(t * cw + cw / 2 - 1, 0, 2, h);
+}
+
+/* ============================================================
+   PLAYER (o som, quando ligado, é o relógio mestre)
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const ui = { play: $('play'), sound: $('sound'), back: $('back'), fwd: $('fwd'), fx: $('fx'), safe: $('safe'), frame: $('frameNum'), time: $('timeNum'), mode: $('mode'), label: $('playLabel'), icoPlay: $('icoPlay'), icoPause: $('icoPause') };
+let playing = false, soundOn = false, f = 0, acc = 0, last = null;
+let actx = null, src = null, audioStart = 0, audioFrame0 = 0;
+
+function render(n) {
+  f = n; compose(n);
+  if (EXPORT) return;
+  const t = loopT(n), d = drawnOf(t);
+  ui.frame.textContent = `QUADRO ${String(t + 1).padStart(3, '0')}/${L}`;
+  ui.time.textContent = `${(t / FPS).toFixed(1).replace('.', ',')} s`;
+  const ones = isOnes(t);
+  ui.mode.textContent = ones ? (isSmear(d) ? 'EM UM · 24 fps · SMEAR' : 'EM UM · 24 fps') : 'EM DOIS · 12 fps';
+  ui.mode.classList.toggle('ones', ones);
+  drawXSheet(t);
+}
+function stopAudio() { if (src) { try { src.stop(); } catch (e) {} src.disconnect(); src = null; } }
+function startAudio() {
+  stopAudio();
+  if (!soundOn || !playing) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const data = synth(), buf = actx.createBuffer(1, data.length, SR); buf.copyToChannel(data, 0);
+    src = actx.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(actx.destination);
+    audioFrame0 = f; audioStart = actx.currentTime;
+    src.start(0, loopT(f) / FPS);
+  } catch (e) { soundOn = false; updateSoundBtn(); }
+}
+function updateSoundBtn() { ui.sound.textContent = soundOn ? 'Som: ligado' : 'Som: desligado'; ui.sound.setAttribute('aria-pressed', String(soundOn)); ui.sound.classList.toggle('on', soundOn); }
+function setPlaying(p) {
+  playing = p; acc = 0; last = null;
+  ui.play.setAttribute('aria-pressed', String(p)); ui.label.textContent = p ? 'Pause' : 'Play';
+  ui.icoPlay.hidden = p; ui.icoPause.hidden = !p;
+  if (p) startAudio(); else stopAudio();
+}
+function loop(ts) {
+  if (playing) {
+    if (src && actx) {
+      const n = audioFrame0 + Math.floor((actx.currentTime - audioStart) * FPS);
+      if (n !== f) render(n);
+    } else {
+      if (last == null) last = ts;
+      let dt = ts - last; last = ts; if (dt > 250) dt = 1000 / FPS;
+      acc += dt; const step = 1000 / FPS; let adv = 0;
+      while (acc >= step) { acc -= step; adv++; }
+      if (adv) render(f + adv);
+    }
+  }
+  requestAnimationFrame(loop);
+}
+const seek = n => { setPlaying(false); render(((n % L) + L) % L); };
+ui.play.addEventListener('click', () => setPlaying(!playing));
+ui.sound.addEventListener('click', () => { soundOn = !soundOn; updateSoundBtn(); if (soundOn && !playing) setPlaying(true); else if (playing) startAudio(); });
+ui.back.addEventListener('click', () => seek(f - 1));
+ui.fwd.addEventListener('click', () => seek(f + 1));
+ui.fx.addEventListener('change', () => { FX = ui.fx.checked; render(f); });
+ui.safe.addEventListener('change', () => { SAFE = ui.safe.checked; render(f); });
+xs.addEventListener('click', e => { const r = xs.getBoundingClientRect(); seek(Math.floor((e.clientX - r.left) / r.width * L)); });
+xs.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { e.preventDefault(); seek(f + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); seek(f - 1); } });
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('button, input, canvas.xs')) return;
+  if (e.code === 'Space') { e.preventDefault(); setPlaying(!playing); }
+  if (e.code === 'ArrowRight') seek(f + 1);
+  if (e.code === 'ArrowLeft') seek(f - 1);
+});
+window.addEventListener('resize', () => drawXSheet(loopT(f)));
+
+window.RetroToon = {
+  ready: false, fps: FPS, loopFrames: L, width: W, height: H,
+  render: n => compose(n),
+  frameDataURL: (n, type = 'image/png', q) => { compose(n); return out.toDataURL(type, q); },
+  setFX: on => { FX = !!on; },
+  audioWAVBase64: () => wavBase64(),
+};
+
+const fontsReady = (document.fonts && document.fonts.load)
+  ? Promise.race([Promise.all(['30px VT323', '29px Bungee', '40px Creepster', '20px "Permanent Marker"'].map(s => document.fonts.load(s))), new Promise(r => setTimeout(r, 2500))])
+  : Promise.resolve();
+fontsReady.catch(() => {}).then(() => {
+  ROOM = paintRoom();
+  if (!EXPORT) { render(0); requestAnimationFrame(loop); setTimeout(() => { if (!matchMedia('(prefers-reduced-motion: reduce)').matches) setPlaying(true); }, 50); }
+  window.RetroToon.ready = true;
+});
+})();
+</script>
+</body>
+</html>
