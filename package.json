@@ -11,7 +11,8 @@
     "render:terror": "node export/render.mjs --page terror/index.html --loops 1 --out out/fita-maldita-333.mp4",
     "render:terror:3x": "node export/render.mjs --page terror/index.html --loops 3 --out out/fita-maldita-333-loop3.mp4",
     "narrar": "python3 scripts/narrar.py",
-    "render:parte2": "node export/render.mjs --page terror/parte2.html --loops 1 --out out/fita-maldita-parte2.mp4"
+    "render:parte2": "node export/render.mjs --page terror/parte2.html --loops 1 --out out/fita-maldita-parte2.mp4",
+    "render:valenca": "node export/render.mjs --page terror/valenca.html --loops 1 --out out/valenca-parte1.mp4"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
