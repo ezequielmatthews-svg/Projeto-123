@@ -325,8 +325,8 @@ const toWin = (x, y) => [(x - CAM.cx) * CAM.z + WCX, (y - CAM.cy) * CAM.z + WCY]
    ============================================================ */
 const KNOCKS = [48.0, 48.58, 49.12];   // casados com as batidas reais de sons/valenca/08-batidas.mp3
 const knockAmp = d => KNOCKS.reduce((s, k) => { const x = (d - sec(k)) / FPS; return s + (x >= 0 && x < .35 ? Math.exp(-x * 12) : 0); }, 0);
-const AVO_TALK = [[30.2, 34.8], [35.4, 40.8], [50.2, 55.8], [70.6, 75.6]];
-const RAFA_TALK = [[61.6, 63.6]];
+const AVO_TALK = [[29.9, 34.8], [34.9, 45.4], [51.9, 57.1], [70.6, 73.6]];
+const RAFA_TALK = [[60.5, 63.9]];
 const talking = (d, list) => list.some(([a, b]) => d >= sec(a) && d < sec(b));
 const T = {
   lookX:   track([[0,.25],[sec(56),.25],[sec(57.2),-1],[sec(60),-1],[sec(64),.95],[sec(70),.95],[sec(76),0],[sec(78.5),.95],[sec(80.5),0],[L,0]]),

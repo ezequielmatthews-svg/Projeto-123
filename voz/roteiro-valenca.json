@@ -1,0 +1,172 @@
+{
+  "episodio": "Fita Maldita · A Dívida dos Valença · Parte 1",
+  "frames": 2280,
+  "vozes": {
+    "tiago": "ElevenLabs · Antônio (Deep, Warm, Calm Storyteller) · eleven_v4",
+    "avo": "ElevenLabs · Sergio (Senior Brazilian voice) · eleven_v4",
+    "rafa": "ElevenLabs · Leandro · eleven_v4",
+    "coisa": "voz do avô (Sergio) + efeito imitacao"
+  },
+  "falas": [
+    {
+      "personagem": "tiago",
+      "inicio": 0.1,
+      "arquivo": "voz/elevenlabs/valenca/01-tiago.mp3",
+      "fala": "[nervous] Na família Valença, todo mundo morre aos trinta e três anos.",
+      "legenda": "NA FAMÍLIA VALENÇA, TODO MUNDO MORRE AOS *33*."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/02-tiago.mp3",
+      "fala": "[whispers] Hoje é o meu aniversário.",
+      "legenda": "HOJE É O MEU *ANIVERSÁRIO*."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 7.1,
+      "arquivo": "voz/elevenlabs/valenca/03-tiago.mp3",
+      "fala": "[softly] Meu bisavô. Meu avô. Meu pai. Todos com trinta e três.",
+      "legenda": "MEU BISAVÔ. MEU AVÔ. MEU PAI. TODOS COM *33*.",
+      "pausa_max": 0.45
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 12.1,
+      "arquivo": "voz/elevenlabs/valenca/04-tiago.mp3",
+      "fala": "[softly] Todos às três e trinta e três da manhã, no dia do aniversário.",
+      "legenda": "TODOS ÀS *3 E 33* DA MANHÃ, NO DIA DO ANIVERSÁRIO."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 16.1,
+      "arquivo": "voz/elevenlabs/valenca/05-tiago.mp3",
+      "fala": "[sad] Eu tinha nove anos quando vi meu pai esperando a hora chegar. Ele nem tentou fugir.",
+      "legenda": "EU TINHA NOVE ANOS QUANDO VI MEU PAI ESPERANDO A HORA CHEGAR. ELE *NEM TENTOU FUGIR*.",
+      "pausa_max": 0.35,
+      "tempo": 1.08
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 21.6,
+      "arquivo": "voz/elevenlabs/valenca/06-tiago.mp3",
+      "fala": "Mas a minha mãe guardou uma coisa. Uma fita. Do meu avô.",
+      "legenda": "MAS A MINHA MÃE GUARDOU UMA COISA. UMA *FITA*. DO MEU AVÔ.",
+      "pausa_max": 0.45
+    },
+    {
+      "personagem": "tiago",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/07-tiago.mp3",
+      "fala": "[nervous] Faltavam quarenta e dois minutos quando eu dei play.",
+      "legenda": "FALTAVAM *42 MINUTOS* QUANDO EU DEI PLAY.",
+      "limite": 29.9
+    },
+    {
+      "personagem": "avo",
+      "inicio": 29.85,
+      "arquivo": "voz/elevenlabs/valenca/08-avo.mp3",
+      "fala": "[serious] Se você está vendo isso, eu já morri. E você tem menos de uma hora.",
+      "legenda": "SE VOCÊ ESTÁ VENDO ISSO, EU JÁ MORRI. E VOCÊ TEM *MENOS DE UMA HORA*.",
+      "pausa_max": 0.4,
+      "tempo": 1.05
+    },
+    {
+      "personagem": "avo",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/09-avo.mp3",
+      "fala": "Não é doença. É uma DÍVIDA. Em 1953, o meu pai fez um trato pra família nunca mais passar fome.",
+      "legenda": "NÃO É DOENÇA. É UMA *DÍVIDA*. EM 1953, O MEU PAI FEZ UM TRATO PRA FAMÍLIA NUNCA MAIS PASSAR FOME.",
+      "pausa_max": 0.25,
+      "tempo": 1.15
+    },
+    {
+      "personagem": "avo",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/10-avo.mp3",
+      "fala": "[softly] E toda geração... um Valença paga.",
+      "legenda": "E TODA GERAÇÃO... UM VALENÇA *PAGA*.",
+      "pausa_max": 0.3,
+      "limite": 46.0,
+      "tempo": 1.05
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 46.0,
+      "arquivo": "voz/elevenlabs/valenca/11a-tiago.mp3",
+      "fala": "[whispers] Às três e vinte...",
+      "legenda": "ÀS *3 E 20*...",
+      "limite": 47.8,
+      "tempo": 1.1
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 49.4,
+      "arquivo": "voz/elevenlabs/valenca/11b-tiago.mp3",
+      "fala": "[whispers] ...alguém bateu na porta.",
+      "legenda": "ALGUÉM *BATEU* NA PORTA."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/12-tiago.mp3",
+      "fala": "[whispers] Três vezes.",
+      "legenda": "*TRÊS VEZES*."
+    },
+    {
+      "personagem": "avo",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/13-avo.mp3",
+      "fala": "[whispers] Tem um jeito de você não ir. Você pode... dar outro Valença no seu lugar.",
+      "legenda": "TEM UM JEITO DE VOCÊ NÃO IR. VOCÊ PODE... *DAR OUTRO VALENÇA* NO SEU LUGAR.",
+      "pausa_max": 0.4
+    },
+    {
+      "personagem": "tiago",
+      "inicio": "depois",
+      "arquivo": "voz/elevenlabs/valenca/14-tiago.mp3",
+      "fala": "[whispers] No sofá... o meu irmão dormia.",
+      "legenda": "NO SOFÁ... O MEU *IRMÃO* DORMIA.",
+      "pausa_max": 0.4
+    },
+    {
+      "personagem": "rafa",
+      "inicio": 60.5,
+      "arquivo": "voz/elevenlabs/valenca/15-rafa.mp3",
+      "fala": "[tired] Tiago? Que horas são?",
+      "legenda": "TIAGO? QUE HORAS SÃO?"
+    },
+    {
+      "personagem": "coisa",
+      "inicio": 64.6,
+      "arquivo": "voz/elevenlabs/valenca/16-coisa.mp3",
+      "fala": "[softly] Tiago... abre. Sou eu, o vô.",
+      "legenda": "TIAGO... ABRE. *SOU EU, O VÔ*.",
+      "efeito": "imitacao",
+      "limite": 69.9
+    },
+    {
+      "personagem": "avo",
+      "inicio": 70.6,
+      "arquivo": "voz/elevenlabs/valenca/17-avo.mp3",
+      "fala": "[serious] E não abra a porta. Não importa QUEM chame.",
+      "legenda": "E NÃO ABRA A PORTA. NÃO IMPORTA *QUEM* CHAME."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 76.1,
+      "arquivo": "voz/elevenlabs/valenca/18-tiago.mp3",
+      "fala": "[nervous] Faltavam dois minutos. E eu precisava escolher.",
+      "legenda": "FALTAVAM *DOIS MINUTOS*. E EU PRECISAVA ESCOLHER."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 82.3,
+      "arquivo": "voz/elevenlabs/valenca/19-tiago.mp3",
+      "fala": "Você entregava o seu irmão... ou abria a porta? Comenta. Você decide a parte dois.",
+      "legenda": "VOCÊ ENTREGAVA O SEU *IRMÃO*... OU ABRIA A *PORTA*? COMENTA!",
+      "pausa_max": 0.5,
+      "limite": 94.8
+    }
+  ]
+}
