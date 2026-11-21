@@ -130,6 +130,7 @@ code { font-family: var(--font-mono); color: var(--amber); }
   </div>
 </div>
 
+<script src="sons-valenca.js"></script>
 <script src="narracao-valenca.js"></script>
 <script>
 (() => {
@@ -322,7 +323,7 @@ const toWin = (x, y) => [(x - CAM.cx) * CAM.z + WCX, (y - CAM.cy) * CAM.z + WCY]
 /* ============================================================
    CURVAS E TEMPO
    ============================================================ */
-const KNOCKS = [48.0, 48.55, 49.1];
+const KNOCKS = [48.0, 48.58, 49.12];   // casados com as batidas reais de sons/valenca/08-batidas.mp3
 const knockAmp = d => KNOCKS.reduce((s, k) => { const x = (d - sec(k)) / FPS; return s + (x >= 0 && x < .35 ? Math.exp(-x * 12) : 0); }, 0);
 const AVO_TALK = [[30.2, 34.8], [35.4, 40.8], [50.2, 55.8], [70.6, 75.6]];
 const RAFA_TALK = [[61.6, 63.6]];
@@ -936,48 +937,25 @@ function synth() {
   const noise = () => Rn() * 2 - 1;
   const env = (x, a, d) => (x < a ? x / a : Math.exp(-(x - a) * d));
   const sat = x => Math.tanh(x);
-  const add = (start, dur, fn) => { const a = at(start), b = Math.min(N, at(start + dur)); for (let i = a; i < b; i++) out[i] += fn((i - a) / SR); };
-  const tapeOn = s => (s >= 30 && s < 41) || (s >= 50 && s < 56) || (s >= 70 && s < 76);
-  // ambiente: chiado de fita sempre, mais forte e com zumbido de 60 Hz quando é a fita do avô
-  let lp = 0, lp2 = 0;
+  // base: um leve chiado (para não ter silêncio digital) + drone grave que cresce até o fim
+  let lp2 = 0;
+  const droneAmp = s => s < 30 ? lerp(.02, .05, s / 30) : s < 64 ? .05 : s < 82 ? lerp(.06, .12, (s - 64) / 18) : .08 * Math.max(0, 1 - (s - 82) / 10);
   for (let i = 0; i < N; i++) {
-    const s = i / SR, n = noise(); lp += (n - lp) * .25; lp2 += (n - lp2) * .02;
-    let v = lp2 * .05 + lp * .01;
-    if (tapeOn(s)) v += (n - lp) * .05 + Math.sin(2 * Math.PI * 60 * s) * .02 + (Rn() < .003 ? noise() * 1.5 : 0) * .3;
-    if (s >= 70 && s < 70.45) v += (n - lp) * .35;   // a fita engasga
-    out[i] = v;
+    const s = i / SR, n = noise(); lp2 += (n - lp2) * .02;
+    const a = droneAmp(s), lfo = .7 + .3 * Math.sin(2 * Math.PI * .21 * s);
+    out[i] = lp2 * .03 + (Math.sin(2 * Math.PI * 49 * s) + .8 * Math.sin(2 * Math.PI * 51.7 * s) + .35 * Math.sin(2 * Math.PI * 98.4 * s)) * a * lfo;
   }
-  // tique-taque do relógio de parede: marca a contagem regressiva
-  for (let s = .5, k = 0; s < 95; s += 1, k++) {
-    if (tapeOn(s) || (s >= 16 && s < 21)) continue;
-    const loud = s >= 76 ? .3 : .16;
-    add(s, .05, x => Math.sin(2 * Math.PI * (k % 2 ? 2100 : 2600) * x) * env(x, .001, 70) * loud);
+  // efeitos reais (ElevenLabs), posicionados por scripts/sonorizar.py a partir de sons/valenca/efeitos.json
+  const SONS = window.SONS || null;
+  if (SONS) {
+    const bin = atob(SONS.pcm), s16 = new Int16Array(bin.length >> 1);
+    for (let i = 0; i < s16.length; i++) s16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
+    const ratio = SONS.sr / SR;
+    for (let i = 0; i < N; i++) {
+      const x = i * ratio, i0 = x | 0, fr = x - i0;
+      if (i0 + 1 < s16.length) out[i] += (s16[i0] * (1 - fr) + s16[i0 + 1] * fr) / 32768;
+    }
   }
-  // gancho: pancada grave no primeiro quadro
-  add(0, 1.2, x => Math.sin(2 * Math.PI * (55 * Math.exp(-x * 2) + 30) * x) * env(x, .003, 3) * .7);
-  // drone grave que cresce até o fim
-  const droneAmp = s => s < 30 ? lerp(.03, .07, s / 30) : s < 64 ? .07 : s < 82 ? lerp(.08, .16, (s - 64) / 18) : .1 * Math.max(0, 1 - (s - 82) / 13);
-  for (let i = 0; i < N; i++) {
-    const s = i / SR, a = droneAmp(s), lfo = .7 + .3 * Math.sin(2 * Math.PI * .21 * s);
-    out[i] += (Math.sin(2 * Math.PI * 49 * s) + .8 * Math.sin(2 * Math.PI * 51.7 * s) + .35 * Math.sin(2 * Math.PI * 98.4 * s)) * a * lfo;
-  }
-  // lembrança abafada (16–21 s): um zumbido distante
-  add(16, 5, x => Math.sin(2 * Math.PI * 220 * x) * .015 * Math.sin(Math.PI * x / 5));
-  // caixa arrastada no armário e videocassete engolindo a fita
-  let bx = 0; add(21.3, .9, x => { bx += (noise() - bx) * .08; return bx * Math.sin(Math.PI * x / .9) * .35; });
-  add(26.6, .18, x => Math.sin(2 * Math.PI * 140 * x) * env(x, .002, 25) * .5 + noise() * env(x, .001, 60) * .2);
-  add(26.9, 1.2, x => Math.sin(2 * Math.PI * (90 + 30 * x) * x) * .04 * Math.sin(Math.PI * x / 1.2));
-  // foto de 1953: o drone abre um acorde sombrio
-  add(41, 5, x => (Math.sin(2 * Math.PI * 110 * x) + Math.sin(2 * Math.PI * 116.5 * x)) * .025 * Math.sin(Math.PI * x / 5));
-  // três batidas na porta
-  KNOCKS.forEach(k => { add(k, .5, x => Math.sin(2 * Math.PI * (95 * Math.exp(-x * 6) + 60) * x) * env(x, .002, 14) * .9); add(k, .08, x => noise() * env(x, .001, 80) * .4); });
-  // coração quando o irmão acorda e a voz chama na porta (60–76 s)
-  const thump = (s0, amp) => add(s0, .35, x => Math.sin(2 * Math.PI * (48 + 50 * Math.exp(-x * 30)) * x) * env(x, .006, 13) * amp);
-  for (let s = 58, bpm = 70; s < 82; s += 60 / bpm, bpm = Math.min(150, bpm * 1.025)) { if (tapeOn(s)) continue; thump(s, .4); thump(s + .17, .25); }
-  // dedos arranhando o chão (78,5–80,5 s)
-  let sc = 0; add(78.5, 2, x => { sc += (noise() - sc) * .5; return sc * (.5 + .5 * Math.sin(2 * Math.PI * 9 * x)) * .12; });
-  // a escolha: o tique-taque fica alto e o grave some no último segundo
-  add(94.4, .6, x => Math.sin(2 * Math.PI * 41 * x) * env(x, .004, 4) * .4);
   // 1) master da cena sozinha (sem vozes): saturação suave e um nível mais baixo,
   //    para sobrar espaço para as vozes por cima
   let peak = 0;

@@ -1,0 +1,22 @@
+{
+  "episodio": "A Dívida dos Valença · Parte 1",
+  "duracao": 95,
+  "origem": "ElevenLabs · eleven_text_to_sound_v3 (uma versão de cada)",
+  "efeitos": [
+    { "arquivo": "03-casa-noite.mp3",   "trechos": [[0, 95]], "volume": -20, "fade": 0.6 },
+    { "arquivo": "02-relogio.mp3",      "trechos": [[0, 16], [21, 30], [41, 50], [56, 76]], "volume": -14 },
+    { "arquivo": "02-relogio.mp3",      "trechos": [[76, 92]], "volume": -8 },
+    { "arquivo": "01-pancada.mp3",      "inicio": 0.0,   "volume": -3 },
+    { "arquivo": "04-caixa.mp3",        "inicio": 21.2,  "volume": -8 },
+    { "arquivo": "05-videocassete.mp3", "inicio": 26.4,  "volume": -6 },
+    { "arquivo": "06-fita-vhs.mp3",     "trechos": [[30, 41], [50, 56], [70, 76]], "volume": -16, "fade": 0.2 },
+    { "arquivo": "07-fita-engasgo.mp3", "inicio": 69.95, "volume": -4 },
+    { "arquivo": "08-batidas.mp3",      "inicio": 47.72, "volume": -2 },
+    { "arquivo": "09-assoalho.mp3",     "inicio": 64.1,  "volume": -9 },
+    { "arquivo": "10-respiracao.mp3",   "inicio": 66.3,  "volume": -10 },
+    { "arquivo": "12-coracao.mp3",      "inicio": 58.0,  "volume": -14 },
+    { "arquivo": "12-coracao.mp3",      "inicio": 72.0,  "volume": -8 },
+    { "arquivo": "11-unhas.mp3",        "inicio": 78.5,  "volume": -7 },
+    { "arquivo": "13-relogio-para.mp3", "inicio": 92.0,  "volume": -2 }
+  ]
+}
