@@ -71,6 +71,8 @@ def vhs(src: Path, dst: Path, pitch: float, echo: bool):
 EFEITOS = {
     # a criatura imitando alguém: um pouco mais grave e com uma ondulação metálica sutil
     "imitacao": ["rubberband=pitch=0.93:formant=preserved", "flanger=delay=1.5:depth=2.5:regen=-20:width=55:speed=0.35"],
+    # a criatura de verdade: bem mais grave (formantes junto, voz "grande"), metálica e com um eco curto de corredor
+    "criatura": ["rubberband=pitch=0.8", "flanger=delay=2:depth=4:regen=-30:width=70:speed=0.25", "aecho=0.8:0.55:45|90:0.3|0.15"],
 }
 
 

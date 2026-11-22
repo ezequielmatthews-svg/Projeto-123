@@ -1,0 +1,58 @@
+{
+  "episodio": "Fita Maldita · A Câmera do Corredor (parte única)",
+  "frames": 600,
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio (Deep, Warm, Calm Storyteller) · eleven_v4, sussurrado",
+    "coisa": "ElevenLabs · Sergio · eleven_v4 + efeito criatura (mais grave, metálico, eco)"
+  },
+  "falas": [
+    {
+      "personagem": "narrador",
+      "inicio": 0.05,
+      "arquivo": "voz/elevenlabs/corredor/01-narrador.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.05,
+      "fala": "[whispers] Ninguém mora no 42. Mas toda noite, às três e dezessete... alguém bate.",
+      "legenda": "NINGUÉM MORA NO *42*. MAS TODA NOITE, ÀS *3H17*... ALGUÉM BATE.",
+      "limite": 6.0
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 8.1,
+      "arquivo": "voz/elevenlabs/corredor/02-narrador.mp3",
+      "fala": "[whispers] As batidas vêm de dentro.",
+      "legenda": "AS BATIDAS VÊM *DE DENTRO*.",
+      "limite": 10.3
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 10.7,
+      "arquivo": "voz/elevenlabs/corredor/03-narrador.mp3",
+      "pausa_max": 0.45,
+      "fala": "[whispers] A maçaneta girou... e parou.",
+      "legenda": "A MAÇANETA GIROU... *E PAROU*.",
+      "limite": 13.3
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 13.3,
+      "arquivo": "voz/elevenlabs/corredor/04-narrador.mp3",
+      "pausa_max": 0.45,
+      "fala": "[whispers] Eu moro no 41. E ontem... ela abriu.",
+      "legenda": "EU MORO NO 41. E ONTEM... *ELA ABRIU*.",
+      "limite": 16.9,
+      "tempo": 1.08
+    },
+    {
+      "personagem": "coisa",
+      "inicio": 20.9,
+      "arquivo": "voz/elevenlabs/corredor/05-coisa.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.12,
+      "efeito": "criatura",
+      "fala": "[raspy] Agora... é a sua porta.",
+      "legenda": "*AGORA... É A SUA PORTA.*",
+      "limite": 23.4
+    }
+  ]
+}

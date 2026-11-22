@@ -352,7 +352,7 @@ function bulbI(d) {
   if (d >= 384) return h2(d, 77) < .12 ? .3 : .8;
   return h2(d, 78) < .03 ? .5 : 1;
 }
-const TALK = [[21.35, 22.55]];
+const TALK = [[20.95, 22.95]];
 const talking = d => TALK.some(([a, b]) => d >= sec(a) && d < sec(b));
 const isSmear = d => d === 491 || d === 492;
 const T = {
@@ -1050,7 +1050,7 @@ function synth() {
   // 1) master da cena sozinha (sem vozes), um nível abaixo para sobrar espaço para as vozes
   let peak = 0;
   for (let i = 0; i < N; i++) { Lc[i] = sat(Lc[i] * 1.3); Rc[i] = sat(Rc[i] * 1.3); peak = Math.max(peak, Math.abs(Lc[i]), Math.abs(Rc[i])); }
-  const gb = .5 / (peak || 1);
+  const gb = .8 / (peak || 1);   // batidas e sustos fortes: vídeo curto pede impacto
   for (let i = 0; i < N; i++) { Lc[i] *= gb; Rc[i] *= gb; }
   // 2) vozes no centro + ducking forte da cena
   if (NARR) {
@@ -1062,7 +1062,7 @@ function synth() {
       const x = i * ratio, i0 = x | 0, fr = x - i0;
       const v = i0 + 1 < n16.length ? (n16[i0] * (1 - fr) + n16[i0 + 1] * fr) / 32768 : 0;
       const a = Math.abs(v);
-      env = a > env ? env + (a - env) * .05 : env * .99995;
+      env = a > env ? env + (a - env) * .05 : env * .9998;   // solta rápido: a batida logo depois da fala não fica abafada
       const k = 1 - Math.min(.9, env * 12);
       Lc[i] = Lc[i] * k + v * VOICE; Rc[i] = Rc[i] * k + v * VOICE;
     }
