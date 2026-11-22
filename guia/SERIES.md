@@ -76,9 +76,23 @@ npm run render:<série>        # MP4 em out/
 
 ---
 
-## 2. A Batida das 3h17 (série do Mateus) — feita fora deste projeto
+## 2. A Batida das 3h17 / Prédio 42 (série do Mateus)
 
-> As 3 partes foram produzidas em outra ferramenta (estilo 2.5D mais realista). Registro feito assistindo os vídeos pelo vidIQ.
+> As Partes 1–3 foram produzidas em outra ferramenta (cenas procedurais em PIL/numpy, estilo mais realista). O briefing completo está em [`briefing-serie-a-batida-das-3h17.pdf`](briefing-serie-a-batida-das-3h17.pdf). A partir da "Câmera do Corredor", a série continua no nosso motor como **Prédio 42**.
+
+### Regras de escrita da série (pedidas pelo usuário — obrigatórias)
+- **Quem está do lado de fora fala "a gente", nunca "eles".**
+- **A Dona Célia é a única que vê o Mateus,** porque olha pelo olho mágico há 11 anos. **Quem olha dá rosto a quem está de fora.**
+- **Proibido clichê de IA:** "mal sabia ele que…", "uma aura de mistério", "gelo percorreu sua espinha", "tudo era um sonho".
+- **Medo pela tensão, mais que pelo susto:** detalhes sensoriais (mofo, ferro, terra molhada, cheiro doce enjoativo, sons abafados, frio), personagens humanos com falhas, começo quase banal, primeiro sinal estranho que o personagem tenta explicar, **final ambíguo, sem explicar o sobrenatural**.
+- **Narração:** Antônio (`oQtRiHTYSl1XeCm4tuUw`), `eleven_v4`, tags `[softly]`, `[whispers]`, `[pause]`, `[long pause]`, números por extenso. **A última frase termina em vírgula ou dois-pontos** para a entonação não fechar e o loop emendar.
+- **Processo:** versão muda (vídeo + legendas) → aprovação → narração (avisar o custo, 1 take) → alinhar e montar.
+- **No TikTok, marcar o conteúdo como gerado por IA.**
+- **Legenda queimada:** até 3 palavras ou 17 caracteres por bloco, no mínimo 0,45 s na tela, palavras-chave em vermelho `#FF3C3C`.
+- **Postagem:** 18h–21h, pergunta que divide opiniões, responder comentários na primeira hora.
+
+### Números (20/11, do briefing)
+Parte 1: 140 views (10% curtidas/view) · Parte 2: 57 (7%) · Parte 3: 77 (6,5%) — depois chegou a 119 e foi o melhor do canal em retenção.
 
 ### História até agora
 - **Parte 1** (88 s): o Mateus se muda para o **apartamento 42** em março. O prédio é antigo e o andar está vazio. Toda noite, **às 3h17, três batidas** na porta, e pelo olho mágico não aparece ninguém. Ele instala uma câmera no corredor: a imagem mostra o corredor vazio, mas **o áudio grava as batidas vindo de dentro do apartamento**. Uma noite, pelo olho mágico, ele vê um homem pálido **com o rosto dele**. Abre a porta. O sósia sorri, diz "Obrigado por abrir", entra e tranca a porta por dentro. "Agora são 3h16. Vou bater três vezes. Se você ouvir… não abra." Pergunta final: *Você abriria?*
@@ -101,6 +115,15 @@ npm run render:<série>        # MP4 em out/
 
 ### Estilo (das partes originais)
 2.5D sombrio: corredor esverdeado e simétrico, olho mágico com lente olho de peixe, câmera de segurança (CAM 02, REC, hora na tela), rostos apagados, granulado de filme. Títulos com "PARTE X" em vermelho.
+
+### Detalhes de produção das Partes 1–3 (para manter a continuidade)
+- **Parte 1:** cenas na ordem corredor → porta com luz por baixo → olho mágico vazio → câmera de segurança verde ("CAM 02 03:17:xx", REC) → sala/sofá → olho mágico com o homem → close do homem (rosto pálido, olhos pretos, sorriso fino) → porta escura. Sons: batidas distantes nas semanas 1 e 2, batidas próximas na câmera, batidas fortes no sofá, tranca e corrente, coração grave nos últimos 25 s.
+- **Parte 2:** piso de **cerâmica bege**, frio que não passa. A **luz amarela** da sala acende pelo vão da porta, vem o **cheiro de café queimado nas bordas** ("do jeito que a minha mãe dizia que era errado"). Ele saiu com "a minha jaqueta e a minha pressa". A Dona Célia rega o vaso e espera o **barulho do portão** lá embaixo antes de virar a cabeça.
+- **Parte 3:** o apto da Dona Célia cheira a **cera e remédio velho**. **Fotos do marido** com a parte de baixo do rosto gasta de tanto passarem o dedo; os olhos das fotos acompanham a câmera. Relógio parado em **3:16**, xícara com vapor. Easter egg: 4 quadros com o rosto do marido inteiro. Termina em vírgula: "E eu entendi por que, no prédio inteiro," → emenda em "só uma pessoa ainda me enxerga."
+- **Partes 4–6:** roteiros atmosféricos escritos antes, nunca produzidos. **Final da série não decidido.**
+
+### História curta aprovada (não produzida): "A regra das 3h16" (~38 s)
+Narrador Rafael. "Se o celular tocar às 3h16, não atenda. Minha mãe me ensinou isso aos sete anos. Nunca disse o porquê. Ontem acordei com o quarto cheirando a terra molhada. O celular vibrava na mesinha de madeira. Na tela, o nome de quem ligava. Rafael. O meu. Eu atendi. Do outro lado, tinha chuva, e alguém respirando devagar. No meu ritmo. Aí a minha própria voz disse, bem baixinho: 'Fica quieto. Ele ainda não sabe que você acordou.' Atrás de mim, o colchão afundou devagar, como alguém que se senta com cuidado pra não me acordar. Agora eu sei por que a minha mãe dizia:" → emenda em "Se o celular tocar às 3h16…". Legenda: "Minha mãe sempre me avisou. Você atenderia? 📱 Manda pra quem dorme com o celular do lado." Comentário fixado: "Qual regra da sua família você nunca entendeu? 👇"
 
 ### Ideia registrada para a Parte 4 (não produzida)
 "Ela escolheu o marido." Em cada apartamento, alguém atrás do olho mágico mantém o rosto de alguém. O Mateus começa a sumir e bate na própria porta, a do 42. O olho mágico abre e um olho igual ao dele olha de volta: "Eu olho por você, Mateus. Mas amanhã… você bate na porta de outro."
