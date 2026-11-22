@@ -1022,39 +1022,37 @@ const SR = 44100;
 let AUDIO = null;
 function synth() {
   if (AUDIO) return AUDIO;
-  const N = Math.round(L / FPS * SR), out = new Float32Array(N), Rn = rng(3330);
-  const sec = fr => fr / FPS;
-  const at = s => Math.round(s * SR);
-  const noise = () => Rn() * 2 - 1;
-  const env = (x, a, d) => (x < a ? x / a : Math.exp(-(x - a) * d));
+  const N = Math.round(L / FPS * SR), Lc = new Float32Array(N), Rc = new Float32Array(N), Rn = rng(3330);
   const sat = x => Math.tanh(x);
-  // base: um leve chiado (para não ter silêncio digital) + drone grave que cresce até o fim
+  // base: chiado leve + zumbido grave que cresce até o avanço final
   let lp2 = 0;
   const droneAmp = s => s < 16 ? lerp(.03, .05, s / 16) : s < 23.2 ? lerp(.06, .13, (s - 16) / 7.2) : .02;
   for (let i = 0; i < N; i++) {
-    const s = i / SR, n = noise(); lp2 += (n - lp2) * .02;
+    const s = i / SR, n = Rn() * 2 - 1; lp2 += (n - lp2) * .02;
     const a = droneAmp(s), lfo = .7 + .3 * Math.sin(2 * Math.PI * .21 * s);
-    out[i] = lp2 * .03 + (Math.sin(2 * Math.PI * 49 * s) + .8 * Math.sin(2 * Math.PI * 51.7 * s) + .35 * Math.sin(2 * Math.PI * 98.4 * s)) * a * lfo;
+    const v = lp2 * .03 + (Math.sin(2 * Math.PI * 49 * s) + .8 * Math.sin(2 * Math.PI * 51.7 * s) + .35 * Math.sin(2 * Math.PI * 98.4 * s)) * a * lfo;
+    Lc[i] = v; Rc[i] = v;
   }
-  // efeitos reais (ElevenLabs), posicionados por scripts/sonorizar.py a partir de sons/valenca/efeitos.json
+  // efeitos reais (ElevenLabs), posicionados por scripts/sonorizar.py (estéreo quando há pan)
   const SONS = window.SONS || null;
   if (SONS) {
-    const bin = atob(SONS.pcm), s16 = new Int16Array(bin.length >> 1);
+    const bin = atob(SONS.pcm), s16 = new Int16Array(bin.length >> 1), ch = SONS.ch || 1;
     for (let i = 0; i < s16.length; i++) s16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
-    const ratio = SONS.sr / SR;
+    const frames = s16.length / ch, ratio = SONS.sr / SR;
     for (let i = 0; i < N; i++) {
       const x = i * ratio, i0 = x | 0, fr = x - i0;
-      if (i0 + 1 < s16.length) out[i] += (s16[i0] * (1 - fr) + s16[i0 + 1] * fr) / 32768;
+      if (i0 + 1 >= frames) break;
+      const l = (s16[i0 * ch] * (1 - fr) + s16[(i0 + 1) * ch] * fr) / 32768;
+      const r = ch === 2 ? (s16[i0 * 2 + 1] * (1 - fr) + s16[(i0 + 1) * 2 + 1] * fr) / 32768 : l;
+      Lc[i] += l; Rc[i] += r;
     }
   }
-  // 1) master da cena sozinha (sem vozes): saturação suave e um nível mais baixo,
-  //    para sobrar espaço para as vozes por cima
+  // 1) master da cena sozinha (sem vozes), um nível abaixo para sobrar espaço para as vozes
   let peak = 0;
-  for (let i = 0; i < N; i++) { out[i] = sat(out[i] * 1.3); peak = Math.max(peak, Math.abs(out[i])); }
-  const BED = .5, gb = BED / (peak || 1);
-  for (let i = 0; i < N; i++) out[i] *= gb;
-  // 2) vozes por cima + ducking forte: a cena abaixa ~15 dB quando alguém fala
-  //    (menos durante a pancada do susto, que não pode ser abafada)
+  for (let i = 0; i < N; i++) { Lc[i] = sat(Lc[i] * 1.3); Rc[i] = sat(Rc[i] * 1.3); peak = Math.max(peak, Math.abs(Lc[i]), Math.abs(Rc[i])); }
+  const gb = .5 / (peak || 1);
+  for (let i = 0; i < N; i++) { Lc[i] *= gb; Rc[i] *= gb; }
+  // 2) vozes no centro + ducking forte da cena
   if (NARR) {
     const bin = atob(NARR.pcm), n16 = new Int16Array(bin.length >> 1);
     for (let i = 0; i < n16.length; i++) n16[i] = (bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8)) << 16 >> 16;
@@ -1065,25 +1063,24 @@ function synth() {
       const v = i0 + 1 < n16.length ? (n16[i0] * (1 - fr) + n16[i0 + 1] * fr) / 32768 : 0;
       const a = Math.abs(v);
       env = a > env ? env + (a - env) * .05 : env * .99995;
-      const maxDuck = .9;
-      out[i] = out[i] * (1 - Math.min(maxDuck, env * 12)) + v * VOICE;
+      const k = 1 - Math.min(.9, env * 12);
+      Lc[i] = Lc[i] * k + v * VOICE; Rc[i] = Rc[i] * k + v * VOICE;
     }
   }
-  // 3) limitador final (só age se algo passar do teto)
+  // 3) limitador final + micro fade para o loop não estalar
   peak = 0;
-  for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(out[i]));
-  if (peak > .97) { const g = .97 / peak; for (let i = 0; i < N; i++) out[i] *= g; }
-  // micro fade no início/fim para o loop não estalar
-  for (let i = 0; i < 400; i++) { out[i] *= i / 400; out[N - 1 - i] *= i / 400; }
-  AUDIO = out; return out;
+  for (let i = 0; i < N; i++) peak = Math.max(peak, Math.abs(Lc[i]), Math.abs(Rc[i]));
+  if (peak > .97) { const g = .97 / peak; for (let i = 0; i < N; i++) { Lc[i] *= g; Rc[i] *= g; } }
+  for (let i = 0; i < 400; i++) { const k = i / 400; Lc[i] *= k; Rc[i] *= k; Lc[N - 1 - i] *= k; Rc[N - 1 - i] *= k; }
+  AUDIO = [Lc, Rc]; return AUDIO;
 }
 function wavBase64() {
-  const s = synth(), N = s.length, buf = new ArrayBuffer(44 + N * 2), v = new DataView(buf);
+  const [Lc, Rc] = synth(), N = Lc.length, buf = new ArrayBuffer(44 + N * 4), v = new DataView(buf);
   const str = (o, txt) => { for (let i = 0; i < txt.length; i++) v.setUint8(o + i, txt.charCodeAt(i)); };
-  str(0, 'RIFF'); v.setUint32(4, 36 + N * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
-  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, SR, true);
-  v.setUint32(28, SR * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, N * 2, true);
-  for (let i = 0; i < N; i++) v.setInt16(44 + i * 2, Math.max(-1, Math.min(1, s[i])) * 32767, true);
+  str(0, 'RIFF'); v.setUint32(4, 36 + N * 4, true); str(8, 'WAVE'); str(12, 'fmt ');
+  v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 2, true); v.setUint32(24, SR, true);
+  v.setUint32(28, SR * 4, true); v.setUint16(32, 4, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, N * 4, true);
+  for (let i = 0; i < N; i++) { v.setInt16(44 + i * 4, Math.max(-1, Math.min(1, Lc[i])) * 32767, true); v.setInt16(46 + i * 4, Math.max(-1, Math.min(1, Rc[i])) * 32767, true); }
   const bytes = new Uint8Array(buf); let bin = '';
   for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
   return btoa(bin);
@@ -1141,7 +1138,7 @@ function startAudio() {
   try {
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if (actx.state === 'suspended') actx.resume();
-    const data = synth(), buf = actx.createBuffer(1, data.length, SR); buf.copyToChannel(data, 0);
+    const [dl, dr] = synth(), buf = actx.createBuffer(2, dl.length, SR); buf.copyToChannel(dl, 0); buf.copyToChannel(dr, 1);
     src = actx.createBufferSource(); src.buffer = buf; src.loop = true; src.connect(actx.destination);
     audioFrame0 = f; audioStart = actx.currentTime;
     src.start(0, loopT(f) / FPS);

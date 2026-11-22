@@ -1,0 +1,24 @@
+{
+  "episodio": "A Câmera do Corredor (parte única)",
+  "duracao": 25,
+  "origem": "ElevenLabs · eleven_text_to_sound_v3 (uma versão de cada); 11–14 reaproveitados de sons/valenca",
+  "efeitos": [
+    { "arquivo": "12-noite.mp3",       "trechos": [[0, 23.2], [24.75, 25]], "volume": -22, "fade": 0.05 },
+    { "arquivo": "02-zumbido.mp3",     "trechos": [[0, 23.2], [24.75, 25]], "volume": -18, "fade": 0.05 },
+    { "arquivo": "01-lampada.mp3",     "inicio": 0.0,   "volume": -2 },
+    { "arquivo": "01-lampada.mp3",     "inicio": 0.16,  "volume": -5 },
+    { "arquivo": "11-batidas.mp3",     "inicio": 5.72,  "volume": 0 },
+    { "arquivo": "10-olho-magico.mp3", "inicio": 6.95,  "volume": -5 },
+    { "arquivo": "05-passos.mp3",      "trechos": [[7.95, 9.85]], "volume": -5, "fade": 0.05 },
+    { "arquivo": "04-macaneta.mp3",    "inicio": 10.1,  "volume": -3 },
+    { "arquivo": "14-coracao.mp3",     "inicio": 12.9,  "volume": -16 },
+    { "arquivo": "03-porta-range.mp3", "inicio": 15.6,  "volume": -2 },
+    { "arquivo": "06-dedos.mp3",       "inicio": 17.45, "volume": -5 },
+    { "arquivo": "07-ossos.mp3",       "inicio": 18.7,  "volume": -4 },
+    { "arquivo": "13-respiracao.mp3",  "inicio": 20.2,  "volume": -12 },
+    { "arquivo": "08-susto.mp3",       "inicio": 22.0,  "volume": 0 },
+    { "arquivo": "09-sem-sinal.mp3",   "inicio": 23.2,  "volume": -4 },
+    { "arquivo": "11-batidas.mp3",     "inicio": 23.30, "volume": 1, "pan": -0.85 },
+    { "arquivo": "01-lampada.mp3",     "inicio": 24.75, "volume": -6 }
+  ]
+}
