@@ -1,0 +1,19 @@
+{
+  "episodio": "Prédio 42 · Quem Olha Por Você",
+  "duracao": 37,
+  "efeitos": [
+    { "arquivo": "../corredor/12-noite.mp3",   "trechos": [[0, 37]], "volume": -22, "fade": 0.05 },
+    { "arquivo": "../corredor/02-zumbido.mp3", "trechos": [[0, 37]], "volume": -18, "fade": 0.05 },
+    { "arquivo": "../corredor/01-lampada.mp3", "inicio": 0.0,  "volume": -3 },
+    { "arquivo": "../corredor/05-passos.mp3",  "trechos": [[3.5, 7.6]], "volume": -12, "fade": 0.2 },
+    { "arquivo": "../corredor/09-sem-sinal.mp3", "inicio": 5.5, "volume": -15 },
+    { "arquivo": "../corredor/14-coracao.mp3", "inicio": 12.0, "volume": -17 },
+    { "arquivo": "17-tampinha.mp3",            "inicio": 19.45, "volume": 0 },
+    { "arquivo": "18-passos-descalco.mp3",     "inicio": 24.9, "volume": -6 },
+    { "arquivo": "../corredor/11-batidas.mp3", "inicio": 26.32, "volume": 4 },
+    { "arquivo": "../corredor/10-olho-magico.mp3", "inicio": 28.4, "volume": -4 },
+    { "arquivo": "../corredor/13-respiracao.mp3", "inicio": 31.4, "volume": -12 },
+    { "arquivo": "../corredor/11-batidas.mp3", "inicio": 35.0, "volume": 6, "pan": -0.85 },
+    { "arquivo": "../corredor/01-lampada.mp3", "inicio": 36.75, "volume": -6 }
+  ]
+}

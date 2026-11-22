@@ -148,7 +148,7 @@ const WIN = { x: 0, y: 165, w: 540, h: 520 };  // janela quase quadrada: imagem 
 const FPS = 24, L = 888;   // 37.0 s (o fim emenda no começo)
 const BGS = EXPORT ? 5 : 3;                   // resolução da pintura de fundo (para os closes)
 const INK = '#120d16';
-const ONES = [[0, 14], [418, 432], [620, 660], [672, 696], [840, 888]];
+const ONES = [[0, 14], [470, 480], [636, 672], [688, 704], [840, 888]];
 const isOnes = t => ONES.some(([a, b]) => t >= a && t <= b);
 const loopT = f => ((f % L) + L) % L;
 const drawnOf = t => (isOnes(t) ? t : t - (t % 2));
@@ -322,9 +322,9 @@ const toWin = (x, y) => [(x - CAM.cx) * CAM.z + WCX, (y - CAM.cy) * CAM.z + WCY]
 /* ============================================================
    CURVAS E TEMPO
    ============================================================ */
-const KNOCKS = [26.0, 26.58, 27.12];        // batidas na porta 42 (casadas com sons/valenca/08-batidas.mp3)
+const KNOCKS = [26.6, 27.18, 27.72];        // batidas na porta 42 (casadas com sons/valenca/08-batidas.mp3)
 const KNOCKS2 = [35.28, 35.86, 36.40];
-const CLOCK0 = 3 * 3600 + 16 * 60 + 34, BULGE_K = .35;   // batidas finais, "atrás de você" (emendam no começo)
+const CLOCK0 = 3 * 3600 + 16 * 60 + 33, BULGE_K = .35;   // batidas finais, "atrás de você" (emendam no começo)
 const KF = KNOCKS.map(sec), KF2 = KNOCKS2.map(sec);
 // a porta "incha" a cada batida (vem de DENTRO do apartamento):
 // antecipação (puxa 2 quadros pra dentro), estica pra fora, passa do ponto e treme até assentar
@@ -839,21 +839,21 @@ const MATEUS = { coat: HOOD, coatSh: HOODSH, skin: MSKIN, skinSh: MSKINSH, hair:
 // onde o Mateus está em cada momento (no mundo do corredor)
 function mateusAt(d) {
   const t = d / FPS;
-  if (t < 14) return { X: .02, Z: 2.0, alpha: .5 };
-  if (t < 24) return { X: .62, Z: 1.62, alpha: .5, back: true };
-  const k = Math.min(1, (t - 24) / 1.9);
-  return { X: lerp(.32, 0, E.io(k)), Z: lerp(1.9, 2.42, E.io(k)), alpha: .5, back: true, walk: k < 1 ? t * 9 : 0, knock: Math.min(1, knockAmp(d) * 1.4) + (t > 25.6 && t < 27.6 ? .25 : 0), erase: 1 };
+  if (t < 15.4) return { X: .02, Z: 2.0, alpha: .5 };
+  if (t < 25) return { X: .62, Z: 1.62, alpha: .5, back: true };
+  const k = Math.min(1, (t - 25) / 1.5);
+  return { X: lerp(.32, 0, E.io(k)), Z: lerp(1.9, 2.42, E.io(k)), alpha: .5, back: true, walk: k < 1 ? t * 9 : 0, knock: Math.min(1, knockAmp(d) * 1.4) + (t > 26.4 && t < 28.2 ? .25 : 0), erase: 1 };
 }
 function quemExtra(d, pass) {
   if (pass !== 'base') return;
   const t = d / FPS;
   // a vizinha passa atravessando o Mateus (3–7 s)
-  if (t >= 3 && t < 7.2) {
-    const k = (t - 3) / 4.2;
+  if (t >= 3.4 && t < 7.8) {
+    const k = (t - 3.4) / 4.4;
     drawPessoa(lerp(-.95, .95, k), 2.0, { coat: '#6b4d52', coatSh: '#53393e', skin: '#d9b9a0', skinSh: '#b8957c', hair: '#3a2c22', legs: '#3b3030', dress: true, bun: true, walk: t * 8, h: .95 }, 200);
   }
   // o marido da Dona Célia, de chapéu, diante do 44 (14–24 s)
-  if (t >= 14 && t < 24) drawPessoa(.8, 1.58, { coat: '#1c1d19', coatSh: '#131410', skin: '#9a9a8c', skinSh: '#7c7c70', hair: '#9a9a90', legs: '#1c1d19', back: true, hat: true, alpha: .62, ghost: true, h: .98 }, 230);
+  if (t >= 15.4 && t < 25) drawPessoa(.8, 1.58, { coat: '#1c1d19', coatSh: '#131410', skin: '#9a9a8c', skinSh: '#7c7c70', hair: '#9a9a90', legs: '#1c1d19', back: true, hat: true, alpha: .62, ghost: true, h: .98 }, 230);
   const m = mateusAt(d);
   if (t < 32) drawPessoa(m.X, m.Z, Object.assign({}, MATEUS, { alpha: m.alpha * (bulbI(d) < .2 ? 1.6 : 1), ghost: true, back: m.back, walk: m.walk, knock: m.knock, erase: m.erase || 0 }), 260);
 }
@@ -899,7 +899,7 @@ function drawOlhoV(d, f, o, pass) {
 // rosto do Mateus em close: some como se fosse apagado com borracha
 function drawRosto(d, f, o, pass) {
   const t = d / FPS;
-  const eyesE = o.erase ? Math.max(0, Math.min(1, (t - 19.6) / 1.6)) : 0, mouthE = o.erase ? Math.max(0, Math.min(1, (t - 21.8) / 1.4)) : 0;
+  const eyesE = o.erase ? Math.max(0, Math.min(1, (t - 21.5) / 1.3)) : 0, mouthE = o.erase ? Math.max(0, Math.min(1, (t - 23.5) / 1.1)) : 0;
   const cx = 270, cy = 215, rx = 118, ry = 150;
   if (pass === 'base') {
     rect(-140, -160, 820, 730, '#5f6259');
@@ -940,15 +940,15 @@ ENVS.olhoV = drawOlhoV; ENVS.rosto = drawRosto;
    ============================================================ */
 const S = (a, b, env, cam, o = {}) => ({ a: sec(a), b: sec(b), env, cam, o });
 const SHOTS = [
-  S(0, 3, 'corredor', [1.35, 270, 190, 1.5, 270, 192], { extra: quemExtra }),
-  S(3, 7, 'corredor', [1.5, 270, 192, 1.62, 270, 194], { extra: quemExtra }),
-  S(7, 11, 'olhoV', [1.0, 270, 202.5, 1.25, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', grain: 410 }),
-  S(11, 14, 'rosto', [1.0, 270, 215, 1.1, 270, 210], { cine: 1 }),
-  S(14, 17, 'corredor', [1.9, 400, 190, 2.1, 410, 192], { extra: quemExtra }),
-  S(17, 19, 'olhoV', [1.3, 270, 200, 1.4, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', flapClose: 17.6, grain: 410 }),
-  S(19, 24, 'rosto', [1.1, 270, 210, 1.35, 270, 205], { cine: 1, erase: 1 }),
-  S(24, 28, 'corredor', [1.5, 270, 196, 1.9, 270, 198], { extra: quemExtra }),
-  S(28, 32, 'olhoV', [1.15, 270, 200, 1.4, 270, 200], { cine: 1, iris: '#5a3d2a', num: '42', flapOpen: 28.2, eyeIn: 28.5, blinkAt: 30.4, grain: 420 }),
+  S(0, 3.4, 'corredor', [1.35, 270, 190, 1.5, 270, 192], { extra: quemExtra }),
+  S(3.4, 7.8, 'corredor', [1.5, 270, 192, 1.62, 270, 194], { extra: quemExtra }),
+  S(7.8, 12.0, 'olhoV', [1.0, 270, 202.5, 1.25, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', grain: 410 }),
+  S(12.0, 15.4, 'rosto', [1.0, 270, 215, 1.1, 270, 210], { cine: 1 }),
+  S(15.4, 17.8, 'corredor', [1.9, 400, 190, 2.1, 410, 192], { extra: quemExtra }),
+  S(17.8, 20.5, 'olhoV', [1.3, 270, 200, 1.45, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', flapClose: 19.7, grain: 410 }),
+  S(20.5, 25, 'rosto', [1.1, 270, 210, 1.35, 270, 205], { cine: 1, erase: 1 }),
+  S(25, 28.5, 'corredor', [1.5, 270, 196, 1.9, 270, 198], { extra: quemExtra }),
+  S(28.5, 32, 'olhoV', [1.15, 270, 200, 1.4, 270, 200], { cine: 1, iris: '#5a3d2a', num: '42', flapOpen: 28.7, eyeIn: 29.0, blinkAt: 30.9, grain: 420 }),
   S(32, 36.75, 'corredor', [1.35, 270, 190, 1.42, 270, 190], { extra: quemExtra }),
   S(36.75, 37, 'corredor', [1.35, 270, 190, 1.35, 270, 190], { extra: quemExtra, loop: 1 }),
 ];
@@ -1041,8 +1041,8 @@ function drawCaption(g, t) {
   let on = false; text.split(' ').forEach((w, i) => { const st = w.startsWith('*'), en = w.endsWith('*') || w.replace(/[.?!,]+$/, '').endsWith('*'); if (st) on = true; words[i].hot = on; if (en) on = false; });
   // como nos virais: blocos curtos (até 4 palavras) trocando no ritmo da fala
   let ws = words, cs = a;
-  if (!big && words.length > 4) {
-    const n = Math.ceil(words.length / 4), per = Math.ceil(words.length / n);
+  if (!big && words.length > 3) {
+    const n = Math.ceil(words.length / 3), per = Math.ceil(words.length / n);
     const idx = Math.min(n - 1, Math.floor((t - a) / Math.max(1, b - a) * n));
     ws = words.slice(idx * per, idx * per + per); cs = a + idx * (b - a) / n;
   }

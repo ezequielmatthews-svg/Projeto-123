@@ -1,0 +1,46 @@
+{
+  "episodio": "Fita Maldita · Prédio 42 · Regra do Elevador (curto)",
+  "frames": 432,
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio · eleven_v4, sussurrado"
+  },
+  "falas": [
+    {
+      "personagem": "narrador",
+      "inicio": 0.05,
+      "arquivo": "voz/elevenlabs/elevador/01.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.12,
+      "fala": "[whispers] Regra do quarto andar: se o elevador abrir sozinho às três e dezessete... não entre.",
+      "legenda": "REGRA DO 4º ANDAR: SE O ELEVADOR ABRIR SOZINHO ÀS *3H17*... *NÃO ENTRE*.",
+      "limite": 5.3
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 5.35,
+      "arquivo": "voz/elevenlabs/elevador/02.mp3",
+      "pausa_max": 0.35,
+      "fala": "[whispers] Ele espera. Com a porta aberta.",
+      "legenda": "ELE *ESPERA*. COM A PORTA ABERTA.",
+      "limite": 7.6,
+      "tempo": 1.06
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 7.7,
+      "arquivo": "voz/elevenlabs/elevador/03.mp3",
+      "pausa_max": 0.3,
+      "fala": "[softly] Ontem, o seu Jorge do quarenta e cinco entrou.",
+      "legenda": "ONTEM, O SEU JORGE DO 45 *ENTROU*.",
+      "limite": 11.5
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 11.8,
+      "arquivo": "voz/elevenlabs/elevador/04.mp3",
+      "fala": "[whispers] O prédio não tem subsolo.",
+      "legenda": "O PRÉDIO NÃO TEM *SUBSOLO*.",
+      "limite": 14.1
+    }
+  ]
+}

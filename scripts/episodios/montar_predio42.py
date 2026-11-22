@@ -23,6 +23,7 @@ def common(s):
     # os tremores de imagem do avanço da criatura são só da Câmera do Corredor
     s = rep(s, "  if (d >= 489 && d <= 495) glitchRows(f, .14);\n", "")
     s = rep(s, "  if (d >= 546) glitchRows(f, .15 + (d - 546) * .05);\n", "")
+    s = rep(s, "if (!big && words.length > 4) {\n    const n = Math.ceil(words.length / 4)", "if (!big && words.length > 3) {\n    const n = Math.ceil(words.length / 3)")
     return s
 
 def specific(s, cfg):
@@ -73,17 +74,17 @@ ELEV = dict(slug='elevador', out='regra-do-elevador', title='Regra do Elevador',
 QUEM = dict(slug='quem', out='quem-olha-por-voce', title='Quem Olha Por Você', code='quem.js', L=888,
   sub='Prédio 42 · episódio do Mateus · 9:16, 1080×1920, 37 s · câmera de segurança + closes · se entende sozinho',
   aria='Curta de terror: Mateus abriu a porta às 3h17 e agora vive invisível no corredor, mantido por um olhar',
-  knocks='[26.0, 26.58, 27.12]', knocks2='[35.28, 35.86, 36.40]', clock0='3 * 3600 + 16 * 60 + 34', bulgek='.35',
-  ones='[[0, 14], [418, 432], [620, 660], [672, 696], [840, 888]]',
-  shots='''  S(0, 3, 'corredor', [1.35, 270, 190, 1.5, 270, 192], { extra: quemExtra }),
-  S(3, 7, 'corredor', [1.5, 270, 192, 1.62, 270, 194], { extra: quemExtra }),
-  S(7, 11, 'olhoV', [1.0, 270, 202.5, 1.25, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', grain: 410 }),
-  S(11, 14, 'rosto', [1.0, 270, 215, 1.1, 270, 210], { cine: 1 }),
-  S(14, 17, 'corredor', [1.9, 400, 190, 2.1, 410, 192], { extra: quemExtra }),
-  S(17, 19, 'olhoV', [1.3, 270, 200, 1.4, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', flapClose: 17.6, grain: 410 }),
-  S(19, 24, 'rosto', [1.1, 270, 210, 1.35, 270, 205], { cine: 1, erase: 1 }),
-  S(24, 28, 'corredor', [1.5, 270, 196, 1.9, 270, 198], { extra: quemExtra }),
-  S(28, 32, 'olhoV', [1.15, 270, 200, 1.4, 270, 200], { cine: 1, iris: '#5a3d2a', num: '42', flapOpen: 28.2, eyeIn: 28.5, blinkAt: 30.4, grain: 420 }),
+  knocks='[26.6, 27.18, 27.72]', knocks2='[35.28, 35.86, 36.40]', clock0='3 * 3600 + 16 * 60 + 33', bulgek='.35',
+  ones='[[0, 14], [470, 480], [636, 672], [688, 704], [840, 888]]',
+  shots='''  S(0, 3.4, 'corredor', [1.35, 270, 190, 1.5, 270, 192], { extra: quemExtra }),
+  S(3.4, 7.8, 'corredor', [1.5, 270, 192, 1.62, 270, 194], { extra: quemExtra }),
+  S(7.8, 12.0, 'olhoV', [1.0, 270, 202.5, 1.25, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', grain: 410 }),
+  S(12.0, 15.4, 'rosto', [1.0, 270, 215, 1.1, 270, 210], { cine: 1 }),
+  S(15.4, 17.8, 'corredor', [1.9, 400, 190, 2.1, 410, 192], { extra: quemExtra }),
+  S(17.8, 20.5, 'olhoV', [1.3, 270, 200, 1.45, 270, 200], { cine: 1, iris: '#6d726a', old: 1, num: '44', flapClose: 19.7, grain: 410 }),
+  S(20.5, 25, 'rosto', [1.1, 270, 210, 1.35, 270, 205], { cine: 1, erase: 1 }),
+  S(25, 28.5, 'corredor', [1.5, 270, 196, 1.9, 270, 198], { extra: quemExtra }),
+  S(28.5, 32, 'olhoV', [1.15, 270, 200, 1.4, 270, 200], { cine: 1, iris: '#5a3d2a', num: '42', flapOpen: 28.7, eyeIn: 29.0, blinkAt: 30.9, grain: 420 }),
   S(32, 36.75, 'corredor', [1.35, 270, 190, 1.42, 270, 190], { extra: quemExtra }),
   S(36.75, 37, 'corredor', [1.35, 270, 190, 1.35, 270, 190], { extra: quemExtra, loop: 1 }),''',
   caps='''  [0, 72, 'NINGUÉM ABRE A PORTA ÀS *3H17*. EU *ABRI*.', 'narrador'],

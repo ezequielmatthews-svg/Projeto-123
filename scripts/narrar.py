@@ -161,6 +161,10 @@ def main():
             report.append(f"  {i + 1}. {start:5.2f}s → {end:5.2f}s  ({dur:.2f}s)  [{line.get('personagem', 'narrador')}] {line['fala']}")
             prev_end = speech_end
 
+    # legendas sem fala (ex.: "TOC. TOC. TOC." nas batidas), para quem assiste sem som
+    for ex in script.get("legendas_extra", []):
+        captions.append([math.floor(ex["inicio"] * FPS), math.ceil(ex["fim"] * FPS), ex["legenda"], ex.get("personagem", "narrador")])
+    captions.sort(key=lambda c: c[0])
     # legenda fica pelo menos 1 s na tela, sem invadir a próxima
     for i, cap in enumerate(captions):
         cap[1] = max(cap[1], cap[0] + FPS)

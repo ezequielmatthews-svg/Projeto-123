@@ -1,0 +1,100 @@
+{
+  "episodio": "Fita Maldita · Prédio 42 · Quem Olha Por Você",
+  "frames": 888,
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio (Mateus) · eleven_v4",
+    "coisa": "a mesma voz com o efeito imitacao (o sósia)"
+  },
+  "falas": [
+    {
+      "personagem": "narrador",
+      "inicio": 0.05,
+      "arquivo": "voz/elevenlabs/quem/01.mp3",
+      "pausa_max": 0.3,
+      "fala": "[whispers] Ninguém abre a porta às três e dezessete. Eu abri.",
+      "legenda": "NINGUÉM ABRE A PORTA ÀS *3H17*. EU *ABRI*.",
+      "limite": 3.6,
+      "tempo": 1.08
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 3.5,
+      "arquivo": "voz/elevenlabs/quem/02.mp3",
+      "pausa_max": 0.25,
+      "tempo": 1.16,
+      "fala": "[softly] Agora eu moro no corredor. A vizinha passou por mim... e só sentiu frio.",
+      "legenda": "AGORA EU MORO NO CORREDOR. A VIZINHA PASSOU POR MIM... E SÓ SENTIU *FRIO*.",
+      "limite": 7.9
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 7.9,
+      "arquivo": "voz/elevenlabs/quem/03.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.12,
+      "fala": "[softly] Só a Dona Célia, do quarenta e quatro, ainda me olha. Pelo olho mágico.",
+      "legenda": "SÓ A DONA CÉLIA, DO 44, AINDA ME *OLHA*. PELO OLHO MÁGICO.",
+      "limite": 12.2
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 12.2,
+      "arquivo": "voz/elevenlabs/quem/04.mp3",
+      "pausa_max": 0.3,
+      "fala": "[softly] Enquanto ela olha... eu continuo tendo rosto.",
+      "legenda": "ENQUANTO ELA OLHA... EU CONTINUO TENDO *ROSTO*.",
+      "limite": 15.5,
+      "tempo": 1.1
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 15.55,
+      "arquivo": "voz/elevenlabs/quem/05.mp3",
+      "fala": "[softly] Mas ela só consegue olhar pra um.",
+      "legenda": "MAS ELA SÓ CONSEGUE OLHAR PRA *UM*.",
+      "limite": 17.9
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 17.95,
+      "arquivo": "voz/elevenlabs/quem/06.mp3",
+      "fala": "[whispers] Ontem, a tampinha do quarenta e quatro fechou.",
+      "legenda": "ONTEM, A TAMPINHA DO 44 *FECHOU*.",
+      "limite": 20.9
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 20.95,
+      "arquivo": "voz/elevenlabs/quem/07.mp3",
+      "pausa_max": 0.45,
+      "fala": "[softly] Primeiro sumiram os olhos. Depois, a boca.",
+      "legenda": "PRIMEIRO SUMIRAM OS *OLHOS*. DEPOIS, A *BOCA*.",
+      "limite": 25.0
+    },
+    {
+      "personagem": "coisa",
+      "inicio": 29.3,
+      "arquivo": "voz/elevenlabs/quem/08-sosia.mp3",
+      "efeito": "imitacao",
+      "fala": "[whispers] Eu olho por você, Mateus.",
+      "legenda": "*EU OLHO POR VOCÊ, MATEUS.*",
+      "limite": 31.9
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 32.3,
+      "arquivo": "voz/elevenlabs/quem/09.mp3",
+      "pausa_max": 0.4,
+      "fala": "[whispers] Amanhã... a gente bate na sua porta,",
+      "legenda": "AMANHÃ... A GENTE BATE NA *SUA PORTA*,",
+      "limite": 35.2
+    }
+  ],
+  "legendas_extra": [
+    {
+      "inicio": 26.5,
+      "fim": 28.4,
+      "legenda": "*TOC. TOC. TOC.*"
+    }
+  ]
+}

@@ -966,8 +966,8 @@ function drawCaption(g, t) {
   let on = false; text.split(' ').forEach((w, i) => { const st = w.startsWith('*'), en = w.endsWith('*') || w.replace(/[.?!,]+$/, '').endsWith('*'); if (st) on = true; words[i].hot = on; if (en) on = false; });
   // como nos virais: blocos curtos (até 4 palavras) trocando no ritmo da fala
   let ws = words, cs = a;
-  if (!big && words.length > 4) {
-    const n = Math.ceil(words.length / 4), per = Math.ceil(words.length / n);
+  if (!big && words.length > 3) {
+    const n = Math.ceil(words.length / 3), per = Math.ceil(words.length / n);
     const idx = Math.min(n - 1, Math.floor((t - a) / Math.max(1, b - a) * n));
     ws = words.slice(idx * per, idx * per + per); cs = a + idx * (b - a) / n;
   }

@@ -44,21 +44,21 @@ const MATEUS = { coat: HOOD, coatSh: HOODSH, skin: MSKIN, skinSh: MSKINSH, hair:
 // onde o Mateus está em cada momento (no mundo do corredor)
 function mateusAt(d) {
   const t = d / FPS;
-  if (t < 14) return { X: .02, Z: 2.0, alpha: .5 };
-  if (t < 24) return { X: .62, Z: 1.62, alpha: .5, back: true };
-  const k = Math.min(1, (t - 24) / 1.9);
-  return { X: lerp(.32, 0, E.io(k)), Z: lerp(1.9, 2.42, E.io(k)), alpha: .5, back: true, walk: k < 1 ? t * 9 : 0, knock: Math.min(1, knockAmp(d) * 1.4) + (t > 25.6 && t < 27.6 ? .25 : 0), erase: 1 };
+  if (t < 15.4) return { X: .02, Z: 2.0, alpha: .5 };
+  if (t < 25) return { X: .62, Z: 1.62, alpha: .5, back: true };
+  const k = Math.min(1, (t - 25) / 1.5);
+  return { X: lerp(.32, 0, E.io(k)), Z: lerp(1.9, 2.42, E.io(k)), alpha: .5, back: true, walk: k < 1 ? t * 9 : 0, knock: Math.min(1, knockAmp(d) * 1.4) + (t > 26.4 && t < 28.2 ? .25 : 0), erase: 1 };
 }
 function quemExtra(d, pass) {
   if (pass !== 'base') return;
   const t = d / FPS;
   // a vizinha passa atravessando o Mateus (3–7 s)
-  if (t >= 3 && t < 7.2) {
-    const k = (t - 3) / 4.2;
+  if (t >= 3.4 && t < 7.8) {
+    const k = (t - 3.4) / 4.4;
     drawPessoa(lerp(-.95, .95, k), 2.0, { coat: '#6b4d52', coatSh: '#53393e', skin: '#d9b9a0', skinSh: '#b8957c', hair: '#3a2c22', legs: '#3b3030', dress: true, bun: true, walk: t * 8, h: .95 }, 200);
   }
   // o marido da Dona Célia, de chapéu, diante do 44 (14–24 s)
-  if (t >= 14 && t < 24) drawPessoa(.8, 1.58, { coat: '#1c1d19', coatSh: '#131410', skin: '#9a9a8c', skinSh: '#7c7c70', hair: '#9a9a90', legs: '#1c1d19', back: true, hat: true, alpha: .62, ghost: true, h: .98 }, 230);
+  if (t >= 15.4 && t < 25) drawPessoa(.8, 1.58, { coat: '#1c1d19', coatSh: '#131410', skin: '#9a9a8c', skinSh: '#7c7c70', hair: '#9a9a90', legs: '#1c1d19', back: true, hat: true, alpha: .62, ghost: true, h: .98 }, 230);
   const m = mateusAt(d);
   if (t < 32) drawPessoa(m.X, m.Z, Object.assign({}, MATEUS, { alpha: m.alpha * (bulbI(d) < .2 ? 1.6 : 1), ghost: true, back: m.back, walk: m.walk, knock: m.knock, erase: m.erase || 0 }), 260);
 }
@@ -104,7 +104,7 @@ function drawOlhoV(d, f, o, pass) {
 // rosto do Mateus em close: some como se fosse apagado com borracha
 function drawRosto(d, f, o, pass) {
   const t = d / FPS;
-  const eyesE = o.erase ? Math.max(0, Math.min(1, (t - 19.6) / 1.6)) : 0, mouthE = o.erase ? Math.max(0, Math.min(1, (t - 21.8) / 1.4)) : 0;
+  const eyesE = o.erase ? Math.max(0, Math.min(1, (t - 21.5) / 1.3)) : 0, mouthE = o.erase ? Math.max(0, Math.min(1, (t - 23.5) / 1.1)) : 0;
   const cx = 270, cy = 215, rx = 118, ry = 150;
   if (pass === 'base') {
     rect(-140, -160, 820, 730, '#5f6259');
