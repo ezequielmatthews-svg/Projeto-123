@@ -15,7 +15,8 @@
     "render:valenca": "node export/render.mjs --page terror/valenca.html --loops 1 --out out/valenca-parte1.mp4",
     "render:corredor": "node export/render.mjs --page terror/corredor.html --loops 1 --out out/camera-do-corredor.mp4",
     "render:elevador": "node export/render.mjs --page terror/elevador.html --loops 1 --out out/regra-do-elevador.mp4",
-    "render:quem": "node export/render.mjs --page terror/quem.html --loops 1 --out out/quem-olha-por-voce.mp4"
+    "render:quem": "node export/render.mjs --page terror/quem.html --loops 1 --out out/quem-olha-por-voce.mp4",
+    "render:regra316": "node export/render.mjs --page terror/regra316.html --loops 1 --out out/a-regra-das-3h16.mp4"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
