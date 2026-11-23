@@ -24,6 +24,9 @@ def common(s):
     s = rep(s, "  if (d >= 489 && d <= 495) glitchRows(f, .14);\n", "")
     s = rep(s, "  if (d >= 546) glitchRows(f, .15 + (d - 546) * .05);\n", "")
     s = rep(s, "if (!big && words.length > 4) {\n    const n = Math.ceil(words.length / 4)", "if (!big && words.length > 3) {\n    const n = Math.ceil(words.length / 3)")
+    # textos da câmera longe das bordas: o TikTok corta ~8% de cada lado em celulares compridos
+    s = s.replace("WIN.x + WIN.w - 70", "WIN.x + WIN.w - 112").replace("WIN.x + WIN.w - 16", "WIN.x + WIN.w - 58").replace("WIN.x + 16", "WIN.x + 58")
+    s = s.replace("maxW = 420, cx = 252", "maxW = 360, cx = 262")   # legenda dentro dos 82% centrais
     return s
 
 def specific(s, cfg):

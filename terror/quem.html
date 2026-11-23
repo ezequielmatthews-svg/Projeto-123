@@ -1033,7 +1033,7 @@ function drawCaption(g, t) {
   const [a, b, text, who] = cap;
   const baseColor = { rafa: '#a8dcff', coisa: '#ff2a3d', avo: '#ffd79a' }[who] || '#ffffff';
   const big = t < 72;   // a fala dele, inteira e maior; o gancho entra em blocos curtos   // gancho e a fala dele: frase inteira em letras maiores
-  const size = big ? 31 : 27, maxW = 420, cx = 252, cy = 724;
+  const size = big ? 31 : 27, maxW = 360, cx = 262, cy = 724;
   g.save(); g.setTransform(R, 0, 0, R, 0, 0);
   g.font = `${size}px Bungee, "Arial Black", Impact, sans-serif`; g.textBaseline = 'middle'; g.textAlign = 'left';
   const words = text.split(' ').map(w => ({ w: w.replace(/\*/g, ''), hot: /\*/.test(w) }));
@@ -1136,14 +1136,14 @@ function compose(f) {
       if (blink) osd('SEM SINAL', LW / 2, WIN.y + WIN.h / 2 - 16, '#ff3b3b');
       g.font = '24px VT323, ui-monospace, monospace'; g.textAlign = 'left';
     }
-    osd('CAM 0' + LAST.cam + (LAST.label || (LAST.cam === 3 ? '  ESCADA' : '  CORREDOR 4º')), WIN.x + 16, WIN.y + 10);
+    osd('CAM 0' + LAST.cam + (LAST.label || (LAST.cam === 3 ? '  ESCADA' : '  CORREDOR 4º')), WIN.x + 58, WIN.y + 10);
     g.textAlign = 'right';
-    if (blink) { g.fillStyle = '#ff2a2a'; g.beginPath(); g.arc(WIN.x + WIN.w - 70, WIN.y + 23, 6, 0, 7); g.fill(); }
-    osd('REC', WIN.x + WIN.w - 16, WIN.y + 10);
+    if (blink) { g.fillStyle = '#ff2a2a'; g.beginPath(); g.arc(WIN.x + WIN.w - 112, WIN.y + 23, 6, 0, 7); g.fill(); }
+    osd('REC', WIN.x + WIN.w - 58, WIN.y + 10);
     const secs = CLOCK0 + (LAST.loop ? 0 : Math.floor(t / FPS)), hh = Math.floor(secs / 3600), mm = Math.floor(secs / 60) % 60, ss = secs % 60;
     const clock = `${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}:${String(ss).padStart(2, '0')}`;
-    g.textAlign = 'left'; osd('21-11-2026  ' + clock, WIN.x + 16, WIN.y + WIN.h - 34, ss === 0 && mm === 17 ? '#ff3b3b' : '#f4f4f4');
-    if (!LAST.black && LAST.z > 1.08) { g.textAlign = 'right'; osd('ZOOM ' + LAST.z.toFixed(1) + 'x', WIN.x + WIN.w - 16, WIN.y + WIN.h - 34); }
+    g.textAlign = 'left'; osd('21-11-2026  ' + clock, WIN.x + 58, WIN.y + WIN.h - 34, ss === 0 && mm === 17 ? '#ff3b3b' : '#f4f4f4');
+    if (!LAST.black && LAST.z > 1.08) { g.textAlign = 'right'; osd('ZOOM ' + LAST.z.toFixed(1) + 'x', WIN.x + WIN.w - 58, WIN.y + WIN.h - 34); }
     g.textAlign = 'left';
     }
   }
