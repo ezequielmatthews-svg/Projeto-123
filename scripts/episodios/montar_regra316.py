@@ -8,21 +8,20 @@ B = src.index('/* ============================================================\n
 s = src[:A] + open('scripts/episodios/regra316.js', encoding='utf-8').read() + '\n' + src[B:]
 # configuração
 s = rep(s, 'const WIN = { x: 0, y: 165, w: 540, h: 520 };', 'const WIN = { x: 0, y: 160, w: 540, h: 550 };  // imagem grande: quase a tela toda')
-s = re.sub(r"const FPS = 24, L = \d+;.*\n", "const FPS = 24, L = 864;   // 36 s (o fim emenda no começo)\n", s, count=1)
-s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[0, 864]];   // realista: movimento a 24 desenhos por segundo\n", s, count=1)
+s = re.sub(r"const FPS = 24, L = \d+;.*\n", "const FPS = 24, L = 672;   // 28 s (o fim emenda no começo)\n", s, count=1)
+s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[0, 672]];   // realista: movimento a 24 desenhos por segundo\n", s, count=1)
 s = rep(s, 'family=Bungee&family=Creepster', 'family=Inter:wght@400;500;600&family=Bungee&family=Creepster')
 s = rep(s, "ROOM = paintRoom();", "ROOM = paintRoom(); buildTextures();")
 # legendas
 a = s.index("const CAPS = NARR ? NARR.legendas : ["); b = s.index("];", a) + 2
 s = s[:a] + """const CAPS = NARR ? NARR.legendas : [
-  [0, 91, 'SE O CELULAR TOCAR ÀS *3H16*, *NÃO ATENDA*.', 'narrador'],
-  [91, 182, 'MINHA MÃE ME ENSINOU ISSO AOS SETE ANOS. NUNCA DISSE O *PORQUÊ*.', 'narrador'],
-  [182, 312, 'ONTEM ACORDEI COM O QUARTO CHEIRANDO A *TERRA MOLHADA*. O CELULAR VIBRAVA NA MESINHA.', 'narrador'],
-  [312, 389, 'NA TELA, O NOME DE QUEM LIGAVA. *RAFAEL*. *O MEU*.', 'narrador'],
-  [389, 504, 'EU ATENDI. DO OUTRO LADO, CHUVA... E ALGUÉM RESPIRANDO. *NO MEU RITMO*.', 'narrador'],
-  [504, 624, 'AÍ A MINHA PRÓPRIA VOZ DISSE: *FICA QUIETO. ELE AINDA NÃO SABE QUE VOCÊ ACORDOU.*', 'coisa'],
-  [624, 768, 'ATRÁS DE MIM, O COLCHÃO *AFUNDOU* DEVAGAR...', 'narrador'],
-  [768, 864, 'AGORA EU SEI POR QUE A MINHA MÃE DIZIA:', 'narrador'],
+  [0, 72, 'SE O CELULAR TOCAR ÀS *3H16*... *NÃO ATENDA*.', 'narrador'],
+  [72, 163, 'ONTEM TOCOU. E O NOME NA TELA ERA O MEU. *RAFAEL*.', 'narrador'],
+  [163, 230, 'O QUARTO CHEIRAVA A *TERRA MOLHADA*.', 'narrador'],
+  [230, 360, 'EU ATENDI. DO OUTRO LADO, CHUVA... E ALGUÉM RESPIRANDO. *NO MEU RITMO*.', 'narrador'],
+  [360, 470, '*FICA QUIETO. ELE AINDA NÃO SABE QUE VOCÊ ACORDOU.*', 'coisa'],
+  [470, 581, 'ATRÁS DE MIM, O COLCHÃO *AFUNDOU* DEVAGAR.', 'narrador'],
+  [581, 672, 'AGORA EU SEI POR QUE A MINHA MÃE DIZIA:', 'narrador'],
 ];""" + s[b:]
 s = re.sub(r"const big = .*?;", "const big = false;", s, count=1)
 s = rep(s, "if (!big && words.length > 4) {\n    const n = Math.ceil(words.length / 4)", "if (!big && words.length > 3) {\n    const n = Math.ceil(words.length / 3)")
@@ -65,10 +64,10 @@ function compose(f) {
 }
 
 """ + s[b:]
-s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 91, 'GANCHO'], [91, 182, 'A MÃE'], [182, 312, 'O QUARTO'], [312, 389, 'RAFAEL'], [389, 504, 'ATENDI'], [504, 624, 'A VOZ'], [624, 768, 'O COLCHÃO'], [768, 864, 'EMENDA']];", s, count=1)
+s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 79, 'GANCHO'], [79, 163, 'RAFAEL'], [163, 230, 'O QUARTO'], [230, 360, 'ATENDI'], [360, 470, 'A VOZ'], [470, 581, 'O COLCHÃO'], [581, 672, 'EMENDA']];", s, count=1)
 s = re.sub(r"<title>.*?</title>", "<title>A Regra das 3h16</title>", s, count=1)
 s = re.sub(r"<h1>.*?</h1>", "<h1>A Regra das 3h16</h1>", s, count=1)
-s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · história completa · modo realista (texturas, luz, foco, câmera na mão) · 9:16, 1080×1920, 36 s · o fim emenda no começo</p>', s, count=1, flags=re.S)
+s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · história completa · modo realista (texturas, luz, foco, câmera na mão) · 9:16, 1080×1920, 28 s · o fim emenda no começo</p>', s, count=1, flags=re.S)
 s = re.sub(r'aria-label="Curta de terror:[^"]*"', 'aria-label="Curta de terror realista: o celular toca às 3h16 com o próprio nome de quem dorme"', s, count=1)
 s = rep(s, '<script src="sons-corredor.js"></script>\n<script src="narracao-corredor.js"></script>', '<script src="sons-regra316.js"></script>\n<script src="narracao-regra316.js"></script>')
 s = rep(s, "<code>npm run render:corredor</code> → <code>out/camera-do-corredor.mp4</code>", "<code>npm run render:regra316</code> → <code>out/a-regra-das-3h16.mp4</code>")

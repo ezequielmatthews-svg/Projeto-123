@@ -77,9 +77,9 @@ function applyLights(lights, ambient) {
 }
 
 /* ---------- TEMPO ---------- */
-const SH = { mesa: [0, 3.8], foto: [3.8, 7.6], quarto: [7.6, 13], tela: [13, 16.2], chamada: [16.2, 21], olho: [21, 26], colchao: [26, 32], fim: [32, 36] };
-const ANSWER = 16.2;
-const ringing = t => t < ANSWER || t >= 32;
+const SH = { mesa: [0, 2], foto: [2, 3.3], tela: [3.3, 7.4], quarto: [7.4, 10.0], chamada: [10.0, 15], olho: [15, 19.6], colchao: [19.6, 24.2], fim: [24.2, 28] };
+const ANSWER = 10.0;
+const ringing = t => t < ANSWER || t >= 24.2;
 const vib = t => ringing(t) && (t % 1.1) < .55;                  // vibra em pulsos
 const GLIMPSE = d => d >= 4 && d <= 9;                           // o flash da tela mostra alguém na beira da cama
 const screenFlash = d => (GLIMPSE(d) ? 2.2 : 1);
@@ -96,7 +96,7 @@ function drawPhoneUI(x0, y0, w, h, t, d, emissive) {
   c.save(); c.beginPath(); c.arc(x0 + w / 2, y0 + 40 * u, 17 * u, 0, 7); c.clip(); c.drawImage(TX.avatar, x0 + w / 2 - 17 * u, y0 + 23 * u, 34 * u, 34 * u); c.restore();
   c.font = `600 ${11 * u}px Inter, Helvetica, sans-serif`; c.fillText('Rafael', x0 + w / 2, y0 + 70 * u);
   c.fillStyle = 'rgba(255,255,255,.6)'; c.font = `400 ${5.5 * u}px Inter, Helvetica, sans-serif`;
-  if (t < ANSWER || t >= 32) {
+  if (t < ANSWER || t >= 24.2) {
     c.fillText('celular · chamando…', x0 + w / 2, y0 + 81 * u);
     [[-1, '#e5484d', 'Recusar'], [1, '#30a46c', 'Atender']].forEach(([s, col, lab]) => {
       const bx = x0 + w / 2 + s * 24 * u, by = y0 + h - 34 * u, pulse = 1 + (s > 0 ? .06 * Math.sin(t * 9) : 0);
@@ -186,7 +186,7 @@ function sceneQuarto(t, d, pass) {
     // cobertor desfocado em primeiro plano
     c.save(); c.filter = `blur(${6 * R}px)`; c.drawImage(TX.sheet, -60, 470, 680, 160); c.restore();
   } else if (pass === 'lights') {
-    return [{ x: 460 + vx, y: 318, r: 260, col: 'rgba(150,180,255,.85)', sy: .8 }, { x: 245, y: 150, r: 300, col: 'rgba(90,110,170,.45)' }, { x: 245, y: 470, r: 220, col: 'rgba(80,100,160,.28)', sy: .4 }];
+    return [{ x: 460 + vx, y: 318, r: 300, col: 'rgba(150,180,255,.95)', sy: .8 }, { x: 245, y: 150, r: 320, col: 'rgba(90,110,170,.55)' }, { x: 170, y: 470, r: 260, col: 'rgba(120,140,200,.45)', sy: .45 }];
   } else if (pass === 'emissive') {
     drawPhone(460 + vx, 318 + vy, 50, 92, 1.45, .35, t, d, true);
   }
@@ -210,7 +210,7 @@ function sceneTela(t, d, pass, answered) {
 // olho realista em close (o próprio Rafael), refletindo a tela
 function sceneOlho(t, d, pass) {
   const k = (t - SH.olho[0]);
-  const look = k > 2.6 ? -1 : 0, lookK = k > 2.6 ? E.o(Math.min(1, (k - 2.6) / .12)) : 0;   // sacada rápida: olha pra trás
+  const look = k > 3.1 ? -1 : 0, lookK = k > 3.1 ? E.o(Math.min(1, (k - 3.1) / .12)) : 0;   // sacada rápida: olha pra trás
   const pupil = lerp(16, 26, Math.min(1, k / 3)), ix = 270 + look * lookK * 62 + Math.sin(t * 7) * .8, iy = 280;
   if (pass === 'base') {
     c.drawImage(TX.skin, -80, -60, 700, 700);
@@ -242,7 +242,7 @@ function sceneOlho(t, d, pass) {
 // o colchão afundando atrás dele
 function sceneColchao(t, d, pass) {
   const k = (t - SH.colchao[0]);
-  const sink = E.io(Math.min(1, Math.max(0, (k - .8) / 1.6))) * .6 + E.io(Math.min(1, Math.max(0, (k - 3.2) / 1.4))) * .4;   // afunda em dois tempos, como alguém se ajeitando
+  const sink = E.io(Math.min(1, Math.max(0, (k - .5) / 1.4))) * .6 + E.io(Math.min(1, Math.max(0, (k - 2.4) / 1.2))) * .4;   // afunda em dois tempos, como alguém se ajeitando
   const cx = 300, cy = 225;
   if (pass === 'base') {
     c.fillStyle = '#0d0f14'; c.fillRect(-60, -60, 660, 680);
@@ -256,7 +256,7 @@ function sceneColchao(t, d, pass) {
     }
     c.save(); c.filter = `blur(${7 * R}px)`; c.fillStyle = '#c8ccd6'; c.beginPath(); c.ellipse(60, 560, 220, 120, -.2, 0, 7); c.fill(); c.restore();   // travesseiro em primeiro plano
   } else if (pass === 'lights') {
-    return [{ x: 40, y: 560, r: 600, col: 'rgba(150,175,255,.75)' }];
+    return [{ x: 40, y: 560, r: 650, col: 'rgba(160,185,255,.9)' }, { x: 300, y: 225, r: 260, col: 'rgba(90,100,140,.35)' }];
   }
 }
 const SCENES = { mesa: sceneMesa, foto: sceneFoto, quarto: sceneQuarto, tela: (t, d, p) => sceneTela(t, d, p, false), chamada: (t, d, p) => sceneTela(t, d, p, true), olho: sceneOlho, colchao: sceneColchao, fim: sceneMesa };
@@ -264,15 +264,19 @@ const SCENES = { mesa: sceneMesa, foto: sceneFoto, quarto: sceneQuarto, tela: (t
 /* ---------- PLANOS ---------- */
 const S = (a, b, env, cam, o = {}) => ({ a: sec(a), b: sec(b), env, cam, o });
 const SHOTS = [
-  S(0, 3.8, 'mesa', [1.05, LCX, LCY, 1.16, LCX, LCY + 10], { hand: .8 }),
-  S(3.8, 7.6, 'foto', [1.0, LCX, LCY, 1.12, LCX, LCY - 5], { hand: .6 }),
-  S(7.6, 13, 'quarto', [1.0, LCX, LCY, 1.08, LCX + 20, LCY], { hand: 1.2 }),
-  S(13, 16.2, 'tela', [1.0, LCX, LCY, 1.08, LCX, LCY - 10], { hand: 1.2 }),
-  S(16.2, 21, 'chamada', [1.0, LCX, LCY, 1.06, LCX + 10, LCY], { hand: 1.6 }),
-  S(21, 26, 'olho', [1.0, LCX, LCY, 1.12, LCX, LCY], { hand: 1.1 }),
-  S(26, 32, 'colchao', [1.0, LCX, LCY, 1.15, LCX + 20, LCY - 20], { hand: 1.4 }),
-  S(32, 35.75, 'fim', [1.05, LCX, LCY, 1.16, LCX, LCY + 10], { hand: .8 }),
-  S(35.75, 36, 'mesa', [1.05, LCX, LCY, 1.05, LCX, LCY], { hand: .8, loop: 1 }),
+  S(0, 2.0, 'mesa', [1.05, LCX, LCY, 1.14, LCX, LCY + 8], { hand: .8 }),
+  S(2.0, 3.3, 'foto', [1.0, LCX, LCY, 1.08, LCX, LCY - 4], { hand: .6 }),
+  S(3.3, 5.0, 'tela', [1.0, LCX, LCY, 1.06, LCX, LCY - 8], { hand: 1.2 }),
+  S(5.0, 7.4, 'tela', [1.9, 270, 140, 2.3, 270, 125], { hand: 1.4 }),
+  S(7.4, 10.0, 'quarto', [1.0, LCX, LCY, 1.1, LCX - 30, LCY + 20], { hand: 1.2 }),
+  S(10.0, 12.2, 'chamada', [1.0, LCX, LCY, 1.06, LCX + 10, LCY], { hand: 1.6 }),
+  S(12.2, 15.0, 'chamada', [1.7, 330, 280, 1.95, 330, 268], { hand: 1.6 }),
+  S(15.0, 17.3, 'olho', [1.0, LCX, LCY, 1.08, LCX, LCY], { hand: 1.1 }),
+  S(17.3, 19.6, 'olho', [1.35, LCX - 20, LCY, 1.5, LCX - 40, LCY], { hand: 1.3 }),
+  S(19.6, 22.0, 'colchao', [1.0, LCX, LCY, 1.12, LCX + 15, LCY - 15], { hand: 1.4 }),
+  S(22.0, 24.2, 'colchao', [1.45, 300, 240, 1.7, 300, 232], { hand: 1.6 }),
+  S(24.2, 27.75, 'fim', [1.05, LCX, LCY, 1.14, LCX, LCY + 8], { hand: .8 }),
+  S(27.75, 28, 'mesa', [1.05, LCX, LCY, 1.05, LCX, LCY], { hand: .8, loop: 1 }),
 ];
 const shotAt = t => SHOTS.find(s => t >= s.a && t < s.b) || SHOTS[SHOTS.length - 1];
 const isSmear = () => false;
@@ -294,7 +298,7 @@ function drawScene(t0, f) {
   const SC = SCENES[shot.env];
   setC(); SC(t, d, 'base');
   setC(); const lights = SC(t, d, 'lights') || [];
-  applyLights(lights, 'rgb(34,36,46)');
+  applyLights(lights, 'rgb(52,54,66)');
   setC(); c.globalCompositeOperation = 'source-over'; SC(t, d, 'emissive');
   c.restore();
 }

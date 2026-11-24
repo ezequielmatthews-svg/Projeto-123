@@ -1,0 +1,74 @@
+{
+  "episodio": "Fita Maldita · A Regra das 3h16 (história completa, modo realista)",
+  "frames": 672,
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio (Rafael) · eleven_v4",
+    "coisa": "a mesma voz saindo do celular (efeito telefone)"
+  },
+  "falas": [
+    {
+      "personagem": "narrador",
+      "inicio": 0.05,
+      "arquivo": "voz/elevenlabs/regra316/01.mp3",
+      "pausa_max": 0.3,
+      "fala": "[whispers] Se o celular tocar às três e dezesseis... não atenda.",
+      "legenda": "SE O CELULAR TOCAR ÀS *3H16*... *NÃO ATENDA*.",
+      "limite": 3.9
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 3.9,
+      "arquivo": "voz/elevenlabs/regra316/02.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.15,
+      "fala": "[softly] Ontem tocou. E o nome na tela era o meu. Rafael.",
+      "legenda": "ONTEM TOCOU. E O NOME NA TELA ERA O MEU. *RAFAEL*.",
+      "limite": 7.6
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 7.65,
+      "arquivo": "voz/elevenlabs/regra316/03.mp3",
+      "fala": "[softly] O quarto cheirava a terra molhada.",
+      "legenda": "O QUARTO CHEIRAVA A *TERRA MOLHADA*.",
+      "limite": 10.0
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 10.1,
+      "arquivo": "voz/elevenlabs/regra316/04.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.16,
+      "fala": "[whispers] Eu atendi. Do outro lado, chuva... e alguém respirando. No meu ritmo.",
+      "legenda": "EU ATENDI. DO OUTRO LADO, CHUVA... E ALGUÉM RESPIRANDO. *NO MEU RITMO*.",
+      "limite": 15.2
+    },
+    {
+      "personagem": "coisa",
+      "inicio": 15.3,
+      "arquivo": "voz/elevenlabs/regra316/05-telefone.mp3",
+      "efeito": "telefone",
+      "pausa_max": 0.3,
+      "fala": "[whispers] Fica quieto. Ele ainda não sabe que você acordou.",
+      "legenda": "*FICA QUIETO. ELE AINDA NÃO SABE QUE VOCÊ ACORDOU.*",
+      "limite": 19.5
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 19.75,
+      "arquivo": "voz/elevenlabs/regra316/06.mp3",
+      "pausa_max": 0.4,
+      "fala": "[softly] Atrás de mim, o colchão afundou devagar.",
+      "legenda": "ATRÁS DE MIM, O COLCHÃO *AFUNDOU* DEVAGAR.",
+      "limite": 24.0
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 24.4,
+      "arquivo": "voz/elevenlabs/regra316/07.mp3",
+      "fala": "[whispers] Agora eu sei por que a minha mãe dizia:",
+      "legenda": "AGORA EU SEI POR QUE A MINHA MÃE DIZIA:",
+      "limite": 27.6
+    }
+  ]
+}
