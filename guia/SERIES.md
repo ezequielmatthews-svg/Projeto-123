@@ -33,6 +33,24 @@ npm run render:<série>        # MP4 em out/
 
 ---
 
+## Estratégia visual: cada série (e cada vídeo avulso) com a sua cara
+
+Decisão do usuário: o canal **não** tem um estilo único. Cada série tem o seu tipo de animação, e cada vídeo avulso pode ter um visual próprio. O que liga tudo é a **marca**, que fica igual em todos:
+- **Faixa do topo:** "FITA MALDITA" em vermelho (Creepster) + o nome da série/regra.
+- **Narrador:** a voz do Antônio.
+- **Legendas:** caixa alta com palavras-chave em vermelho.
+- **Formato:** curto, regra ou pergunta no primeiro segundo, fim emendando no começo.
+
+| Série / vídeo | Estilo de animação |
+|---|---|
+| Léo (3:33, A Voz da Mãe) | Cartoon colorido anos 80/90, com VHS |
+| Valença | Recorte em cinza, com cor só no que brilha (vela, relógio, porta) |
+| Prédio 42 (3h17, Corredor, Elevador, Quem Olha) | Câmera de segurança verde + closes de cinema |
+| A Regra das 3h16 (avulso) | **Realista**: texturas, luz, foco, câmera na mão, granulado de sensor |
+| Próximo avulso | **Cartoon anos 2000**: traço grosso e limpo, cores fortes, poses exageradas, terror sério |
+
+Ao criar uma série nova, escolher um estilo que ainda não foi usado e registrar aqui.
+
 ## 0. Zarko e a Espada Relâmpago (piloto do motor, não é terror)
 
 - **O que é:** o curta de teste do estilo cartoon anos 80/90 ("Episódio 7 · Tempestade no Planeta Violeta").
