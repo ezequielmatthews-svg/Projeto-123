@@ -81,32 +81,26 @@ def imp(pkg, key):
     raise ValueError(pkg)
 HumanService = imp('mpfb.services.humanservice', 'HumanService'); AssetService = imp('mpfb.services.assetservice', 'AssetService')
 TargetService = imp('mpfb.services.targetservice', 'TargetService'); HOP = imp('mpfb.entities.objectproperties', 'HumanObjectProperties')
-FIG_Y = -13.6 if SHOT == 0 else -10.6
+FIG_Y = -13.6 if SHOT == 0 else -10.6 if SHOT == 1 else -8.0
 hum = HumanService.create_human()
 for k, v in (('gender', 1.0), ('age', .62), ('muscle', .28), ('weight', .12), ('height', 1.0), ('proportions', .2), ('caucasian', 1.0), ('african', 0.0), ('asian', 0.0)):
     HOP.set_value(k, v, entity_reference=hum)
 TargetService.reapply_macro_details(hum)
-HumanService.set_character_skin(AssetService.find_asset_absolute_path('old_caucasian_male.mhmat', asset_subdir='skins'), hum, skin_type='MAKESKIN')
+HumanService.set_character_skin(AssetService.find_asset_absolute_path('old_caucasian_male.mhmat', asset_subdir='skins'), hum, skin_type='ENHANCED_SSS')
 rig = HumanService.add_builtin_rig(hum, 'default')
 for sub, f, t in (('eyes', 'high-poly.mhclo', 'Eyes'), ('eyebrows', 'eyebrow001.mhclo', 'Eyebrows'), ('eyelashes', 'eyelashes01.mhclo', 'Eyelashes'), ('teeth', 'teeth_base.mhclo', 'Teeth'),
-                  ('clothes', 'male_elegantsuit01.mhclo', 'Clothes'), ('clothes', 'shoes06.mhclo', 'Clothes')):
+                  ('hair', 'short02.mhclo', 'Hair'), ('clothes', 'male_elegantsuit01.mhclo', 'Clothes'), ('clothes', 'shoes06.mhclo', 'Clothes')):
     p = AssetService.find_asset_absolute_path(f, asset_subdir=sub)
     if p: HumanService.add_mhclo_asset(p, hum, asset_type=t)
     else: print('FALTOU', f)
 # olhos totalmente pretos e brilhantes
-print('FILHOS', [o.name for o in bpy.data.objects if o.type == 'MESH'])
-for o in bpy.data.objects:
-    nm = o.name.lower()
-    if o.type == 'MESH' and ('high-poly' in nm or 'highpoly' in nm or (nm.startswith('eye') and 'brow' not in nm and 'lash' not in nm)):
-        m = bpy.data.materials.new('olho_preto'); m.use_nodes = True; bb = m.node_tree.nodes['Principled BSDF']; bb.inputs['Base Color'].default_value = (.005, .005, .006, 1); bb.inputs['Roughness'].default_value = .05
-        o.data.materials.clear(); o.data.materials.append(m)
 # pele mais pálida (puxa para o cinza-esverdeado)
 for slot in hum.material_slots:
     if slot.material and slot.material.use_nodes:
         nt = slot.material.node_tree
         for n in nt.nodes:
             if n.type == 'BSDF_PRINCIPLED':
-                hsv = nt.nodes.new('ShaderNodeHueSaturation'); hsv.inputs['Saturation'].default_value = .45; hsv.inputs['Value'].default_value = 1.12
+                hsv = nt.nodes.new('ShaderNodeHueSaturation'); hsv.inputs['Saturation'].default_value = .72; hsv.inputs['Value'].default_value = 1.04
                 lk = n.inputs['Base Color'].links
                 if lk: src_sock = lk[0].from_socket; nt.links.new(src_sock, hsv.inputs['Color']); nt.links.new(hsv.outputs['Color'], n.inputs['Base Color'])
 # esqueleto para pôr os braços para baixo e inclinar a cabeça
@@ -120,17 +114,32 @@ def rot(bone_like, euler):
 rot('upperarm01.L', (0, 0, math.radians(-38))); rot('upperarm01.R', (0, 0, math.radians(38)))
 for side in ('L', 'R'):
     for f in range(1, 6):
-        for j in (2, 3):
+        for j, ang in ((1, 14), (2, 30), (3, 24)):
             n = f'finger{f}-{j}.{side}'
-            if n in names: pb = rig.pose.bones[n]; pb.rotation_mode = 'XYZ'; pb.rotation_euler = (math.radians(22), 0, 0)
+            if n in names: pb = rig.pose.bones[n]; pb.rotation_mode = 'XYZ'; pb.rotation_euler = (math.radians(ang if f > 1 else ang * .5), 0, 0)
 rot('neck01', (math.radians(4), 0, math.radians(10))); rot('head', (math.radians(-6), math.radians(4), math.radians(14)))
 bpy.ops.object.mode_set(mode='OBJECT')
 print('OSSOS', [n for n in names if 'arm' in n.lower() or 'head' in n.lower() or 'neck' in n.lower()][:20])
+for o in bpy.data.objects:
+    for md in getattr(o, 'modifiers', []):
+        if md.type == 'SUBSURF': md.levels = 1; md.render_levels = 2
+    if o.type == 'MESH' and (o == hum or o.parent in (hum, rig)) and not any(md.type == 'SUBSURF' for md in o.modifiers):
+        md = o.modifiers.new('suave', 'SUBSURF'); md.levels = 1; md.render_levels = 2
 root = rig if rig else hum
 root.location = (.05, FIG_Y, 0); root.rotation_euler = (0, 0, math.radians(180 if SHOT == 1 else 180))
 # câmera
 cam_data = bpy.data.cameras.new('cam'); cam = bpy.data.objects.new('cam', cam_data); bpy.context.collection.objects.link(cam); sc.camera = cam
-if SHOT == 0: cam.location = (-.35, -.6, 1.62); cam.rotation_euler = (math.radians(90.5), 0, math.radians(180 - 1.5)); cam_data.lens = 20
+if SHOT == 2:
+    bpy.context.view_layer.update()
+    hb = rig.pose.bones['head']; hp = rig.matrix_world @ ((hb.head + hb.tail) / 2)
+    cam.location = (hp.x - .12, hp.y + 1.05, hp.z - .02)
+    d = hp - cam.location; cam.rotation_euler = d.to_track_quat('-Z', 'Y').to_euler(); cam_data.lens = 75
+    cam_data.dof.use_dof = True; cam_data.dof.focus_distance = d.length; cam_data.dof.aperture_fstop = 2.0
+    bpy.ops.object.light_add(type='AREA', location=(hp.x - .7, hp.y + .9, hp.z + .35)); k = bpy.context.object; k.data.energy = 35; k.data.size = .6; k.data.color = (1, .9, .8)
+    k.rotation_euler = (hp - k.location).to_track_quat('-Z', 'Y').to_euler()
+    bpy.ops.object.light_add(type='AREA', location=(hp.x + .6, hp.y - .6, hp.z + .3)); r2 = bpy.context.object; r2.data.energy = 30; r2.data.size = .4; r2.data.color = (.45, 1, .6)
+    r2.rotation_euler = (hp - r2.location).to_track_quat('-Z', 'Y').to_euler()
+elif SHOT == 0: cam.location = (-.35, -.6, 1.62); cam.rotation_euler = (math.radians(90.5), 0, math.radians(180 - 1.5)); cam_data.lens = 20
 else:
     cam.location = (-.25, -7.6, 1.5); cam.rotation_euler = (math.radians(95), 0, math.radians(180 + 2)); cam_data.lens = 40
     cam_data.dof.use_dof = True; cam_data.dof.focus_distance = 3.0; cam_data.dof.aperture_fstop = 2.2
