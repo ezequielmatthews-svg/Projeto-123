@@ -1,0 +1,104 @@
+{
+  "episodio": "Fita Maldita · A Dívida dos Valença · Parte 2",
+  "frames": 1032,
+  "vozes": {
+    "tiago": "ElevenLabs · Antônio (Deep, Warm, Calm Storyteller) · eleven_v4",
+    "avo": "ElevenLabs · Sergio (Senior Brazilian voice) · eleven_v4",
+    "rafa": "ElevenLabs · Leandro · eleven_v4 (o mesmo áudio da Parte 1, de propósito)"
+  },
+  "falas": [
+    {
+      "personagem": "tiago",
+      "inicio": 0.05,
+      "arquivo": "voz/elevenlabs/valenca2/01-tiago.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.1,
+      "limite": 5.45,
+      "fala": "[nervous] Na família Valença, todo mundo morre aos trinta e três. Ontem eu fiz trinta e três.",
+      "legenda": "NA FAMÍLIA VALENÇA, TODO MUNDO MORRE AOS *33*. ONTEM EU FIZ 33."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 6.95,
+      "arquivo": "voz/elevenlabs/valenca2/02-tiago.mp3",
+      "pausa_max": 0.4,
+      "tempo": 1.08,
+      "limite": 10.95,
+      "fala": "[whispers] Às três e trinta e dois, bateram. Com a voz do meu avô.",
+      "legenda": "ÀS 3H32, BATERAM. COM A VOZ DO MEU *AVÔ*."
+    },
+    {
+      "personagem": "avo",
+      "inicio": 11.1,
+      "arquivo": "voz/elevenlabs/valenca2/03-avo.mp3",
+      "limite": 13.5,
+      "fala": "[serious] Dá outro Valença no seu lugar.",
+      "legenda": "*DÁ OUTRO VALENÇA NO SEU LUGAR.*"
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 13.75,
+      "arquivo": "voz/elevenlabs/valenca2/04-tiago.mp3",
+      "pausa_max": 0.45,
+      "limite": 16.95,
+      "fala": "[softly] Eu olhei pro meu irmão... e abri a porta.",
+      "legenda": "EU OLHEI PRO MEU IRMÃO... E *ABRI* A PORTA."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 17.15,
+      "arquivo": "voz/elevenlabs/valenca2/05-tiago.mp3",
+      "pausa_max": 0.35,
+      "tempo": 1.05,
+      "limite": 22.3,
+      "fala": "[softly] Não tinha ninguém. Só uma caixa de sapato. Com o meu nome, na letra do meu pai.",
+      "legenda": "NÃO TINHA NINGUÉM. SÓ UMA CAIXA DE SAPATO. COM O MEU NOME, NA LETRA DO MEU *PAI*."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 22.45,
+      "arquivo": "voz/elevenlabs/valenca2/06-tiago.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.17,
+      "limite": 29.9,
+      "fala": "[softly] Dentro, uma foto do Rafa com cinco anos. Atrás: \"Pago. Mil novecentos e noventa e nove.\" O ano em que meu pai morreu.",
+      "legenda": "DENTRO, UMA FOTO DO RAFA COM CINCO ANOS. ATRÁS: *PAGO. 1999.* O ANO EM QUE MEU PAI MORREU."
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 30.1,
+      "arquivo": "voz/elevenlabs/valenca2/07-tiago.mp3",
+      "pausa_max": 0.35,
+      "limite": 33.6,
+      "fala": "[whispers] Meu pai entregou o Rafa. Quando a gente era criança.",
+      "legenda": "MEU PAI ENTREGOU O *RAFA*. QUANDO A GENTE ERA CRIANÇA."
+    },
+    {
+      "personagem": "rafa",
+      "inicio": 33.8,
+      "arquivo": "voz/elevenlabs/valenca2/08-rafa.mp3",
+      "pausa_max": 0.3,
+      "limite": 37.2,
+      "fala": "[tired] Tiago? Que horas são?",
+      "legenda": "TIAGO? QUE HORAS SÃO?",
+      "tempo": 1.05
+    },
+    {
+      "personagem": "tiago",
+      "inicio": 37.45,
+      "arquivo": "voz/elevenlabs/valenca2/09-tiago.mp3",
+      "tempo": 1.03,
+      "limite": 41.3,
+      "fala": "[whispers] Então... quem dorme no meu sofá há vinte e quatro anos?",
+      "legenda": "ENTÃO... QUEM DORME NO MEU SOFÁ *HÁ 24 ANOS*?"
+    }
+  ],
+  "legendas_extra": [
+    {
+      "inicio": 5.5,
+      "fim": 6.9,
+      "legenda": "TOC. TOC. TOC.",
+      "personagem": "coisa"
+    }
+  ]
+}

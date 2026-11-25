@@ -4,19 +4,19 @@ def rep(a, b, cnt=1):
     global s
     assert a in s, 'faltou: ' + a[:80]
     s = s.replace(a, b, cnt)
-rep("const FPS = 24, L = 2280;                     // 95 s", "const FPS = 24, L = 960;                      // 40 s")
-s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[90, 130], [530, 556], [684, 722], [900, 960]];  // batidas, a foto virando, o Rafa sentando, o fim\n", s, count=1)
-rep("const KNOCKS = [48.0, 48.58, 49.12];", "const KNOCKS = [4.0, 4.58, 5.12];")
-rep("const AVO_TALK = [[29.9, 34.8], [34.9, 45.4], [51.9, 57.1], [70.6, 73.6]];", "const AVO_TALK = [[7.3, 10.6]];")
-rep("const RAFA_TALK = [[60.5, 63.9]];", "const RAFA_TALK = [[33.6, 35.9]];")
+rep("const FPS = 24, L = 2280;                     // 95 s", "const FPS = 24, L = 1032;                     // 43 s")
+s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[130, 168], [595, 625], [760, 800], [985, 1032]];  // batidas, a foto virando, o Rafa sentando, o fim\n", s, count=1)
+rep("const KNOCKS = [48.0, 48.58, 49.12];", "const KNOCKS = [5.5, 6.08, 6.62];")
+rep("const AVO_TALK = [[29.9, 34.8], [34.9, 45.4], [51.9, 57.1], [70.6, 73.6]];", "const AVO_TALK = [[11.1, 13.2]];")
+rep("const RAFA_TALK = [[60.5, 63.9]];", "const RAFA_TALK = [[33.8, 37.0]];")
 a = s.index("const T = {"); b = s.index("};", a) + 2
 s = s[:a] + """const T = {
-  lookX:   track([[0,.25],[sec(11.2),.25],[sec(11.6),-1,'o'],[sec(13.2),-1],[sec(13.7),.95,'o'],[sec(15),.95],[sec(27),0],[L,0]]),
-  lookY:   track([[0,.2],[sec(2),.6],[sec(4),.2],[L,.2]]),
-  eye:     track([[0,1.1],[sec(4),1.1],[sec(4.1),1.45,'o'],[sec(6),1.25],[sec(27),1.25],[sec(29.6),1.7,'o'],[L,1.7]]),
-  rafa:    track([[0,0],[sec(28.6),0],[sec(30.1),1,'o'],[L,1]]),
+  lookX:   track([[0,.25],[sec(13.6),.25],[sec(14.0),-1,'o'],[sec(15.4),-1],[sec(15.9),.95,'o'],[sec(17.1),.95],[sec(29.9),0],[L,0]]),
+  lookY:   track([[0,.2],[sec(2),.6],[sec(5.3),.2],[L,.2]]),
+  eye:     track([[0,1.1],[sec(5.5),1.1],[sec(5.6),1.45,'o'],[sec(7.5),1.25],[sec(29.9),1.25],[sec(32.2),1.7,'o'],[L,1.7]]),
+  rafa:    track([[0,0],[sec(31.4),0],[sec(33.0),1,'o'],[L,1]]),
   fingers: track([[0,0],[L,0]]),
-  shake:   d => knockAmp(d) * 7 + (d >= sec(29.6) && d < sec(29.9) ? 4 : 0),
+  shake:   d => knockAmp(d) * 7 + (d >= sec(32.2) && d < sec(32.5) ? 4 : 0),
 };""" + s[b:]
 rep("const tvOn = d >= sec(26.8);", "const tvOn = true;")
 # cenas novas
@@ -38,7 +38,7 @@ function drawCapacho(d, f, o, pass) {
   }
 }
 // a foto do Rafa criança, nas mãos do Tiago; ela vira e mostra o verso
-const FLIP = d => { const t = d / FPS; if (t < 22.2) return 0; if (t < 22.45) return -.06 * E.o((t - 22.2) / .25); return Math.min(1, E.io((t - 22.45) / .5)); };
+const FLIP = d => { const t = d / FPS; if (t < 25.3) return 0; if (t < 25.55) return -.06 * E.o((t - 25.3) / .25); return Math.min(1, E.io((t - 25.55) / .5)); };
 function drawFotoRafa(d, f, o, pass) {
   const k = FLIP(d), back = k > .5, sx = Math.max(.04, Math.abs(Math.cos(k * Math.PI))) * (k < 0 ? 1 + k : 1);
   const P = new M().t(270, 200).r(-.05 + k * .08).s(sx, 1);
@@ -71,22 +71,25 @@ function drawFotoRafa(d, f, o, pass) {
 const ENVS = { sala: drawSala, memoria: drawMemoria, armario: drawArmario, fita: drawFita, vcr: drawVCR, estudio: drawEstudio, foto: drawFoto, capacho: drawCapacho, fotoRafa: drawFotoRafa };""")
 a = s.index("const SHOTS = ["); b = s.index("];", a) + 2
 s = s[:a] + """const SHOTS = [
-  S(0, 3, 'sala', [1.0, 270, 202, 1.18, 280, 215], { clock: 3 * 60 + 32, sweep: 1 }),
-  S(3, 7, 'sala', [2.4, 470, 200, 2.65, 470, 205], { clock: 3 * 60 + 32 }),
-  S(7, 11, 'estudio', [1.5, 270, 170, 1.85, 270, 160], { tape: 1, lean: 1, sweat: 1 }),
-  S(11, 13.2, 'sala', [2.4, 110, 255, 2.7, 100, 258], { clock: 3 * 60 + 32 }),
-  S(13.2, 15, 'sala', [3.3, 290, 168, 3.7, 285, 168], { clock: 3 * 60 + 32 }),
-  S(15, 17.6, 'capacho', [1.0, 270, 230, 1.25, 270, 300], {}),
-  S(17.6, 20, 'capacho', [1.9, 270, 330, 2.3, 270, 320], {}),
-  S(20, 24.2, 'fotoRafa', [1.0, 270, 205, 1.15, 270, 200], {}),
-  S(24.2, 27, 'fotoRafa', [1.7, 270, 200, 2.0, 270, 200], {}),
-  S(27, 30.5, 'sala', [3.9, 290, 166, 4.6, 290, 164], { clock: 3 * 60 + 33 }),
-  S(30.5, 33, 'sala', [1.4, 180, 220, 1.55, 160, 230], { clock: 3 * 60 + 33 }),
-  S(33, 38, 'sala', [4.4, 55, 245, 5.2, 55, 242], { clock: 3 * 60 + 33 }),
-  S(38, 40, 'card', [1.0, 270, 202, 1.0, 270, 202], { clock: 3 * 60 + 33 }),
+  S(0, 2.8, 'sala', [1.0, 270, 202, 1.15, 278, 212], { clock: 3 * 60 + 32, sweep: 1 }),
+  S(2.8, 5.3, 'sala', [2.2, 290, 120, 2.5, 292, 128], { clock: 3 * 60 + 32, sweep: 1 }),
+  S(5.3, 7.6, 'sala', [2.4, 470, 200, 2.65, 470, 205], { clock: 3 * 60 + 32 }),
+  S(7.6, 10.9, 'sala', [1.7, 330, 190, 1.9, 340, 192], { clock: 3 * 60 + 32 }),
+  S(10.9, 13.6, 'estudio', [1.5, 270, 170, 1.85, 270, 160], { tape: 1, lean: 1, sweat: 1 }),
+  S(13.6, 15.4, 'sala', [2.4, 110, 255, 2.7, 100, 258], { clock: 3 * 60 + 32 }),
+  S(15.4, 17.1, 'sala', [3.3, 290, 168, 3.7, 285, 168], { clock: 3 * 60 + 32 }),
+  S(17.1, 19.6, 'capacho', [1.0, 270, 230, 1.25, 270, 300], {}),
+  S(19.6, 22.3, 'capacho', [1.9, 270, 330, 2.3, 270, 320], {}),
+  S(22.3, 24.6, 'fotoRafa', [1.0, 270, 205, 1.12, 270, 200], {}),
+  S(24.6, 29.9, 'fotoRafa', [1.5, 270, 200, 2.0, 270, 200], {}),
+  S(29.9, 32.2, 'sala', [3.9, 290, 166, 4.6, 290, 164], { clock: 3 * 60 + 33 }),
+  S(32.2, 33.6, 'sala', [1.4, 180, 220, 1.55, 160, 230], { clock: 3 * 60 + 33 }),
+  S(33.6, 37.2, 'sala', [4.4, 55, 245, 5.2, 55, 242], { clock: 3 * 60 + 33 }),
+  S(37.2, 41.3, 'sala', [1.3, 200, 225, 2.6, 80, 245], { clock: 3 * 60 + 33 }),
+  S(41.3, 43, 'card', [1.0, 270, 202, 1.0, 270, 202], { clock: 3 * 60 + 33 }),
 ];""" + s[b:]
 # tela final: a pergunta da Parte 2
-rep("const dd = card ? sec(81.5) : d;", "const dd = card ? sec(37.9) : d;")
+rep("const dd = card ? sec(81.5) : d;", "const dd = card ? sec(41.2) : d;")
 rep("const k = Math.min(1, (t - SHOTS[SHOTS.length - 1].a) / 8);", "const k = Math.min(1, (t - SHOTS[SHOTS.length - 1].a) / 6);")
 rep("c.strokeText('O QUE VOCÊ FARIA?', LW / 2, WIN.y + 52); c.fillStyle = '#ff2a3d'; c.fillText('O QUE VOCÊ FARIA?', LW / 2, WIN.y + 52);", "c.strokeText('É O RAFA?', LW / 2, WIN.y + 52); c.fillStyle = '#ff2a3d'; c.fillText('É O RAFA?', LW / 2, WIN.y + 52);")
 rep("c.fillText('3:32', LW / 2, WIN.y + 102);", "c.fillText('3:33', LW / 2, WIN.y + 102);")
@@ -94,15 +97,16 @@ rep("btn(WIN.x + WIN.w * .26, 'ENTREGAR O IRMÃO', 0);\n  btn(WIN.x + WIN.w * .7
 # legendas
 a = s.index("const CAPS = NARR ? NARR.legendas : ["); b = s.index("];", a) + 2
 s = s[:a] + """const CAPS = NARR ? NARR.legendas : [
-  [0, 72, 'NA FAMÍLIA VALENÇA, TODO MUNDO MORRE AOS *33*. ONTEM EU FIZ 33.', 'tiago'],
-  [72, 168, 'ÀS 3H32, BATERAM COM A VOZ DO MEU *AVÔ*.', 'tiago'],
-  [168, 264, '*DÁ OUTRO VALENÇA NO SEU LUGAR.*', 'avo'],
-  [264, 360, 'EU OLHEI PRO MEU IRMÃO... E *ABRI* A PORTA.', 'tiago'],
-  [360, 480, 'NÃO TINHA NINGUÉM. SÓ UMA CAIXA DE SAPATO. COM O MEU NOME, NA LETRA DO MEU *PAI*.', 'tiago'],
-  [480, 648, 'DENTRO, UMA FOTO DO RAFA COM CINCO ANOS. ATRÁS: *PAGO. 1999.* O ANO EM QUE MEU PAI MORREU.', 'tiago'],
-  [648, 792, 'MEU PAI ENTREGOU O *RAFA*. QUANDO A GENTE ERA CRIANÇA.', 'tiago'],
-  [792, 912, 'TIAGO? QUE HORAS SÃO?', 'rafa'],
-  [912, 960, 'ENTÃO... QUEM DORME NO MEU SOFÁ *HÁ 24 ANOS*?', 'tiago'],
+  [0, 130, 'NA FAMÍLIA VALENÇA, TODO MUNDO MORRE AOS *33*. ONTEM EU FIZ 33.', 'tiago'],
+  [132, 165, 'TOC. TOC. TOC.', 'coisa'],
+  [166, 262, 'ÀS 3H32, BATERAM. COM A VOZ DO MEU *AVÔ*.', 'tiago'],
+  [266, 318, '*DÁ OUTRO VALENÇA NO SEU LUGAR.*', 'avo'],
+  [329, 404, 'EU OLHEI PRO MEU IRMÃO... E *ABRI* A PORTA.', 'tiago'],
+  [410, 530, 'NÃO TINHA NINGUÉM. SÓ UMA CAIXA DE SAPATO. COM O MEU NOME, NA LETRA DO MEU *PAI*.', 'tiago'],
+  [538, 715, 'DENTRO, UMA FOTO DO RAFA COM CINCO ANOS. ATRÁS: *PAGO. 1999.* O ANO EM QUE MEU PAI MORREU.', 'tiago'],
+  [722, 800, 'MEU PAI ENTREGOU O *RAFA*. QUANDO A GENTE ERA CRIANÇA.', 'tiago'],
+  [811, 890, 'TIAGO? QUE HORAS SÃO?', 'rafa'],
+  [898, 990, 'ENTÃO... QUEM DORME NO MEU SOFÁ *HÁ 24 ANOS*?', 'tiago'],
 ];""" + s[b:]
 s = re.sub(r"const big = .*?;", "const big = false;", s, count=1)
 rep("if (!big && words.length > 4) {\n    const n = Math.ceil(words.length / 4)", "if (!big && words.length > 3) {\n    const n = Math.ceil(words.length / 3)")
@@ -110,12 +114,12 @@ s = re.sub(r"maxW = \d+, cx = \d+, cy = \d+;", "maxW = 360, cx = 262, cy = 646;"
 rep("g.fillText('OS VALENÇA · 1', LW / 2 + 78, 150);", "g.fillText('OS VALENÇA · 2', LW / 2 + 78, 150);")
 # textos da fita longe das bordas (o TikTok corta as laterais)
 rep("osd('PLAY ▶', WIN.x + 18, WIN.y + 12);", "osd('PLAY ▶', WIN.x + 58, WIN.y + 12);")
-rep("osd('SP  0:' + String(Math.floor((t - sec(30)) / FPS) % 60).padStart(2, '0'), WIN.x + WIN.w - 18, WIN.y + 12)", "osd('SP  0:' + String(Math.floor((t - sec(7)) / FPS) % 60).padStart(2, '0'), WIN.x + WIN.w - 58, WIN.y + 12)")
+rep("osd('SP  0:' + String(Math.floor((t - sec(30)) / FPS) % 60).padStart(2, '0'), WIN.x + WIN.w - 18, WIN.y + 12)", "osd('SP  0:' + String(Math.floor((t - sec(10.9)) / FPS) % 60).padStart(2, '0'), WIN.x + WIN.w - 58, WIN.y + 12)")
 rep('<script src="sons-valenca.js"></script>\n<script src="narracao-valenca.js"></script>', '<script src="sons-valenca2.js"></script>\n<script src="narracao-valenca2.js"></script>')
 s = re.sub(r"<title>.*?</title>", "<title>Os Valença · Parte 2</title>", s, count=1)
 s = re.sub(r"<h1>.*?</h1>", "<h1>Os Valença · Parte 2</h1>", s, count=1)
-s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · A Dívida dos Valença, Parte 2 · 9:16, 1080×1920, 40 s · se entende sozinha</p>', s, count=1, flags=re.S)
-s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 72, 'GANCHO'], [72, 264, 'A BATIDA E A FITA'], [264, 360, 'ABRI'], [360, 480, 'A CAIXA'], [480, 648, 'A FOTO'], [648, 792, 'O RAFA'], [792, 912, 'QUE HORAS SÃO'], [912, 960, 'É O RAFA?']];", s, count=1)
+s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · A Dívida dos Valença, Parte 2 · 9:16, 1080×1920, 43 s · se entende sozinha</p>', s, count=1, flags=re.S)
+s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 130, 'GANCHO'], [130, 326, 'A BATIDA E A FITA'], [326, 410, 'ABRI'], [410, 535, 'A CAIXA'], [535, 718, 'A FOTO'], [718, 808, 'O RAFA'], [808, 893, 'QUE HORAS SÃO'], [893, 1032, 'É O RAFA?']];", s, count=1)
 s = re.sub(r'<ol class="beats">.*?</ol>', '''<ol class="beats">
       <li class="hot"><b>0–3 s</b><span>“Na família Valença, todo mundo morre aos 33. Ontem eu fiz 33.” O bolo, o relógio em 3:32.</span></li>
       <li><b>3–11 s</b><span>Três batidas com a voz do avô. Na fita: “Dá outro Valença no seu lugar.”</span></li>

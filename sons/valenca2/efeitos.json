@@ -1,0 +1,21 @@
+{
+  "episodio": "A Dívida dos Valença · Parte 2",
+  "duracao": 43,
+  "origem": "os mesmos efeitos da Parte 1 (sons/valenca), sem gerar nada novo",
+  "efeitos": [
+    { "arquivo": "../valenca/03-casa-noite.mp3",   "trechos": [[0, 43]], "volume": -20, "fade": 0.6 },
+    { "arquivo": "../valenca/02-relogio.mp3",      "trechos": [[0, 10.9], [13.6, 17.1], [29.9, 37.2]], "volume": -14 },
+    { "arquivo": "../valenca/02-relogio.mp3",      "trechos": [[37.2, 41.25]], "volume": -8 },
+    { "arquivo": "../valenca/01-pancada.mp3",      "inicio": 0.0,   "volume": -4 },
+    { "arquivo": "../valenca/08-batidas.mp3",      "inicio": 5.22,  "volume": -2 },
+    { "arquivo": "../valenca/05-videocassete.mp3", "inicio": 10.5,  "volume": -9 },
+    { "arquivo": "../valenca/06-fita-vhs.mp3",     "trechos": [[10.9, 13.6]], "volume": -16, "fade": 0.2 },
+    { "arquivo": "../valenca/07-fita-engasgo.mp3", "inicio": 13.3,  "volume": -6 },
+    { "arquivo": "../valenca/04-caixa.mp3",        "inicio": 19.7,  "volume": -9 },
+    { "arquivo": "../valenca/12-coracao.mp3",      "inicio": 25.6,  "volume": -12 },
+    { "arquivo": "../valenca/09-assoalho.mp3",     "inicio": 31.5,  "volume": -8, "pan": -0.6 },
+    { "arquivo": "../valenca/10-respiracao.mp3",   "inicio": 32.4,  "volume": -11, "pan": -0.75 },
+    { "arquivo": "../valenca/12-coracao.mp3",      "inicio": 35.5,  "volume": -9 },
+    { "arquivo": "../valenca/13-relogio-para.mp3", "inicio": 41.25, "volume": -2 }
+  ]
+}
