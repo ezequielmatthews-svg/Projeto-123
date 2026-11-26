@@ -61,11 +61,11 @@ function drawOlhoC(d, f, o, pass) {
   }
 }
 // o que ela vê pela lente: o corredor em olho de peixe, o marido e o Mateus
-const PAN = track([[0, -150], [sec(5.4), -110], [sec(7.0), 0], [sec(11.2), 0], [sec(11.45), 150, 'o'], [sec(12.1), 150], [sec(12.3), -150, 'o'], [sec(12.8), -150], [sec(12.95), 150, 'o'], [sec(13.3), 150], [sec(13.42), -150, 'o'], [sec(13.7), -150], [sec(13.8), 150, 'o'], [sec(14.2), 150], [L, 150]]);
+const PAN = track([[0, -150], [sec(6.3), -110], [sec(8.2), 0], [sec(13.0), 0], [sec(13.25), 150, 'o'], [sec(13.9), 150], [sec(14.1), -150, 'o'], [sec(14.6), -150], [sec(14.75), 150, 'o'], [sec(15.1), 150], [sec(15.22), -150, 'o'], [sec(15.5), -150], [sec(15.6), 150, 'o'], [sec(16.0), 150], [L, 150]]);
 const HUSB_X = -.3, MAT_X = .3;
 function rostoDe(d) {   // quanto cada rosto está apagado (0 = rosto inteiro)
   const t = d / FPS, p = PAN(d);
-  if (t < 11.2) return { h: 0, m: t < 7 ? 1 : lerp(.85, 1, sat((t - 8.4) / 2.8)) };
+  if (t < 13.0) return { h: 0, m: t < 8.2 ? 1 : lerp(.85, 1, sat((t - 9.6) / 3)) };
   const k = sat((p + 150) / 300);          // 0 olhando o marido, 1 olhando o Mateus
   return { h: E.io(k), m: 1 - E.io(k) };
 }
@@ -74,7 +74,7 @@ function celiaExtra(d, pass) {
   const t = d / FPS, r = rostoDe(d);
   const breathe = Math.sin(t * 2.2) * .006;
   drawPessoa(HUSB_X, 1.12 + breathe, { coat: '#1c1d19', coatSh: '#131410', skin: '#a9a99a', skinSh: '#8a8a7c', hair: '#9a9a90', legs: '#1c1d19', hat: true, alpha: .78, ghost: true, h: .98, erase: r.h }, 230);
-  if (t >= 7) drawPessoa(MAT_X, 1.16 - breathe, Object.assign({}, MATEUS, { alpha: .72, ghost: true, erase: r.m, knock: t < 7.5 ? .6 : 0 }), 260);
+  if (t >= 8.2) drawPessoa(MAT_X, 1.16 - breathe, Object.assign({}, MATEUS, { alpha: .72, ghost: true, erase: r.m, knock: t < 8.7 ? .6 : 0 }), 260);
 }
 function drawLente(d, f, o, pass) {
   const t = d / FPS, R0 = 196;
@@ -128,7 +128,7 @@ function drawDentro(d, f, o, pass) {
   }
 }
 // a mão dela na corrente: treme, a corrente escorrega no trilho... e para
-const SLIDE = track([[0, 0], [sec(14.6), 0], [sec(15.6), .35, 'io'], [sec(15.9), .33], [sec(16.4), .62, 'io'], [sec(16.7), .6], [L, .6]]);
+const SLIDE = track([[0, 0], [sec(16.4), 0], [sec(17.4), .35, 'io'], [sec(17.7), .33], [sec(18.3), .62, 'io'], [sec(18.6), .6], [L, .6]]);
 function drawMao2(d, f, o, pass) {
   const t = d / FPS, tr = Math.sin(d * 1.9) * 1.6 + Math.sin(d * 3.7) * 1.1, s = SLIDE(d);
   if (pass === 'base') {
@@ -157,7 +157,7 @@ function drawMao2(d, f, o, pass) {
 }
 // o retrato do marido: o polegar dela gasta o rosto
 function drawRetrato(d, f, o, pass) {
-  const t = d / FPS, rub = Math.sin(t * 9), fade = sat((t - 17.6) / 1.6);
+  const t = d / FPS, rub = Math.sin(t * 9), fade = sat((t - 19.7) / 1.7);
   if (pass === 'base') {
     rect(-140, -160, 820, 730, '#463a2e');
     for (let i = 0; i < 16; i++) for (let j = 0; j < 12; j++) { c.fillStyle = 'rgba(90,70,50,.35)'; c.beginPath(); c.arc(-120 + i * 52 + (j % 2) * 26, -140 + j * 52, 5, 0, 7); c.fill(); }   // papel de parede florido

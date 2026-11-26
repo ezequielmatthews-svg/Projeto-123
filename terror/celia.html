@@ -90,7 +90,7 @@ code { font-family: var(--font-mono); color: var(--amber); }
 
   <div class="side">
     <h1>Onze Anos</h1>
-    <p>Prédio 42 · a Dona Célia · 9:16, 1080×1920, 22 s · ação do começo ao fim · o fim emenda no começo</p>
+    <p>Prédio 42 · a Dona Célia · 9:16, 1080×1920, 25 s · ação do começo ao fim · o fim emenda no começo</p>
 
     <div class="deck" role="group" aria-label="Controles">
       <button class="btn primary" id="play" type="button" aria-pressed="false">
@@ -118,10 +118,10 @@ code { font-family: var(--font-mono); color: var(--amber); }
 
     <ol class="beats">
       <li class="hot"><b>0–3 s</b><span>Close do olho dela no olho mágico, pulando de um lado pro outro. “Faz 11 anos que eu olho pelo olho mágico.”</span></li>
-      <li><b>3–7 s</b><span>Pela lente: o marido, de chapéu, com rosto. Três batidas sacodem a porta dela; a poeira cai, a corrente pula.</span></li>
-      <li><b>7–14 s</b><span>Agora são dois: o Mateus sem os olhos. A lente vai de um pro outro, cada vez mais rápido — quem ela olha ganha o rosto, o outro perde.</span></li>
-      <li><b>14–19 s</b><span>A mão dela na corrente, tremendo, a corrente escorregando. “Abre, Célia. A gente tá com frio.” O polegar gasta o rosto da foto do marido.</span></li>
-      <li class="hot"><b>19–22 s</b><span>O olho sai da lente. Escuro. Um olho volta e encosta — o mesmo do começo. Recomeça.</span></li>
+      <li><b>3–8 s</b><span>Pela lente: o marido, de chapéu, com rosto. Três batidas sacodem a porta dela; a poeira cai, a corrente pula.</span></li>
+      <li><b>8–16 s</b><span>Agora são dois: o Mateus sem os olhos. A lente vai de um pro outro, cada vez mais rápido — quem ela olha ganha o rosto, o outro perde.</span></li>
+      <li><b>16–22 s</b><span>A mão dela na corrente, tremendo, a corrente escorregando. “Abre, Célia. A gente tá com frio.” O polegar gasta o rosto da foto do marido.</span></li>
+      <li class="hot"><b>22–25 s</b><span>O olho sai da lente. Escuro. Um olho volta e encosta — o mesmo do começo. Recomeça.</span></li>
     </ol>
 
     <div class="export"><p>Gerar o MP4 para postar (vídeo + som): <code>npm run render:celia</code> → <code>out/onze-anos.mp4</code></p></div>
@@ -143,10 +143,10 @@ const R = EXPORT || qs.has('hd') ? 2 : 1;      // prévia em 540x960, exportaç�
 const LW = 540, LH = 960;                     // coordenadas lógicas (9:16)
 const W = LW * R, H = LH * R;
 const WIN = { x: 0, y: 165, w: 540, h: 520 };  // janela quase quadrada: imagem 28% maior no celular
-const FPS = 24, L = 528;   // 22.0 s (o fim emenda no começo)
+const FPS = 24, L = 612;   // 25.5 s (o fim emenda no começo)
 const BGS = EXPORT ? 5 : 3;                   // resolução da pintura de fundo (para os closes)
 const INK = '#120d16';
-const ONES = [[0, 528]];
+const ONES = [[0, 612]];
 const isOnes = t => ONES.some(([a, b]) => t >= a && t <= b);
 const loopT = f => ((f % L) + L) % L;
 const drawnOf = t => (isOnes(t) ? t : t - (t % 2));
@@ -320,7 +320,7 @@ const toWin = (x, y) => [(x - CAM.cx) * CAM.z + WCX, (y - CAM.cy) * CAM.z + WCY]
 /* ============================================================
    CURVAS E TEMPO
    ============================================================ */
-const KNOCKS = [5.6, 6.18, 6.72];        // batidas na porta 42 (casadas com sons/valenca/08-batidas.mp3)
+const KNOCKS = [6.6, 7.18, 7.72];        // batidas na porta 42 (casadas com sons/valenca/08-batidas.mp3)
 const KNOCKS2 = [];
 const CLOCK0 = 3 * 3600 + 16 * 60 + 58, BULGE_K = 0;   // batidas finais, "atrás de você" (emendam no começo)
 const KF = KNOCKS.map(sec), KF2 = KNOCKS2.map(sec);
@@ -995,11 +995,11 @@ function drawOlhoC(d, f, o, pass) {
   }
 }
 // o que ela vê pela lente: o corredor em olho de peixe, o marido e o Mateus
-const PAN = track([[0, -150], [sec(5.4), -110], [sec(7.0), 0], [sec(11.2), 0], [sec(11.45), 150, 'o'], [sec(12.1), 150], [sec(12.3), -150, 'o'], [sec(12.8), -150], [sec(12.95), 150, 'o'], [sec(13.3), 150], [sec(13.42), -150, 'o'], [sec(13.7), -150], [sec(13.8), 150, 'o'], [sec(14.2), 150], [L, 150]]);
+const PAN = track([[0, -150], [sec(6.3), -110], [sec(8.2), 0], [sec(13.0), 0], [sec(13.25), 150, 'o'], [sec(13.9), 150], [sec(14.1), -150, 'o'], [sec(14.6), -150], [sec(14.75), 150, 'o'], [sec(15.1), 150], [sec(15.22), -150, 'o'], [sec(15.5), -150], [sec(15.6), 150, 'o'], [sec(16.0), 150], [L, 150]]);
 const HUSB_X = -.3, MAT_X = .3;
 function rostoDe(d) {   // quanto cada rosto está apagado (0 = rosto inteiro)
   const t = d / FPS, p = PAN(d);
-  if (t < 11.2) return { h: 0, m: t < 7 ? 1 : lerp(.85, 1, sat((t - 8.4) / 2.8)) };
+  if (t < 13.0) return { h: 0, m: t < 8.2 ? 1 : lerp(.85, 1, sat((t - 9.6) / 3)) };
   const k = sat((p + 150) / 300);          // 0 olhando o marido, 1 olhando o Mateus
   return { h: E.io(k), m: 1 - E.io(k) };
 }
@@ -1008,7 +1008,7 @@ function celiaExtra(d, pass) {
   const t = d / FPS, r = rostoDe(d);
   const breathe = Math.sin(t * 2.2) * .006;
   drawPessoa(HUSB_X, 1.12 + breathe, { coat: '#1c1d19', coatSh: '#131410', skin: '#a9a99a', skinSh: '#8a8a7c', hair: '#9a9a90', legs: '#1c1d19', hat: true, alpha: .78, ghost: true, h: .98, erase: r.h }, 230);
-  if (t >= 7) drawPessoa(MAT_X, 1.16 - breathe, Object.assign({}, MATEUS, { alpha: .72, ghost: true, erase: r.m, knock: t < 7.5 ? .6 : 0 }), 260);
+  if (t >= 8.2) drawPessoa(MAT_X, 1.16 - breathe, Object.assign({}, MATEUS, { alpha: .72, ghost: true, erase: r.m, knock: t < 8.7 ? .6 : 0 }), 260);
 }
 function drawLente(d, f, o, pass) {
   const t = d / FPS, R0 = 196;
@@ -1062,7 +1062,7 @@ function drawDentro(d, f, o, pass) {
   }
 }
 // a mão dela na corrente: treme, a corrente escorrega no trilho... e para
-const SLIDE = track([[0, 0], [sec(14.6), 0], [sec(15.6), .35, 'io'], [sec(15.9), .33], [sec(16.4), .62, 'io'], [sec(16.7), .6], [L, .6]]);
+const SLIDE = track([[0, 0], [sec(16.4), 0], [sec(17.4), .35, 'io'], [sec(17.7), .33], [sec(18.3), .62, 'io'], [sec(18.6), .6], [L, .6]]);
 function drawMao2(d, f, o, pass) {
   const t = d / FPS, tr = Math.sin(d * 1.9) * 1.6 + Math.sin(d * 3.7) * 1.1, s = SLIDE(d);
   if (pass === 'base') {
@@ -1091,7 +1091,7 @@ function drawMao2(d, f, o, pass) {
 }
 // o retrato do marido: o polegar dela gasta o rosto
 function drawRetrato(d, f, o, pass) {
-  const t = d / FPS, rub = Math.sin(t * 9), fade = sat((t - 17.6) / 1.6);
+  const t = d / FPS, rub = Math.sin(t * 9), fade = sat((t - 19.7) / 1.7);
   if (pass === 'base') {
     rect(-140, -160, 820, 730, '#463a2e');
     for (let i = 0; i < 16; i++) for (let j = 0; j < 12; j++) { c.fillStyle = 'rgba(90,70,50,.35)'; c.beginPath(); c.arc(-120 + i * 52 + (j % 2) * 26, -140 + j * 52, 5, 0, 7); c.fill(); }   // papel de parede florido
@@ -1125,16 +1125,16 @@ ENVS.olhoC = drawOlhoC; ENVS.lente = drawLente; ENVS.dentro = drawDentro; ENVS.m
    ============================================================ */
 const S = (a, b, env, cam, o = {}) => ({ a: sec(a), b: sec(b), env, cam, o });
 const SHOTS = [
-  S(0, 2.6, 'olhoC', [1.0, 270, 200, 1.18, 270, 205], { cine: 1 }),
-  S(2.6, 5.4, 'lente', [1.0, 270, 200, 1.12, 260, 200], { cine: 1 }),
-  S(5.4, 7.0, 'dentro', [1.3, 270, 170, 1.5, 270, 160], { cine: 1 }),
-  S(7.0, 8.4, 'lente', [1.0, 270, 200, 1.35, 270, 205], { cine: 1 }),
-  S(8.4, 11.2, 'lente', [1.35, 270, 205, 1.5, 270, 200], { cine: 1 }),
-  S(11.2, 14.2, 'lente', [1.5, 270, 200, 1.75, 270, 196], { cine: 1 }),
-  S(14.2, 17.2, 'mao2', [1.05, 250, 200, 1.4, 300, 196], { cine: 1 }),
-  S(17.2, 19.4, 'retrato', [1.2, 270, 170, 1.6, 270, 168], { cine: 1 }),
-  S(19.4, 21.75, 'olhoC', [1.25, 270, 205, 1.0, 270, 200], { cine: 1, leave: 19.9, back: 21.1 }),
-  S(21.75, 22, 'olhoC', [1.0, 270, 200, 1.0, 270, 200], { cine: 1, loop: 1 }),
+  S(0, 3.0, 'olhoC', [1.0, 270, 200, 1.18, 270, 205], { cine: 1 }),
+  S(3.0, 6.3, 'lente', [1.0, 270, 200, 1.14, 260, 200], { cine: 1 }),
+  S(6.3, 8.2, 'dentro', [1.3, 270, 170, 1.5, 270, 160], { cine: 1 }),
+  S(8.2, 9.6, 'lente', [1.0, 270, 200, 1.35, 270, 205], { cine: 1 }),
+  S(9.6, 13.0, 'lente', [1.35, 270, 205, 1.5, 270, 200], { cine: 1 }),
+  S(13.0, 16.0, 'lente', [1.5, 270, 200, 1.75, 270, 196], { cine: 1 }),
+  S(16.0, 19.3, 'mao2', [1.05, 250, 200, 1.4, 300, 196], { cine: 1 }),
+  S(19.3, 21.8, 'retrato', [1.2, 270, 170, 1.6, 270, 168], { cine: 1 }),
+  S(21.8, 25.25, 'olhoC', [1.25, 270, 205, 1.0, 270, 200], { cine: 1, leave: 22.3, back: 24.2 }),
+  S(25.25, 25.5, 'olhoC', [1.0, 270, 200, 1.0, 270, 200], { cine: 1, loop: 1 }),
 ];
 const shotAt = t => SHOTS.find(s => t >= s.a && t < s.b) || SHOTS[SHOTS.length - 1];
 const LAST = { z: 1, cam: 2, black: false };
@@ -1200,15 +1200,14 @@ function drawScene(t, f) {
 // legendas: vêm da narração (scripts/narrar.py) quando ela existe; senão, estas
 const NARR = window.NARRACAO || null;
 const CAPS = NARR ? NARR.legendas : [
-  [0, 62, 'FAZ *11 ANOS* QUE EU OLHO PELO OLHO MÁGICO.', 'narrador'],
-  [62, 130, 'ENQUANTO EU OLHO, O MEU MARIDO CONTINUA TENDO *ROSTO*.', 'narrador'],
-  [134, 166, '*TOC. TOC. TOC.*', 'coisa'],
-  [168, 202, 'HOJE ERAM *DOIS*.', 'narrador'],
-  [202, 268, 'O MENINO DO 42. JÁ SEM OS *OLHOS*.', 'narrador'],
-  [268, 340, 'EU SÓ CONSIGO SEGURAR *UM* ROSTO.', 'narrador'],
-  [342, 412, '*ABRE, CÉLIA. A GENTE TÁ COM FRIO.*', 'coisa'],
-  [414, 466, 'ENTÃO EU TIREI O OLHO DA PORTA.', 'narrador'],
-  [468, 528, 'E ALGUÉM, DO OUTRO LADO, *ENCOSTOU O DELE*:', 'narrador'],
+  [0, 70, 'FAZ *11 ANOS* QUE EU OLHO PELO OLHO MÁGICO.', 'narrador'],
+  [72, 152, 'ENQUANTO EU OLHO, O MEU MARIDO CONTINUA TENDO *ROSTO*.', 'narrador'],
+  [156, 190, '*TOC. TOC. TOC.*', 'coisa'],
+  [199, 310, 'HOJE ERAM *DOIS*. O MENINO DO 42. JÁ SEM OS *OLHOS*.', 'narrador'],
+  [316, 378, 'EU SÓ CONSIGO SEGURAR *UM* ROSTO.', 'narrador'],
+  [388, 460, '*ABRE, CÉLIA. A GENTE TÁ COM FRIO.*', 'coisa'],
+  [466, 520, 'ENTÃO EU TIREI O OLHO DA PORTA.', 'narrador'],
+  [526, 600, 'E ALGUÉM, DO OUTRO LADO, *ENCOSTOU O DELE*:', 'narrador'],
 ];
 function drawCaption(g, t) {
   const cap = CAPS.find(([a, b]) => t >= a && t < b);
@@ -1417,7 +1416,7 @@ function wavBase64() {
 /* ============================================================
    FOLHA DE EXPOSIÇÃO
    ============================================================ */
-const SECTIONS = [[0, 62, 'GANCHO'], [62, 134, 'O MARIDO'], [134, 168, 'TOC TOC TOC'], [168, 268, 'DOIS'], [268, 342, 'UM ROSTO'], [342, 414, 'A CORRENTE'], [414, 528, 'O OUTRO OLHO']];
+const SECTIONS = [[0, 72, 'GANCHO'], [72, 156, 'O MARIDO'], [156, 199, 'TOC TOC TOC'], [199, 312, 'DOIS'], [312, 384, 'UM ROSTO'], [384, 464, 'A CORRENTE'], [464, 612, 'O OUTRO OLHO']];
 const xs = document.getElementById('xs'), xctx = xs.getContext('2d');
 function drawXSheet(t) {
   const dpr = window.devicePixelRatio || 1, w = xs.clientWidth, h = xs.clientHeight;

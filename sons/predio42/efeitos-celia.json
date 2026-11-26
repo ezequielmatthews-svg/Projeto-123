@@ -1,0 +1,17 @@
+{
+  "episodio": "Prédio 42 · Onze Anos (a Dona Célia)",
+  "duracao": 25.5,
+  "efeitos": [
+    { "arquivo": "../corredor/12-noite.mp3",   "trechos": [[0, 25.5]], "volume": -22, "fade": 0.05 },
+    { "arquivo": "../corredor/02-zumbido.mp3", "trechos": [[0, 25.5]], "volume": -19, "fade": 0.05 },
+    { "arquivo": "../corredor/10-olho-magico.mp3", "inicio": 0.0, "volume": -4 },
+    { "arquivo": "../corredor/11-batidas.mp3", "inicio": 6.32, "volume": 5 },
+    { "arquivo": "../corredor/09-sem-sinal.mp3", "inicio": 13.0, "volume": -16 },
+    { "arquivo": "../corredor/14-coracao.mp3", "inicio": 13.2, "volume": -14 },
+    { "arquivo": "../corredor/04-macaneta.mp3", "inicio": 16.4, "volume": -6 },
+    { "arquivo": "17-tampinha.mp3",            "inicio": 22.25, "volume": -3 },
+    { "arquivo": "../corredor/13-respiracao.mp3", "inicio": 22.6, "volume": -11, "pan": -0.8 },
+    { "arquivo": "../corredor/10-olho-magico.mp3", "inicio": 24.1, "volume": -2, "pan": 0.5 },
+    { "arquivo": "../corredor/01-lampada.mp3", "inicio": 25.25, "volume": -6 }
+  ]
+}

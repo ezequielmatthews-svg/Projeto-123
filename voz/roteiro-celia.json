@@ -1,0 +1,27 @@
+{
+  "episodio": "Fita Maldita · Prédio 42 · Onze Anos (a Dona Célia)",
+  "frames": 612,
+  "vozes": {
+    "narrador": "ElevenLabs · Edna E. (Dona Célia) · eleven_v4",
+    "coisa": "Sergio (o marido) + Antônio (o Mateus) juntos, com o efeito imitacao"
+  },
+  "falas": [
+    {"personagem": "narrador", "inicio": 0.05, "arquivo": "voz/elevenlabs/celia/01.mp3", "pausa_max": 0.3, "tempo": 1.1, "limite": 3.0,
+     "fala": "[whispers] Faz onze anos que eu olho pelo olho mágico.", "legenda": "FAZ *11 ANOS* QUE EU OLHO PELO OLHO MÁGICO."},
+    {"personagem": "narrador", "inicio": 3.05, "arquivo": "voz/elevenlabs/celia/02.mp3", "pausa_max": 0.3, "tempo": 1.1, "limite": 6.4,
+     "fala": "[softly] Enquanto eu olho, o meu marido continua tendo rosto.", "legenda": "ENQUANTO EU OLHO, O MEU MARIDO CONTINUA TENDO *ROSTO*."},
+    {"personagem": "narrador", "inicio": 8.3, "arquivo": "voz/elevenlabs/celia/03.mp3", "pausa_max": 0.35, "tempo": 1.08, "limite": 13.0,
+     "fala": "[whispers] Hoje eram dois. O menino do quarenta e dois. Já sem os olhos.", "legenda": "HOJE ERAM *DOIS*. O MENINO DO 42. JÁ SEM OS *OLHOS*."},
+    {"personagem": "narrador", "inicio": 13.2, "arquivo": "voz/elevenlabs/celia/04.mp3", "limite": 16.0,
+     "fala": "[softly] Eu só consigo segurar um rosto.", "legenda": "EU SÓ CONSIGO SEGURAR *UM* ROSTO."},
+    {"personagem": "coisa", "inicio": 16.2, "arquivos": ["voz/elevenlabs/celia/05-marido.mp3", "voz/elevenlabs/celia/05-mateus.mp3"], "efeito": "imitacao", "pausa_max": 0.3, "limite": 19.3,
+     "fala": "[whispers] Abre, Célia. A gente tá com frio.", "legenda": "*ABRE, CÉLIA. A GENTE TÁ COM FRIO.*"},
+    {"personagem": "narrador", "inicio": 19.45, "arquivo": "voz/elevenlabs/celia/06.mp3", "limite": 21.8,
+     "fala": "[softly] Então eu tirei o olho da porta.", "legenda": "ENTÃO EU TIREI O OLHO DA PORTA."},
+    {"personagem": "narrador", "inicio": 21.95, "arquivo": "voz/elevenlabs/celia/07.mp3", "pausa_max": 0.3, "tempo": 1.05, "limite": 25.2,
+     "fala": "[whispers] E alguém, do outro lado... encostou o dele:", "legenda": "E ALGUÉM, DO OUTRO LADO, *ENCOSTOU O DELE*:"}
+  ],
+  "legendas_extra": [
+    {"inicio": 6.5, "fim": 8.1, "legenda": "*TOC. TOC. TOC.*", "personagem": "coisa"}
+  ]
+}
