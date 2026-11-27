@@ -8,19 +8,21 @@ B = src.index('/* ============================================================\n
 s = src[:A] + open('scripts/episodios/grimorio1.js', encoding='utf-8').read() + '\n' + src[B:]
 # configuração
 s = rep(s, 'const WIN = { x: 0, y: 165, w: 540, h: 520 };', 'const WIN = { x: 0, y: 160, w: 540, h: 550 };  // imagem grande: quase a tela toda')
-s = re.sub(r"const FPS = 24, L = \d+;.*\n", "const FPS = 24, L = 720;   // 30 s (o fim emenda no começo)\n", s, count=1)
-s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[0, 720]];   // gravura: movimento a 24 desenhos por segundo\n", s, count=1)
+s = re.sub(r"const FPS = 24, L = \d+;.*\n", "const FPS = 24, L = 600;   // 25 s (o fim emenda no começo)\n", s, count=1)
+s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[0, 600]];   // gravura: movimento a 24 desenhos por segundo\n", s, count=1)
 s = rep(s, 'family=Bungee&family=Creepster', 'family=Inter:wght@400;500;600&family=IM+Fell+English&family=IM+Fell+English+SC&family=Bungee&family=Creepster')
 s = rep(s, "ROOM = paintRoom();", "ROOM = paintRoom(); buildTextures();")
+s = rep(s, "fontsReady.catch(() => {}).then(() => {", "fontsReady.catch(() => {}).then(() => window.__clipsReady).then(() => {")
+s = rep(s, "'20px \"Permanent Marker\"'", "'20px \"Permanent Marker\"', '30px \"IM Fell English\"', '30px \"IM Fell English SC\"'")
 # legendas
 a = s.index("const CAPS = NARR ? NARR.legendas : ["); b = s.index("];", a) + 2
 s = s[:a] + """const CAPS = NARR ? NARR.legendas : [
-  [0, 53, 'ISSO É UM *ANJO*. SEGUNDO A BÍBLIA.', 'narrador'],
-  [53, 216, 'O PROFETA EZEQUIEL VIU RODAS DENTRO DE RODAS... COM OS AROS *CHEIOS DE OLHOS*.', 'narrador'],
-  [216, 360, 'ELAS ANDAVAM PARA OS *QUATRO LADOS* SEM SE VIRAR. PARA ONDE O ESPÍRITO IA, AS RODAS IAM.', 'narrador'],
-  [360, 552, 'NA TRADIÇÃO, ELES SÃO OS *TRONOS*: A TERCEIRA ORDEM DOS ANJOS. ACIMA DELES, SÓ QUERUBINS E SERAFINS.', 'narrador'],
-  [552, 672, 'ELES NÃO TÊM ROSTO. SÓ OLHOS. E TODOS *OLHAM PRA VOCÊ*.', 'narrador'],
-  [672, 720, 'COMENTA QUAL ANJO EU EXPLICO AMANHÃ:', 'narrador'],
+  [0, 72, 'ISSO É UM *ANJO*. SEGUNDO A BÍBLIA.', 'narrador'],
+  [72, 200, 'O PROFETA EZEQUIEL VIU RODAS DENTRO DE RODAS... COM OS AROS *CHEIOS DE OLHOS*.', 'narrador'],
+  [202, 290, 'ELAS ANDAVAM PROS *QUATRO LADOS* SEM SE VIRAR.', 'narrador'],
+  [293, 436, 'NA TRADIÇÃO, SÃO OS *TRONOS*: A TERCEIRA ORDEM DOS ANJOS. ACIMA DELES, SÓ QUERUBINS E SERAFINS.', 'narrador'],
+  [438, 530, 'ELES NÃO TÊM ROSTO. SÓ OLHOS. E TODOS *OLHAM PRA VOCÊ*.', 'narrador'],
+  [534, 600, 'COMENTA QUAL ANJO VEM AMANHÃ:', 'narrador'],
 ];""" + s[b:]
 s = re.sub(r"const big = .*?;", "const big = false;", s, count=1)
 s = rep(s, "if (!big && words.length > 4) {\n    const n = Math.ceil(words.length / 4)", "if (!big && words.length > 3) {\n    const n = Math.ceil(words.length / 3)")
@@ -63,12 +65,12 @@ function compose(f) {
 }
 
 """ + s[b:]
-s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 53, 'GANCHO'], [53, 216, 'EZEQUIEL'], [216, 360, 'QUATRO LADOS'], [360, 552, '3º DE 9'], [552, 672, 'OS OLHOS'], [672, 720, 'COMENTA']];", s, count=1)
+s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 72, 'GANCHO'], [72, 202, 'EZEQUIEL'], [202, 293, 'QUATRO LADOS'], [293, 437, '3º DE 9'], [437, 533, 'OS OLHOS'], [533, 600, 'COMENTA']];", s, count=1)
 s = re.sub(r"<title>.*?</title>", "<title>Grimório Nº 1 · Ofanim</title>", s, count=1)
 s = re.sub(r"<h1>.*?</h1>", "<h1>Grimório Nº 1 · Ofanim</h1>", s, count=1)
-s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · Grimório (série explicativa) · gravura de grimório: pergaminho, tinta, folha de ouro, luz de vela · 9:16, 1080×1920, 30 s · o fim emenda no começo</p>', s, count=1, flags=re.S)
+s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · Grimório (série explicativa) · gravura de grimório: pergaminho, tinta, folha de ouro, luz de vela · 9:16, 1080×1920, 25 s · rodas em 3D realista (Blender) · o fim emenda no começo</p>', s, count=1, flags=re.S)
 s = re.sub(r'aria-label="Curta de terror:[^"]*"', 'aria-label="Grimório nº 1: os Ofanim, as rodas cheias de olhos de Ezequiel, terceira ordem dos anjos"', s, count=1)
-s = rep(s, '<script src="sons-corredor.js"></script>\n<script src="narracao-corredor.js"></script>', '<script src="sons-grimorio1.js"></script>\n<script src="narracao-grimorio1.js"></script>')
+s = rep(s, '<script src="sons-corredor.js"></script>\n<script src="narracao-corredor.js"></script>', '<script src="clips-grimorio1.js"></script>\n<script src="sons-grimorio1.js"></script>\n<script src="narracao-grimorio1.js"></script>')
 s = rep(s, "<code>npm run render:corredor</code> → <code>out/camera-do-corredor.mp4</code>", "<code>npm run render:grimorio1</code> → <code>out/grimorio-01-ofanim.mp4</code>")
 s = re.sub(r'<ol class="beats">.*?</ol>', '''<ol class="beats">
       <li class="hot"><b>0–2 s</b><span>Duas rodas de ouro girando uma dentro da outra; os olhos dos aros abrem todos de uma vez. “Isso é um anjo. Segundo a Bíblia.”</span></li>

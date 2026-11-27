@@ -131,7 +131,7 @@ function sceneRodas(t, d, pass, o) {
   }
 }
 function sceneTexto(t, d, pass, o) {
-  const k = (t - o.t0) / 4.2;
+  const k = (t - o.t0) / 3.0;
   if (pass === 'base') {
     paper(); frameBorder();
     fell('EZEQUIEL · I', LCX, 78, 40, '#6a1c12');
@@ -203,24 +203,90 @@ function sceneFim(t, d, pass, o) {
     c.save(); c.translate(LCX, 205); c.scale(.55, .55); c.translate(-LCX, -LCY); rays(LCX, LCY, 175, 262, 48, t); drawRodas(LCX, LCY, 1, t, 'base', {}); c.restore();
     fell('GRIMÓRIO  Nº 1', LCX, 380, 40, '#6a1c12');
     fell('OFANIM', LCX, 428, 34);
-    fell('3º DE 9 · EZEQUIEL 1', LCX, 470, 22, INKC, 'center', '"IM Fell English", Georgia, serif');
+    fell('3º DE 9 · EZEQUIEL 1', LCX, 466, 22, INKC, 'center', '"IM Fell English", Georgia, serif');
+    fell('SEGUE PRA COMPLETAR A ESCADA', LCX, 506, 17, '#6a1c12', 'center', '"IM Fell English SC", Georgia, serif');
   } else if (pass === 'lights') { const k = candle(t); return [{ x: LCX, y: 300, r: 560 * k, col: `rgba(255,${195 * k | 0},125,.95)` }]; }
   else if (pass === 'emissive') { c.save(); c.translate(LCX, 205); c.scale(.55, .55); c.translate(-LCX, -LCY); drawRodas(LCX, LCY, 1, t, 'emissive', {}); c.restore(); }
 }
-const SCENES = { rodas: sceneRodas, texto: sceneTexto, quatro: sceneQuatro, escada: sceneEscada, olhos: sceneOlhos, fim: sceneFim };
+// clipe 3D (Blender) embutido: window.CLIPS = { A: [...], B: [...] } (12 quadros por segundo)
+const CLIPIMG = {};
+window.__clipsReady = new Promise(res => {
+  const C = window.CLIPS || {}; const all = []; Object.keys(C).forEach(k => { CLIPIMG[k] = C[k].map(src => { const im = new Image(); all.push(new Promise(r2 => { im.onload = im.onerror = r2; })); im.src = src; return im; }); });
+  Promise.all(all).then(res);
+});
+function sceneClip(t, d, pass, o) {
+  if (pass !== 'base') return pass === 'lights' ? null : undefined;
+  const fr = CLIPIMG[o.clip] || [], i = Math.max(0, Math.min(fr.length - 1, Math.floor((t - o.t0) * 12)));
+  if (fr[i] && fr[i].complete && fr[i].naturalWidth) c.drawImage(fr[i], 0, 0, 540, LWH);
+  else { c.fillStyle = '#140c06'; c.fillRect(0, 0, 540, LWH); drawRodas(LCX, LCY, 1, t, 'base', {}); }
+}
+// o livro aberto na mesa, com a vela
+function sceneLivro(t, d, pass, o) {
+  if (pass === 'base') {
+    const g = c.createLinearGradient(0, 0, 0, LWH); g.addColorStop(0, '#120b07'); g.addColorStop(1, '#2a1a10'); c.fillStyle = g; c.fillRect(-60, -60, 660, LWH + 120);
+    for (let i = 0; i < 26; i++) inkLine([[-60, 300 + i * 12 + Math.sin(i) * 4], [600, 290 + i * 13]], 1, 'rgba(0,0,0,.35)');   // veios da mesa
+    // capa e páginas (perspectiva)
+    c.fillStyle = '#3a160e'; c.beginPath(); c.moveTo(40, 470); c.lineTo(500, 470); c.lineTo(450, 170); c.lineTo(90, 170); c.closePath(); c.fill();
+    const pg = (x0, x1, flip) => { c.save(); c.beginPath(); c.moveTo(x0, 455); c.quadraticCurveTo((x0 + x1) / 2, 440, x1, 462); c.lineTo(x1 - (flip ? -38 : 38) * 0 + (flip ? 10 : -10), 185); c.quadraticCurveTo((x0 + x1) / 2, 172, x0 + (flip ? -8 : 8), 180); c.closePath(); c.clip(); c.drawImage(TX.parch, x0 - 20, 170, x1 - x0 + 40, 300); c.restore(); };
+    pg(62, 268, false); pg(272, 478, true);
+    // gravura pequena na página esquerda, texto na direita
+    c.save(); c.translate(165, 315); c.scale(.36, .36); c.translate(-LCX, -LCY); rays(LCX, LCY, 175, 262, 40, t); drawRodas(LCX, LCY, 1, t, 'base', { slow: 1 }); c.restore();
+    fell('EZEQUIEL · I', 372, 215, 15, '#6a1c12');
+    for (let i = 0; i < 9; i++) inkLine([[300, 245 + i * 21], [300 + 140 + h2(i, 3) * 20, 245 + i * 21]], 2.2, INKC, .55);
+    const sp = c.createLinearGradient(240, 0, 300, 0); sp.addColorStop(0, 'rgba(0,0,0,0)'); sp.addColorStop(.5, 'rgba(0,0,0,.45)'); sp.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = sp; c.fillRect(240, 170, 60, 300);   // lombada
+    // vela
+    c.fillStyle = '#d9cbb0'; c.fillRect(470, 230, 38, 140); c.fillStyle = '#b9a988'; c.fillRect(470, 230, 10, 140);
+    c.fillStyle = '#1b120c'; c.fillRect(486, 214, 3, 18);
+  } else if (pass === 'lights') {
+    const k = candle(t); return [{ x: 488, y: 200, r: 560 * k, col: `rgba(255,${185 * k | 0},110,1)` }];
+  } else if (pass === 'emissive') {
+    const k = candle(t); c.save(); c.globalCompositeOperation = 'lighter';
+    const fx = 487 + Math.sin(t * 9) * 1.5, g = c.createRadialGradient(fx, 196, 2, fx, 196, 26 * k); g.addColorStop(0, 'rgba(255,240,200,1)'); g.addColorStop(.4, 'rgba(255,170,60,.8)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = g; c.beginPath(); c.ellipse(fx, 196, 9 * k, 24 * k, 0, 0, 7); c.fill(); c.restore();
+  }
+}
+const SCENES = { clip: sceneClip, livro: sceneLivro, rodas: sceneRodas, texto: sceneTexto, quatro: sceneQuatro, escada: sceneEscada, olhos: sceneOlhos, fim: sceneFim };
+
+const [DOF, dofx] = mk(1, 1), [MSK, mskx] = mk(1, 1);
+function realPaper(t, o) {
+  if (DOF.width !== W) { DOF.width = W; DOF.height = H; MSK.width = W; MSK.height = H; }
+  const x0 = WIN.x * R, y0 = WIN.y * R, w = WIN.w * R, h = WIN.h * R;
+  c.save(); c.setTransform(1, 0, 0, 1, 0, 0);
+  // curvatura da página: escurece de um lado (lombada) e brilha no meio
+  const side = o.spine === 'r' ? 1 : 0, g = c.createLinearGradient(x0, 0, x0 + w, 0);
+  g.addColorStop(side ? 0 : 1, 'rgba(0,0,0,0)'); g.addColorStop(.62, 'rgba(0,0,0,0)'); g.addColorStop(side, 'rgba(0,0,0,.5)');
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = g; c.fillRect(x0, y0, w, h);
+  // profundidade de campo: as bordas desfocam
+  dofx.setTransform(1, 0, 0, 1, 0, 0); dofx.clearRect(0, 0, W, H); dofx.filter = `blur(${5 * R}px)`; dofx.drawImage(c.canvas, x0, y0, w, h, x0, y0, w, h); dofx.filter = 'none';
+  dofx.globalCompositeOperation = 'destination-in'; const rg = dofx.createRadialGradient(x0 + w * (o.fx || .5), y0 + h * (o.fy || .5), w * .22, x0 + w * (o.fx || .5), y0 + h * (o.fy || .5), w * .78);
+  rg.addColorStop(0, 'rgba(0,0,0,0)'); rg.addColorStop(1, 'rgba(0,0,0,1)'); dofx.fillStyle = rg; dofx.fillRect(x0, y0, w, h); dofx.globalCompositeOperation = 'source-over';
+  c.globalCompositeOperation = 'source-over'; c.drawImage(DOF, 0, 0);
+  // a chama da vela fora de foco, num canto, em primeiro plano
+  const k = candle(t), bx = x0 + w * (o.flame === 'l' ? .06 : .94), by = y0 + h * .9, fb = c.createRadialGradient(bx, by, 4, bx, by, 150 * R * k);
+  fb.addColorStop(0, 'rgba(255,226,170,.85)'); fb.addColorStop(.25, 'rgba(255,150,60,.45)'); fb.addColorStop(1, 'rgba(0,0,0,0)');
+  c.globalCompositeOperation = 'lighter'; c.fillStyle = fb; c.fillRect(x0, y0, w, h);
+  // poeira flutuando na luz
+  for (let i = 0; i < 26; i++) { const px = x0 + ((h2(i, 1) * w + t * 9 * (h2(i, 2) - .3) * R) % w + w) % w, py = y0 + ((h2(i, 3) * h - t * 6 * h2(i, 4) * R) % h + h) % h, a = .25 + .5 * h2(i, 5);
+    c.fillStyle = `rgba(255,225,170,${a * (.6 + .4 * Math.sin(t * 2 + i))})`; c.beginPath(); c.arc(px, py, (.8 + 1.6 * h2(i, 6)) * R, 0, 7); c.fill(); }
+  c.restore();
+}
 
 /* ---------- PLANOS ---------- */
 const GLIMPSE = () => false;
 const S = (a, b, env, cam, o = {}) => ({ a: sec(a), b: sec(b), env, cam, o });
 const SHOTS = [
-  S(0, 2.2, 'rodas', [1.25, LCX, LCY, 1.4, LCX, LCY], { hand: .6, openAt: .05 }),
-  S(2.2, 4.6, 'rodas', [1.0, LCX, LCY, 1.08, LCX, LCY], { hand: .6 }),
-  S(4.6, 9.2, 'texto', [1.0, LCX, LCY, 1.06, LCX - 10, LCY + 10], { hand: .5, t0: 4.8 }),
-  S(9.2, 15.0, 'quatro', [1.0, LCX, LCY, 1.04, LCX, LCY], { hand: .5, t0: 9.6 }),
-  S(15.0, 23.0, 'escada', [1.1, LCX, stepY(8) + 40, 1.1, LCX, stepY(2) + 30], { hand: .5, litAt: 20.6 }),
-  S(23.0, 28.0, 'olhos', [1.0, LCX, LCY, 1.25, LCX, LCY], { hand: .7, stareAt: 25.2 }),
-  S(28.0, 29.75, 'fim', [1.0, LCX, LCY, 1.04, LCX, LCY], { hand: .4 }),
-  S(29.75, 30, 'rodas', [1.25, LCX, LCY, 1.25, LCX, LCY], { hand: .6, loop: 1 }),
+  S(0, 3.0, 'clip', [1, LCX, LCY, 1, LCX, LCY], { clip: 'A', t0: 0, flat: 1, hand: 0 }),
+  S(3.0, 4.6, 'livro', [1.0, LCX, LCY, 1.12, 280, 300], { hand: .7 }),
+  S(4.6, 6.6, 'texto', [1.05, LCX, LCY, 1.12, LCX - 10, LCY], { hand: .6, t0: 4.5, real: 1, spine: 'l', flame: 'r' }),
+  S(6.6, 8.4, 'texto', [1.7, 220, 380, 1.85, 230, 385], { hand: .8, t0: 4.5, real: 1, spine: 'l', flame: 'r', fy: .55 }),
+  S(8.4, 10.4, 'quatro', [1.0, LCX, LCY, 1.05, LCX, LCY], { hand: .6, t0: 8.5, real: 1, spine: 'r', flame: 'l' }),
+  S(10.4, 12.2, 'quatro', [1.3, LCX, LCY, 1.4, LCX, LCY], { hand: .7, t0: 8.5, real: 1, spine: 'r', flame: 'l' }),
+  S(12.2, 14.2, 'escada', [1.1, LCX, stepY(8) + 40, 1.1, LCX, stepY(6) + 30], { hand: .5, litAt: 15.9, real: 1, spine: 'l', flame: 'r' }),
+  S(14.2, 16.4, 'escada', [1.1, LCX, stepY(5) + 30, 1.1, LCX, stepY(2) + 30], { hand: .5, litAt: 15.9, real: 1, spine: 'l', flame: 'r' }),
+  S(16.4, 18.2, 'escada', [1.5, LCX, stepY(2) - 10, 1.3, LCX, stepY(0) + 80], { hand: .6, litAt: 15.9, real: 1, spine: 'l', flame: 'r' }),
+  S(18.2, 22.2, 'clip', [1, LCX, LCY, 1, LCX, LCY], { clip: 'B', t0: 18.2, flat: 1, hand: 0 }),
+  S(22.2, 24.75, 'fim', [1.0, LCX, LCY, 1.05, LCX, LCY], { hand: .4, real: 1, spine: 'l', flame: 'r' }),
+  S(24.75, 25, 'clip', [1, LCX, LCY, 1, LCX, LCY], { clip: 'A', t0: 0, flat: 1, hand: 0, loop: 1 }),
 ];
 const shotAt = t => SHOTS.find(s => t >= s.a && t < s.b) || SHOTS[SHOTS.length - 1];
 const isSmear = () => false;
@@ -242,8 +308,11 @@ function drawScene(t0, f) {
   c.save(); c.setTransform(R, 0, 0, R, 0, 0); c.beginPath(); c.rect(WIN.x, WIN.y, WIN.w, WIN.h); c.clip();
   const SC = SCENES[shot.env];
   setC(); SC(t, d, 'base', o);
-  setC(); const lights = SC(t, d, 'lights', o) || [];
-  applyLights(lights, 'rgb(96,80,64)');
-  setC(); c.globalCompositeOperation = 'source-over'; SC(t, d, 'emissive', o);
+  if (!o.flat) {
+    setC(); const lights = SC(t, d, 'lights', o) || [];
+    applyLights(lights, 'rgb(96,80,64)');
+    setC(); c.globalCompositeOperation = 'source-over'; SC(t, d, 'emissive', o);
+  }
+  if (o.real) realPaper(t, o);
   c.restore();
 }
