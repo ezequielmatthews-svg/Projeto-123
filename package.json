@@ -19,6 +19,7 @@
     "render:regra316": "node export/render.mjs --page terror/regra316.html --loops 1 --out out/a-regra-das-3h16.mp4",
     "render:valenca2": "node export/render.mjs --page terror/valenca2.html --loops 1 --out out/valenca-parte2.mp4",
     "render:celia": "node export/render.mjs --page terror/celia.html --loops 1 --out out/onze-anos.mp4",
+    "render:censo1": "node export/render.mjs --page terror/censo1.html --loops 1 --out out/censo1991-pisadeira.mp4",
     "render:grimorio1": "node export/render.mjs --page terror/grimorio1.html --loops 1 --out out/grimorio-01-ofanim.mp4"
   },
   "dependencies": {
