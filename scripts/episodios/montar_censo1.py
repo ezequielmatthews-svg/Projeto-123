@@ -62,5 +62,21 @@ s = re.sub(r'<ol class="beats">.*?</ol>', '''<ol class="beats">
       <li><b>35–50 s</b><span>O peso: ela agachada no peito dele. “Ela não mata. Ela pesa.” A avó entra rezando o Salmo 91 com a vela; ela sobe de volta pro forro.</span></li>
       <li class="hot"><b>50–58 s</b><span>Café da manhã: seis xícaras na mesa. Na ficha, o 5 virou 6, e tem mais uma linha na letra dele. Próxima casa: Goiás.</span></li>
     </ol>''', s, flags=re.S)
+
+# ---- modo limpo: traço fino, volume em degradê, quase sem sujeira de fita ----
+rep("  trace(c, P, true); c.fillStyle = shade || base; c.fill();\n  if (shade) { c.clip(); const sh = (o.sh ?? 5) * ZK; c.translate(-sh, -sh * .8); trace(c, P, true); c.fillStyle = base; c.fill(); }",
+    "  trace(c, P, true);\n  if (shade) { let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const q of P) { if (q[0] < x0) x0 = q[0]; if (q[1] < y0) y0 = q[1]; if (q[0] > x1) x1 = q[0]; if (q[1] > y1) y1 = q[1]; }\n    const gr = c.createLinearGradient(x0, y0, x1, y1); gr.addColorStop(0, base); gr.addColorStop(.42, base); gr.addColorStop(1, shade); c.fillStyle = gr; } else c.fillStyle = base;\n  c.fill();")
+rep("const P = jit(pts, seed, (o.j ?? 1.2) * ZK);", "const P = jit(pts, seed, (o.j ?? 1.2) * .3 * ZK);")
+a = s.index("function inkLine(P, closed, lw, seed) {"); b = s.index("\n}\n", a) + 3
+s = s[:a] + "function inkLine(P, closed, lw, seed) {\n  c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.strokeStyle = 'rgba(28,20,16,.62)';\n  c.lineWidth = lw * .5 * ZK; trace(c, P, closed); c.stroke(); c.restore();\n}\n" + s[b:]
+rep("const P = jit(pts, SEED * 131 + id * 7, amp * ZK);", "const P = jit(pts, SEED * 131 + id * 7, amp * .3 * ZK);")
+rep("g.globalCompositeOperation = 'screen'; g.globalAlpha = .12;", "g.globalCompositeOperation = 'screen'; g.globalAlpha = .025;")
+rep("const by = ((f * 11) % (H / R + 300) - 150) * R;", "const by = -999;")
+rep("g.globalCompositeOperation = 'overlay'; g.globalAlpha = .26;", "g.globalCompositeOperation = 'overlay'; g.globalAlpha = .07;")
+rep("if (h2(f, 6) < .4) for", "if (false) for")
+rep("if (h2(f, 11) < .1) {", "if (false) {")
+rep("    g.fillStyle = scan; g.fillRect(0, 0, W, H);\n", "")
+rep("g.fillStyle = 'rgb(14,10,20)'; g.fillRect(0, 0, W, H);", "g.fillStyle = 'rgb(4,3,6)'; g.fillRect(0, 0, W, H);")
+
 open('terror/censo1.html', 'w', encoding='utf-8').write(s)
 print('ok', len(s))

@@ -64,18 +64,24 @@ function bust(B, p, id) {
   // olhos
   const lx = p.look || 0, ly = p.lookY || 0, eo = p.eye ?? 1;
   [[-11, -6], [11, -6]].forEach(([x, y], i) => {
-    if (eo < .15) { stroke(H.map([[x - 6, y + 1], [x, y + 3], [x + 6, y + 1]]), 2, id + 20 + i); return; }
-    cel(H.map(circ(x, y, 6.5, 5 * eo, 10)), '#efece4', null, id + 20 + i, { lw: 2, j: .3 });
-    const q = H.p(x + lx * 3, y + ly * 2.6 * eo); c.fillStyle = INK; c.beginPath(); c.arc(q[0], q[1], 2.1, 0, 7); c.fill();
-    stroke(H.map([[x - 8, y - 9 - (p.brow || 0)], [x, y - 11 - (p.brow || 0) * 1.5], [x + 8, y - 9]]), p.old ? 2 : 3, id + 22 + i, p.style === 'white' ? '#6a6660' : INK);
+    if (eo < .15) { stroke(H.map([[x - 6, y + 1], [x, y + 2.5], [x + 6, y + 1]]), 1.6, id + 20 + i); return; }
+    cel(H.map(circ(x, y, 6, 3.4 * eo, 12)), '#ece6dc', null, id + 20 + i, { lw: 1.4, j: .2 });
+    const q = H.p(x + lx * 2.2, y + ly * 1.6 * eo), sc = Math.hypot(H.a, H.b);
+    c.fillStyle = p.iris || '#4a3020'; c.beginPath(); c.arc(q[0], q[1], 2.9 * sc * Math.min(1, eo + .2), 0, 7); c.fill();
+    c.fillStyle = '#0c0806'; c.beginPath(); c.arc(q[0], q[1], 1.3 * sc, 0, 7); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.8)'; c.beginPath(); c.arc(q[0] - .9 * sc, q[1] - .9 * sc, .6 * sc, 0, 7); c.fill();
+    stroke(H.map([[x - 7, y - .5], [x, y - 3.8 * eo - .4], [x + 7, y - .5]]), 1.8, id + 28 + i, 'rgba(30,20,16,.85)');          // pálpebra de cima
+    stroke(H.map([[x - 6, y - 6.5], [x, y - 7.5], [x + 6, y - 6.5]]), 1, id + 30 + i, 'rgba(60,40,30,.35)');                  // dobra
+    stroke(H.map([[x - 8, y - 10 - (p.brow || 0)], [x, y - 12 - (p.brow || 0) * 1.5], [x + 8, y - 10.5]]), p.old ? 1.6 : 2.2, id + 22 + i, p.style === 'white' ? 'rgba(120,115,108,.9)' : 'rgba(30,22,18,.9)');
   });
+  { const sc = Math.hypot(H.a, H.b); [-1, 1].forEach(sd => { const q = H.p(sd * 15, 8); const rg = c.createRadialGradient(q[0], q[1], 0, q[0], q[1], 9 * sc); rg.addColorStop(0, 'rgba(200,90,80,.22)'); rg.addColorStop(1, 'rgba(200,90,80,0)'); c.fillStyle = rg; c.fillRect(q[0] - 9 * sc, q[1] - 9 * sc, 18 * sc, 18 * sc); });
+    const q = H.p(3, 5); const rg = c.createRadialGradient(q[0], q[1], 0, q[0], q[1], 6 * sc); rg.addColorStop(0, 'rgba(60,30,20,.25)'); rg.addColorStop(1, 'rgba(60,30,20,0)'); c.fillStyle = rg; c.fillRect(q[0] - 6 * sc, q[1] - 6 * sc, 12 * sc, 12 * sc); }
   if (p.glasses) [[-11, -6], [11, -6]].forEach(([x, y], i) => { c.save(); c.strokeStyle = INK; c.lineWidth = 1.6 * ZK; trace(c, H.map(circ(x, y, 9, 8, 12)), true); c.stroke(); c.restore(); });
-  stroke(H.map([[0, -2], [3, 9], [-1, 11]]), 2.1, id + 25);
+  stroke(H.map([[1, -2], [3, 8], [0, 10.5]]), 1.4, id + 25, 'rgba(40,25,18,.7)'); stroke(H.map([[-4, 11], [0, 12], [4, 11]]), 1, id + 24, 'rgba(40,25,18,.45)');
   if (p.mustache) cel(H.map([[-12, 15], [-3, 12], [0, 13], [3, 12], [12, 15], [8, 18], [0, 16], [-8, 18]]), p.hair, p.hairSh, id + 26, { lw: 1.8, j: .3 });
   const talk = p.talk ? Math.abs(Math.sin(p.d * .9)) : 0;
   if (talk > .25) cel(H.map(circ(0, 22, 5.5, 1.5 + talk * 3.5, 10)), '#3a1418', null, id + 27, { lw: 2, j: .3 });
-  else if (p.smile) stroke(H.map([[-8, 20], [0, 23], [8, 20]]), 2.2, id + 27);
-  else stroke(H.map([[-7, 22], [0, 21.5], [7, 22]]), 2.2, id + 27);
+  else { cel(H.map([[-8, 21], [-3, 19.5], [0, 20.2], [3, 19.5], [8, 21], [3, 24], [-3, 24]]), p.lips || '#a0605a', '#7a4440', id + 27, { lw: 1, j: .1 }); if (p.smile) stroke(H.map([[-9, 20], [0, 22.5], [9, 20]]), 1.2, id + 32, 'rgba(60,25,20,.6)'); }
 }
 const VALDIR = { skin: PELE, skinSh: PELESH, hair: '#2b2220', hairSh: '#181210', style: 'short', shirt: '#9fb6c8', shirtSh: '#7d93a6', vest: '#b9a37a', vestSh: '#96825c', mustache: 1 };
 const LURDES = { skin: '#b98666', skinSh: '#93664a', hair: '#3a2a20', hairSh: '#241912', style: 'bun', shirt: '#8a5a7a', shirtSh: '#6a4460', apron: '#e8dfcc' };
@@ -116,11 +122,15 @@ function valdirDeitado(B, d, o = {}) {
   cel(H.map([[-31, -4], [-29, -26], [-14, -42], [8, -43], [26, -34], [31, -8], [24, -22], [6, -28], [-8, -27], [-20, -22]]), '#2b2220', '#181210', 614, { sh: 3 });
   [[-11, -6], [11, -6]].forEach(([x, y], i) => {
     if (ey < .15) { stroke(H.map([[x - 6, y + 1], [x, y + 3], [x + 6, y + 1]]), 2.2, 615 + i); return; }
-    cel(H.map(circ(x, y, 7.5, 6.5 * ey, 12)), '#efece4', null, 615 + i, { lw: 2.2, j: .3 });
-    const q = H.p(x + (o.lookx || 0), y); c.fillStyle = INK; c.beginPath(); c.arc(q[0], q[1], (ey > 1.1 ? 1.7 : 2.4) * 1.55 * (B.a ? Math.hypot(B.a, B.b) : 1), 0, 7); c.fill();
-    stroke(H.map([[x - 8, y - 11 - (ey - 1) * 8], [x, y - 14 - (ey - 1) * 10], [x + 8, y - 11 - (ey - 1) * 6]]), 3, 617 + i);
+    cel(H.map(circ(x, y, 6.2, 3.6 * ey, 12)), '#ece6dc', null, 615 + i, { lw: 1.4, j: .2 });
+    const q = H.p(x, y), sc = Math.hypot(H.a, H.b);
+    c.fillStyle = '#3a2416'; c.beginPath(); c.arc(q[0], q[1], 2.6 * sc, 0, 7); c.fill();
+    c.fillStyle = '#0c0806'; c.beginPath(); c.arc(q[0], q[1], (ey > 1.1 ? .9 : 1.3) * sc, 0, 7); c.fill();
+    c.fillStyle = 'rgba(255,255,255,.8)'; c.beginPath(); c.arc(q[0] - .8 * sc, q[1] - .8 * sc, .55 * sc, 0, 7); c.fill();
+    stroke(H.map([[x - 7, y - .5], [x, y - 4 * ey - .4], [x + 7, y - .5]]), 1.8, 625 + i, 'rgba(30,20,16,.85)');
+    stroke(H.map([[x - 8, y - 11 - (ey - 1) * 8], [x, y - 13 - (ey - 1) * 10], [x + 8, y - 11 - (ey - 1) * 6]]), 2.2, 617 + i, 'rgba(30,22,18,.9)');
   });
-  stroke(H.map([[0, -2], [3, 9], [-1, 11]]), 2.1, 619);
+  stroke(H.map([[1, -2], [3, 8], [0, 10.5]]), 1.4, 619, 'rgba(40,25,18,.7)');
   cel(H.map([[-12, 15], [-3, 12], [0, 13], [3, 12], [12, 15], [8, 18], [0, 16], [-8, 18]]), '#2b2220', '#181210', 620, { lw: 1.8, j: .3 });
   if (o.gasp) cel(H.map(circ(0, 24, 5, 3.5 + Math.abs(Math.sin(d * .6)) * 2.5, 10)), '#3a1418', null, 621, { lw: 2, j: .3 });
   else stroke(H.map([[-7, 23], [0, 24], [7, 23]]), 2.2, 621);
@@ -501,14 +511,14 @@ const TAPE_ON = t => false;
 function camFX(t, f, o) {
   c.setTransform(1, 0, 0, 1, 0, 0);
   const x0 = WIN.x * R, y0 = WIN.y * R, w = WIN.w * R, h = WIN.h * R;
-  const gl = o.glitch ? .12 : .03;
+  const gl = o.glitch ? .08 : 0;
   for (let y = 0; y < h; y += 6 * R) {
-    const off = (Math.sin((y / R) * .08 + f * .7) * .8 + (h2(f, y) < gl ? (h2(f, y + 1) - .5) * 26 : 0)) * R;
+    const off = ((h2(f, y) < gl ? (h2(f, y + 1) - .5) * 26 : 0)) * R;
     if (Math.abs(off) > .3) c.drawImage(scene, x0, y0 + y, w, 6 * R, x0 + off, y0 + y, w, 6 * R);
   }
   c.setTransform(R, 0, 0, R, 0, 0);
-  c.globalAlpha = .08; c.drawImage(fillNoise(tapeNoise, f * 17 + 3), WIN.x, WIN.y, WIN.w, WIN.h); c.globalAlpha = 1;
-  c.globalCompositeOperation = 'multiply'; c.fillStyle = '#f0dcc4'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h); c.globalCompositeOperation = 'source-over';
+  c.globalAlpha = .025; c.drawImage(fillNoise(tapeNoise, f * 17 + 3), WIN.x, WIN.y, WIN.w, WIN.h); c.globalAlpha = 1;
+  c.globalCompositeOperation = 'multiply'; c.fillStyle = '#faf0e4'; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h); c.globalCompositeOperation = 'source-over';
   const T2 = (s, x, y, size, col, font = 'Bungee, "Arial Black", Impact, sans-serif') => { c.save(); c.font = `${size}px ${font}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineJoin = 'round'; c.lineWidth = size * .28; c.strokeStyle = '#000'; c.strokeText(s, x, y); c.fillStyle = col; c.fillText(s, x, y); c.restore(); };
   if (o.hook) { const k = Math.min(1, (t + 2) / 6); c.globalAlpha = k; T2('JÁ ACORDOU SEM', LW / 2, WIN.y + 44, 26, '#fff'); T2('CONSEGUIR SE MEXER?', LW / 2, WIN.y + 76, 26, '#ff2a3d'); c.globalAlpha = 1; }
   if (o.cta) { const s = 1 + .04 * Math.sin(t * .4); c.save(); c.translate(LW / 2, WIN.y + WIN.h - 44); c.scale(s, s); c.beginPath(); c.roundRect(-150, -20, 300, 40, 12); c.fillStyle = 'rgba(18,13,22,.88)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#ff2a3d'; c.stroke(); c.restore(); T2('SEGUE PRA VER A PRÓXIMA CASA', LW / 2, WIN.y + WIN.h - 43, 14, '#fff'); }
