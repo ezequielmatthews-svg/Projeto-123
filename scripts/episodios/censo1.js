@@ -11,7 +11,7 @@ const glow = (x, y, r, col) => { const rg = c.createRadialGradient(x, y, 0, x, y
 const litW = (x, y, r, col) => { const p = toWin(x, y), rr = r * CAM.z; const rg = c.createRadialGradient(p[0], p[1], 0, p[0], p[1], rr); rg.addColorStop(0, col); rg.addColorStop(1, 'rgba(0,0,0,0)'); c.fillStyle = rg; c.fillRect(WIN.x, WIN.y, WIN.w, WIN.h); };
 
 // quem fala (boca mexendo)
-const AVO_TALK = [[21.3, 24.8], [43.1, 45.5]];
+const AVO_TALK = [[21.3, 25.1], [43.1, 47.5]];
 const LUR_TALK = [[10.9, 13.6]];
 const talkingIn = (d, list) => list.some(([a, b]) => d >= sec(a) && d < sec(b));
 
@@ -20,7 +20,7 @@ const STEPS = [[27.0, 70, 30], [27.8, 130, 44], [28.6, 185, 34], [29.4, 240, 46]
 const GAP = track([[0, 0], [sec(29.6), 0], [sec(30.6), 1, 'o'], [L, 1]]);           // a tábua do forro afasta
 const FING = track([[0, 0], [sec(30.6), 0], [sec(31.5), 1, 'o'], [L, 1]]);           // dedos na beira da tábua
 const HANG = track([[0, 0], [sec(31.8), 0], [sec(35.0), 1, 'io'], [L, 1]]);          // o cabelo descendo até a cama
-const UP = track([[0, 0], [sec(45.6), 0], [sec(48.2), 1, 'i'], [L, 1]]);             // ela sobe de volta pro forro
+const UP = track([[0, 0], [sec(47.9), 0], [sec(49.9), 1, 'i'], [L, 1]]);             // ela sobe de volta pro forro
 const OPEN = track([[0, 0], [sec(9.0), 0], [sec(10.2), 1, 'o'], [L, 1]]);            // a porta da casa abrindo
 const AVOLOOK = track([[0, 0], [sec(19.9), 0], [sec(20.6), 1, 'o'], [sec(21.2), 1], [L, 1]]);
 const T = {
@@ -400,7 +400,7 @@ function drawQuarto(d, f, o, pass) {
     // janela com luar e chuva
     cel(dn([[130, 140], [210, 140], [210, 225], [130, 225]], 8), '#1c2430', null, 1534, { lw: 2.6 }); stroke([[170, 142], [170, 223]], 2, 1535);
     // porta (à direita): abre na reza
-    const dop = o.reza ? sat((t - 45.5) / .6) : 0;
+    const dop = o.reza ? sat((t - 47.6) / .6) : 0;
     cel(dn([[470, 128], [540, 110], [540, 380], [470, 348]], 10), dop > 0 ? '#2a1a10' : '#5a4434', null, 1536, { lw: 2.4 });
     if (dop > 0) { cel(dn([[470, 128], [470 + 70 * (1 - dop), 110 + 30 * dop], [470 + 70 * (1 - dop), 380 - 10 * dop], [470, 348]], 10), '#5a4434', null, 1537, { lw: 2.2 }); const A = new M().t(520, 290).s(.55); bust(A, Object.assign({}, AVO, { d, lookY: -1, talk: 1 }), 1540); arruda(new M().t(486, 330).r(-.4 + Math.sin(t * 3) * .3), 1590, 0); }
     // cama
@@ -420,7 +420,7 @@ function drawQuarto(d, f, o, pass) {
     STEPS.forEach(([ts, x, y], j) => { const a = t - ts; if (a < 0 || a > 1.8) return; for (let i = 0; i < 12; i++) { const px = x - 14 + h2(j, i) * 28, py = y + 6 + a * a * 140 * (.5 + h2(i, j + 3)); c.fillStyle = `rgba(210,200,170,${.6 * (1 - a / 1.8)})`; c.fillRect(px, py, 1.6, 1.6); } });
   } else if (pass === 'light') {
     litW(170, 182, 240, 'rgba(150,175,230,.28)');                       // luar
-    if (o.reza) litW(500, 250, 360, `rgba(255,180,110,${.6 * sat((t - 45.5) / .6)})`);
+    if (o.reza) litW(500, 250, 360, `rgba(255,180,110,${.6 * sat((t - 47.6) / .6)})`);
   } else {
     c.save(); c.beginPath(); c.rect(130, 140, 80, 85); c.clip(); chuva(f, .7, 120, 120, 100, 120); c.restore();
     if (o.reza && o._h && up < .95) pisaGlow(o._h, d, .7);
@@ -448,7 +448,7 @@ function drawPeito(d, f, o, pass) {
 
 // 8) o mapa: a próxima casa
 function drawMapa(d, f, o, pass) {
-  const t = d / FPS, k = sat((t - 55.6) / 1.4);
+  const t = d / FPS, k = sat((t - 58.5) / 1.4);
   if (pass === 'base') {
     rect(-80, -80, 700, 560, '#d8c8a2');
     for (let i = 0; i < 40; i++) { c.fillStyle = 'rgba(120,90,50,.07)'; c.beginPath(); c.ellipse(h2(i, 7) * 600, h2(i, 8) * 420, 30 + h2(i, 9) * 50, 12, h2(i, 1) * 3, 0, 0, 7); c.fill(); }
@@ -495,12 +495,13 @@ const SHOTS = [
   S(35.0, 37.2, 'peito', [2.6, 160, 232, 3.0, 160, 230], { clock: 3 * 60 + 7, date: 'JUN 19 1991' }),
   S(37.2, 40.0, 'peito', [1.0, 270, 195, 1.15, 270, 180], { clock: 3 * 60 + 8, date: 'JUN 19 1991' }),
   S(40.0, 43.0, 'peito', [2.4, 320, 105, 2.8, 322, 100], { clock: 3 * 60 + 8, date: 'JUN 19 1991', glitch: 1 }),
-  S(43.0, 45.5, 'aviso', [1.15, 270, 220, 1.3, 270, 215], { reza: 1, clock: 3 * 60 + 9, date: 'JUN 19 1991' }),
-  S(45.5, 48.0, 'quarto', [1.15, 330, 175, 1.25, 320, 150], { reza: 1, awake: 1, clock: 3 * 60 + 9, date: 'JUN 19 1991' }),
-  S(48.0, 50.0, 'peito', [2.6, 160, 232, 2.8, 158, 236], { free: 1, clock: 3 * 60 + 10, date: 'JUN 19 1991' }),
-  S(50.0, 52.0, 'mesa', [1.0, 270, 210, 1.12, 300, 215], { day: 1, cafe: 1, clock: 6 * 60 + 31, date: 'JUN 19 1991' }),
-  S(52.0, 55.5, 'ficha', [1.3, 270, 220, 2.3, 300, 330], { day: 1, seis: 1, t0: 52.4, clock: 6 * 60 + 33, date: 'JUN 19 1991' }),
-  S(55.5, 58.0, 'mapa', [1.0, 270, 205, 1.05, 260, 200], { day: 1, sat: .1, noosd: 1, teaser: 1 }),
+  S(43.0, 45.4, 'aviso', [1.15, 270, 220, 1.3, 270, 215], { reza: 1, clock: 3 * 60 + 9, date: 'JUN 19 1991' }),
+  S(45.4, 47.6, 'aviso', [1.8, 270, 170, 2.0, 270, 165], { reza: 1, clock: 3 * 60 + 9, date: 'JUN 19 1991' }),
+  S(47.6, 50.0, 'quarto', [1.15, 330, 175, 1.25, 320, 150], { reza: 1, awake: 1, clock: 3 * 60 + 9, date: 'JUN 19 1991' }),
+  S(50.0, 52.4, 'peito', [2.6, 160, 232, 2.8, 158, 236], { free: 1, clock: 3 * 60 + 10, date: 'JUN 19 1991' }),
+  S(52.4, 54.4, 'mesa', [1.0, 270, 210, 1.12, 300, 215], { day: 1, cafe: 1, clock: 6 * 60 + 31, date: 'JUN 19 1991' }),
+  S(54.4, 58.4, 'ficha', [1.3, 270, 220, 2.3, 300, 330], { day: 1, seis: 1, t0: 54.8, clock: 6 * 60 + 33, date: 'JUN 19 1991' }),
+  S(58.4, 61.0, 'mapa', [1.0, 270, 205, 1.05, 260, 200], { day: 1, sat: .1, noosd: 1, teaser: 1 }),
 ];
 const shotAt = t => SHOTS.find(s => t >= s.a && t < s.b) || SHOTS[SHOTS.length - 1];
 const TAPE_ON = t => false;
@@ -523,7 +524,7 @@ function camFX(t, f, o) {
   if (o.hook) { const k = Math.min(1, (t + 2) / 6); c.globalAlpha = k; T2('JÁ ACORDOU SEM', LW / 2, WIN.y + 44, 26, '#fff'); T2('CONSEGUIR SE MEXER?', LW / 2, WIN.y + 76, 26, '#ff2a3d'); c.globalAlpha = 1; }
   if (o.cta) { const s = 1 + .04 * Math.sin(t * .4); c.save(); c.translate(LW / 2, WIN.y + WIN.h - 44); c.scale(s, s); c.beginPath(); c.roundRect(-150, -20, 300, 40, 12); c.fillStyle = 'rgba(18,13,22,.88)'; c.fill(); c.lineWidth = 3; c.strokeStyle = '#ff2a3d'; c.stroke(); c.restore(); T2('SEGUE PRA VER A PRÓXIMA CASA', LW / 2, WIN.y + WIN.h - 43, 14, '#fff'); }
   if (o.teaser) {
-    const a = t - sec(55.5);
+    const a = t - sec(58.4);
     T2('PRÓXIMA CASA:', LW / 2, WIN.y + 60, 24, '#fff');
     if (a > 8) T2('GOIÁS', LW / 2, WIN.y + 112, 52, '#ff2a3d', 'Creepster, Bungee, Impact, sans-serif');
     if (a > 20) { T2('O HOMEM QUE', LW / 2, WIN.y + 176, 20, '#fff'); T2('NEM A TERRA QUIS', LW / 2, WIN.y + 204, 20, '#fff'); }

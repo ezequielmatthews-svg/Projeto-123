@@ -1,0 +1,120 @@
+{
+  "episodio": "Fita Maldita · Censo 1991 · A Pisadeira (domicílio nº 001)",
+  "frames": 1464,
+  "vozes": {
+    "narrador": "ElevenLabs · Antônio (Valdir, o recenseador) · eleven_v4",
+    "rafa": "ElevenLabs · Lucinda (Dona Lurdes) · eleven_v4",
+    "avo": "ElevenLabs · Edna E. (a avó benzedeira) · eleven_v4"
+  },
+  "falas": [
+    {
+      "personagem": "narrador",
+      "inicio": 0.15,
+      "arquivo": "voz/elevenlabs/censo1/01.mp3",
+      "limite": 3.0,
+      "fala": "[whispers, out of breath] Eu não conseguia respirar.",
+      "legenda": "EU NÃO CONSEGUIA *RESPIRAR*."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 3.3,
+      "arquivo": "voz/elevenlabs/censo1/02.mp3",
+      "pausa_max": 0.35,
+      "limite": 8.2,
+      "fala": "[calm, remembering] Em noventa e um, eu batia de porta em porta. Contando gente.",
+      "legenda": "EM NOVENTA E UM, EU BATIA DE PORTA EM PORTA. CONTANDO *GENTE*."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 8.3,
+      "arquivo": "voz/elevenlabs/censo1/03.mp3",
+      "pausa_max": 0.3,
+      "limite": 10.9,
+      "fala": "[polite, friendly] Boa tarde. Quantas pessoas moram aqui?",
+      "legenda": "BOA TARDE. QUANTAS PESSOAS MORAM AQUI?"
+    },
+    {
+      "personagem": "rafa",
+      "inicio": 11.0,
+      "arquivo": "voz/elevenlabs/censo1/04-lurdes.mp3",
+      "pausa_max": 0.4,
+      "limite": 15.8,
+      "fala": "[simple, a little tired] Cinco. Contando a mãe.",
+      "legenda": "CINCO. CONTANDO *A MÃE*."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 16.2,
+      "arquivo": "voz/elevenlabs/censo1/05.mp3",
+      "pausa_max": 0.35,
+      "limite": 21.1,
+      "fala": "[calm] Choveu. A gente jantou junto, e me deram a cama do menino.",
+      "legenda": "CHOVEU. A GENTE JANTOU JUNTO, E ME DERAM A CAMA DO MENINO."
+    },
+    {
+      "personagem": "avo",
+      "inicio": 21.35,
+      "arquivo": "voz/elevenlabs/censo1/06-avo.mp3",
+      "pausa_max": 0.4,
+      "limite": 25.2,
+      "fala": "[low, serious, quiet warning] Não deita de barriga cheia. Nem de barriga pra cima.",
+      "legenda": "NÃO DEITA DE *BARRIGA CHEIA*. NEM DE *BARRIGA PRA CIMA*."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 25.35,
+      "arquivo": "voz/elevenlabs/censo1/07.mp3",
+      "limite": 27.6,
+      "fala": "[softly, a little regretful] Eu achei que era coisa de vó.",
+      "legenda": "EU ACHEI QUE ERA COISA DE VÓ."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 27.7,
+      "arquivo": "voz/elevenlabs/censo1/08.mp3",
+      "pausa_max": 0.5,
+      "limite": 34.9,
+      "fala": "[whispers] Lá pelas três, uma coisa andou no telhado. Devagar. Como quem conhece a casa.",
+      "legenda": "LÁ PELAS TRÊS, UMA COISA ANDOU NO *TELHADO*. DEVAGAR. COMO QUEM *CONHECE A CASA*."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 35.25,
+      "arquivo": "voz/elevenlabs/censo1/09.mp3",
+      "pausa_max": 0.45,
+      "limite": 42.95,
+      "fala": "[whispers, tense] A lenda diz que ela mora nos telhados. E desce em quem dorme de estômago cheio. Ela não mata. Ela pesa.",
+      "legenda": "A LENDA DIZ QUE ELA MORA NOS TELHADOS. E DESCE EM QUEM DORME DE ESTÔMAGO CHEIO. ELA NÃO MATA. *ELA PESA*."
+    },
+    {
+      "personagem": "avo",
+      "inicio": 43.15,
+      "arquivo": "voz/elevenlabs/censo1/10-avo.mp3",
+      "pausa_max": 0.3,
+      "tempo": 1.16,
+      "limite": 47.9,
+      "fala": "[praying softly, steady] Mil cairão ao teu lado... e dez mil à tua direita... mas não chegará a ti.",
+      "legenda": "*MIL CAIRÃO* AO TEU LADO... E DEZ MIL À TUA DIREITA..."
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 47.85,
+      "arquivo": "voz/elevenlabs/censo1/11.mp3",
+      "pausa_max": 0.3,
+      "limite": 52.4,
+      "fala": "[softly, relieved] A avó entrou rezando. E o peso foi saindo do meu peito.",
+      "legenda": "A AVÓ ENTROU REZANDO. E O PESO FOI SAINDO DO MEU PEITO.",
+      "tempo": 1.08
+    },
+    {
+      "personagem": "narrador",
+      "inicio": 52.6,
+      "arquivo": "voz/elevenlabs/censo1/12.mp3",
+      "pausa_max": 0.45,
+      "limite": 58.3,
+      "fala": "[quiet, uneasy] Eu contei cinco. Mas na ficha... na minha letra... tinha mais uma linha:",
+      "legenda": "EU CONTEI *CINCO*. MAS NA FICHA, NA MINHA LETRA, TINHA *MAIS UMA LINHA*:",
+      "tempo": 1.04
+    }
+  ]
+}

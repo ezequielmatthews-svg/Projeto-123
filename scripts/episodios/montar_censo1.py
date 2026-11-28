@@ -8,7 +8,7 @@ def rep(a, b, cnt=1):
 A = s.index('/* ============================================================\n   CURVAS E TEMPO')
 B = s.index('/* ============================================================\n   QUADRO')
 s = s[:A] + open('scripts/episodios/censo1.js', encoding='utf-8').read() + '\n' + s[B:]
-rep("const FPS = 24, L = 2280;                     // 95 s", "const FPS = 24, L = 1392;                     // 58 s")
+rep("const FPS = 24, L = 2280;                     // 95 s", "const FPS = 24, L = 1464;                     // 61 s")
 s = re.sub(r"const ONES = \[.*?\];.*\n", "const ONES = [[0, 72], [644, 1200]];  // o gancho; do telhado até a reza, desenho a desenho\n", s, count=1)
 # luz do dia x noite, e cor um pouco mais viva de dia (é uma câmera caseira)
 rep("c.fillStyle = env === 'estudio' || env === 'foto' ? 'rgb(170,165,160)' : 'rgb(92,92,108)';", "c.fillStyle = o.day ? 'rgb(214,208,198)' : 'rgb(92,92,108)';")
@@ -47,10 +47,10 @@ s = s[:a] + """const CAPS = NARR ? NARR.legendas : [
 rep("const big = t < 96 || t >= 1968;", "const big = false;")
 rep("if (!big && words.length > 4) {\n    const n = Math.ceil(words.length / 4)", "if (!big && words.length > 3) {\n    const n = Math.ceil(words.length / 3)")
 rep("maxW = 410, cx = 252, cy = 646;", "maxW = 360, cx = 262, cy = 640;")
-s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 72, 'GANCHO'], [72, 216, 'A ESTRADA'], [216, 384, 'A CASA'], [384, 600, 'A JANTA'], [600, 840, 'O TELHADO'], [840, 1032, 'O PESO'], [1032, 1200, 'A REZA'], [1200, 1332, 'A FICHA'], [1332, 1392, 'PRÓXIMA CASA']];", s, count=1)
+s = re.sub(r"const SECTIONS = \[.*?\];", "const SECTIONS = [[0, 72, 'GANCHO'], [72, 216, 'A ESTRADA'], [216, 384, 'A CASA'], [384, 600, 'A JANTA'], [600, 840, 'O TELHADO'], [840, 1032, 'O PESO'], [1032, 1258, 'A REZA'], [1258, 1402, 'A FICHA'], [1402, 1464, 'PRÓXIMA CASA']];", s, count=1)
 s = re.sub(r"<title>.*?</title>", "<title>Censo 1991 · A Pisadeira</title>", s, count=1)
 s = re.sub(r"<h1>.*?</h1>", "<h1>Censo 1991 · A Pisadeira</h1>", s, count=1)
-s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · Censo 1991 (série: uma lenda por casa) · fita da câmera do recenseador, interior de Minas · 9:16, 1080×1920, 58 s · domicílio nº 001</p>', s, count=1, flags=re.S)
+s = re.sub(r'(<div class="side">\s*<h1>.*?</h1>\s*)<p>.*?</p>', lambda m: m.group(1) + '<p>Fita Maldita · Censo 1991 (série: uma lenda por casa) · fita da câmera do recenseador, interior de Minas · 9:16, 1080×1920, 61 s · domicílio nº 001</p>', s, count=1, flags=re.S)
 s = re.sub(r'aria-label="[^"]*"', 'aria-label="Censo 1991, a Pisadeira: um recenseador dorme de barriga cheia numa casa do interior de Minas e acorda sem conseguir se mexer"', s, count=1)
 rep('<script src="sons-valenca.js"></script>\n<script src="narracao-valenca.js"></script>', '<script src="sons-censo1.js"></script>\n<script src="narracao-censo1.js"></script>')
 s = re.sub(r"<code>npm run render:valenca</code> → <code>out/[^<]*</code>", "<code>npm run render:censo1</code> → <code>out/censo1991-pisadeira.mp4</code>", s, count=1)
@@ -60,7 +60,7 @@ s = re.sub(r'<ol class="beats">.*?</ol>', '''<ol class="beats">
       <li><b>16–25 s</b><span>A janta (feijão, torresmo, angu). A avó olha pro forro. Na porta do quarto, com um galho de arruda: “Não deita de barriga cheia. Nem de barriga pra cima.”</span></li>
       <li><b>25–35 s</b><span>A câmera ficou gravando. Passos no forro, poeira caindo, uma tábua afasta, dedos na beira, o cabelo descendo até a cama.</span></li>
       <li><b>35–50 s</b><span>O peso: ela agachada no peito dele. “Ela não mata. Ela pesa.” A avó entra rezando o Salmo 91 com a vela; ela sobe de volta pro forro.</span></li>
-      <li class="hot"><b>50–58 s</b><span>Café da manhã: seis xícaras na mesa. Na ficha, o 5 virou 6, e tem mais uma linha na letra dele. Próxima casa: Goiás.</span></li>
+      <li class="hot"><b>50–61 s</b><span>Café da manhã: seis xícaras na mesa. Na ficha, o 5 virou 6, e tem mais uma linha na letra dele. Próxima casa: Goiás.</span></li>
     </ol>''', s, flags=re.S)
 
 # ---- modo limpo: traço fino, volume em degradê, quase sem sujeira de fita ----

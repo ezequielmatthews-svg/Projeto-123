@@ -1,0 +1,190 @@
+{
+ "episodio": "Censo 1991 · A Pisadeira",
+ "duracao": 61,
+ "efeitos": [
+  {
+   "arquivo": "../regra316/02-chuva.mp3",
+   "trechos": [
+    [
+     3,
+     9
+    ]
+   ],
+   "volume": -15,
+   "fade": 0.3
+  },
+  {
+   "arquivo": "../regra316/02-chuva.mp3",
+   "trechos": [
+    [
+     9,
+     25
+    ]
+   ],
+   "volume": -23,
+   "fade": 0.3
+  },
+  {
+   "arquivo": "../regra316/02-chuva.mp3",
+   "trechos": [
+    [
+     25,
+     52.4
+    ]
+   ],
+   "volume": -27,
+   "fade": 0.3
+  },
+  {
+   "arquivo": "../valenca/03-casa-noite.mp3",
+   "trechos": [
+    [
+     16,
+     25
+    ]
+   ],
+   "volume": -28,
+   "fade": 0.3
+  },
+  {
+   "arquivo": "../corredor/12-noite.mp3",
+   "trechos": [
+    [
+     0,
+     3
+    ],
+    [
+     25,
+     52.4
+    ]
+   ],
+   "volume": -25,
+   "fade": 0.3
+  },
+  {
+   "arquivo": "../valenca/12-coracao.mp3",
+   "trechos": [
+    [
+     0,
+     3
+    ]
+   ],
+   "volume": -17,
+   "fade": 0.1
+  },
+  {
+   "arquivo": "../valenca/12-coracao.mp3",
+   "trechos": [
+    [
+     35,
+     43.2
+    ]
+   ],
+   "volume": -15,
+   "fade": 0.3
+  },
+  {
+   "arquivo": "../corredor/02-zumbido.mp3",
+   "trechos": [
+    [
+     31.6,
+     43.2
+    ]
+   ],
+   "volume": -21,
+   "fade": 0.8
+  },
+  {
+   "arquivo": "../valenca/10-respiracao.mp3",
+   "inicio": 0.0,
+   "volume": -9
+  },
+  {
+   "arquivo": "../valenca/10-respiracao.mp3",
+   "inicio": 35.0,
+   "volume": -10
+  },
+  {
+   "arquivo": "../valenca/10-respiracao.mp3",
+   "inicio": 37.6,
+   "volume": -10
+  },
+  {
+   "arquivo": "../valenca/10-respiracao.mp3",
+   "inicio": 40.2,
+   "volume": -10
+  },
+  {
+   "arquivo": "../corredor/13-respiracao.mp3",
+   "inicio": 50.1,
+   "volume": -15
+  },
+  {
+   "arquivo": "../valenca/09-assoalho.mp3",
+   "inicio": 26.95,
+   "volume": -11,
+   "pan": -0.6,
+   "fade": 0.05
+  },
+  {
+   "arquivo": "../valenca/09-assoalho.mp3",
+   "inicio": 27.75,
+   "volume": -11,
+   "pan": -0.38,
+   "fade": 0.05
+  },
+  {
+   "arquivo": "../valenca/09-assoalho.mp3",
+   "inicio": 28.55,
+   "volume": -11,
+   "pan": -0.16,
+   "fade": 0.05
+  },
+  {
+   "arquivo": "../valenca/09-assoalho.mp3",
+   "inicio": 29.349999999999998,
+   "volume": -11,
+   "pan": 0.06,
+   "fade": 0.05
+  },
+  {
+   "arquivo": "../valenca/09-assoalho.mp3",
+   "inicio": 30.25,
+   "volume": -11,
+   "pan": 0.28,
+   "fade": 0.05
+  },
+  {
+   "arquivo": "../valenca/09-assoalho.mp3",
+   "inicio": 31.05,
+   "volume": -11,
+   "pan": 0.5,
+   "fade": 0.05
+  },
+  {
+   "arquivo": "../valenca/11-unhas.mp3",
+   "inicio": 30.55,
+   "volume": -12
+  },
+  {
+   "arquivo": "../corredor/03-porta-range.mp3",
+   "inicio": 8.95,
+   "volume": -15
+  },
+  {
+   "arquivo": "../corredor/03-porta-range.mp3",
+   "inicio": 47.5,
+   "volume": -15
+  },
+  {
+   "arquivo": "../corredor/08-susto.mp3",
+   "inicio": 37.15,
+   "volume": -19
+  },
+  {
+   "arquivo": "../valenca/01-pancada.mp3",
+   "inicio": 54.85,
+   "volume": -17
+  }
+ ]
+}
